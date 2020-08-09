@@ -14,6 +14,8 @@ public class ConsoleMenuBuilder {
     private int m_Index = 0;
     private int m_Level;
 
+    Scanner scanner = new Scanner(System.in);
+
     public ConsoleMenuBuilder(String i_Title) {
         //// Default State of any menu is MainMenu (level is 1, option 0 is exit system)
         m_Title = i_Title;
@@ -54,18 +56,11 @@ public class ConsoleMenuBuilder {
             }
         });
 
-        AddMenuItem(io_SubMenu.m_Title, new Runnable() {
-            @Override
-            public void run() {
-                io_SubMenu.Show();
-            }
-        });
-
+        AddMenuItem(io_SubMenu.m_Title,ConsoleMenuBuilder::exitSystem);
         r_MenuItems.get(r_MenuItems.size() - 1).setMenu(true);
     }
 
-
-    private void exit_Clicked() {
+    private static void exitSystem() {
         System.exit(-1);
     }
 
@@ -82,6 +77,8 @@ public class ConsoleMenuBuilder {
             if (r_MenuItems.get(choice).IsMenu()) {
                 quit = true;
             } else {
+                System.out.println("Press Enter to continue...");
+                scanner.next();
                 printMenu();
             }
         }
@@ -98,7 +95,7 @@ public class ConsoleMenuBuilder {
     private int getInput() {
         int userIntegerInput = -1;
         boolean validInput = false;
-        Scanner scanner = new Scanner(System.in);
+
 
         System.out.println("Please choose one of these options:");
 
