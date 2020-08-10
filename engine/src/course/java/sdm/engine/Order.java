@@ -6,8 +6,6 @@ import java.util.Set;
 
 public class Order implements Coordinatable{
 
-    private static long serialGenerator = 5000000;
-
     private final Customer m_Customer;
     private final long m_serialNumber;
     private Date m_Date;
@@ -15,17 +13,17 @@ public class Order implements Coordinatable{
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;
     private int m_amountOfItems;
-    private final Set<Item> m_Basket = new HashSet<Item>(); //todo what about prices?
+    private final Set<Item> m_Basket = new HashSet<>(); //todo what about prices?
     //todo need stores?
 
-    public Order(Customer m_Customer, Date m_Date) {
-        this.m_serialNumber = serialGenerator++;
+    Order(Long serialGenerator,Customer m_Customer, Date m_Date) {
+        this.m_serialNumber = serialGenerator;
         this.m_Customer = m_Customer;
         this.m_Date = m_Date;
     }
 
-    public Order(Customer m_Customer, Date m_Date, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice) {
-        this.m_serialNumber = serialGenerator++;
+    public Order(Long serialGenerator,Customer m_Customer, Date m_Date, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice) {
+        this.m_serialNumber = serialGenerator;
         this.m_Customer = m_Customer;
         this.m_Date = m_Date;
         this.m_TotalPrice = m_TotalPrice;

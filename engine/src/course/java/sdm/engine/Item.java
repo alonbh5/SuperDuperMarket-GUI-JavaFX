@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public  class Item implements HasName {
 
-    private static long serialGenerator = 10000;
     public enum payByMethod {
         AMOUNT, WEIGHT
     }
@@ -13,8 +12,8 @@ public  class Item implements HasName {
     private String Name;
     private final payByMethod PayBy;
 
-    public Item(String i_Name, payByMethod e_howItsPaid) {
-        this.serialNumber = serialGenerator++;
+    Item(Long i_serialNumber,String i_Name, payByMethod e_howItsPaid) {
+        this.serialNumber = i_serialNumber;
         Name = i_Name;
         PayBy = e_howItsPaid;
     }
@@ -44,7 +43,7 @@ public  class Item implements HasName {
         return Objects.hash(serialNumber, Name, PayBy);
     }
 
-    public int getSerialNumber() {
+    long getSerialNumber() {
         return serialNumber;
     }
 
