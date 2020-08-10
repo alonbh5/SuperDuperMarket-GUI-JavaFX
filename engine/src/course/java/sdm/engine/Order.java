@@ -10,7 +10,8 @@ public class Order {
     private double m_TotalPrice;
     private double m_ShippingPrice;
     private double m_ItemsPrice;
-    Set<Product> m_Basket = new HashSet<Product>();
+    Set<Item> m_Basket = new HashSet<Item>(); //todo what about prices?
+    //todo need stores?
 
     public Order(Customer m_Customer, Date m_Date) {
         this.m_Customer = m_Customer;
