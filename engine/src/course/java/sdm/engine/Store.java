@@ -3,14 +3,15 @@ import course.java.sdm.exceptions.NegativePrice;
 
 import javax.management.openmbean.InvalidKeyException;
 import javax.management.openmbean.KeyAlreadyExistsException;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Store implements HasName{
+public class Store implements HasName, Coordinatable{
 
-    private final Coordinate2D m_locationCoordinate;  //todo this need final?
+    private final Point m_locationCoordinate;  //todo this need final?
     private final int m_StoreID;
     int m_profitFromShipping = 0;
     Map<Integer,Item> m_items = new HashMap<>();
@@ -22,7 +23,7 @@ public class Store implements HasName{
     //TODO how to implemnt price for item
 
 
-    public Store(Coordinate2D i_locationCoordinate,String m_Name, int i_PPK, int i_IDNumber) {
+    public Store(Point i_locationCoordinate,String m_Name, int i_PPK, int i_IDNumber) {
         this.m_StoreID = i_IDNumber;
         this.m_locationCoordinate = i_locationCoordinate;
         this.PPK=i_PPK;
@@ -71,7 +72,7 @@ public class Store implements HasName{
 
     public void addOrderToHistory (Order NewOrder)
     {
-        //todo check expetion
+        //todo check exception
         m_OrderHistory.add(NewOrder);
     }
 
@@ -84,6 +85,11 @@ public class Store implements HasName{
     @Override
     public void setName(String Input) {
         m_Name = Input;
+    }
+
+    @Override
+    public Point getCoordinate() {
+        return this.m_locationCoordinate;
     }
 
     //todo tostring hash and equals

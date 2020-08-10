@@ -2,7 +2,7 @@ package course.java.sdm.engine;
 
 import java.awt.*;
 
-public class Customer extends Person {
+public class Customer extends Person implements Coordinatable {
 
     private Point m_currentLocation;
 
@@ -14,5 +14,10 @@ public class Customer extends Person {
     public void setCurrentLocation (Point i_newLocation)
     {
         this.m_currentLocation = i_newLocation;
+    }
+
+    @Override
+    public Point getCoordinate() {
+        return m_currentLocation;
     }
 }

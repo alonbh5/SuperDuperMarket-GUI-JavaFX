@@ -4,19 +4,19 @@ import java.util.Objects;
 
 public  class Item implements HasName {
 
-    private static int serialGenerator = 10000;
+    private static long serialGenerator = 10000;
     public enum payByMethod {
         AMOUNT, WEIGHT
     }
 
-    private final int serialNumber;
+    private final long serialNumber;
     private String Name;
     private final payByMethod PayBy;
 
-    public Item(String i_Name, payByMethod howItsPaid) {
+    public Item(String i_Name, payByMethod e_howItsPaid) {
         this.serialNumber = serialGenerator++;
         Name = i_Name;
-        PayBy = howItsPaid;
+        PayBy = e_howItsPaid;
     }
 
     @Override
@@ -50,5 +50,13 @@ public  class Item implements HasName {
 
     public payByMethod getPayBy() {
         return PayBy;
+    }
+
+    @Override
+    public String toString() {
+        return  "Name='" + Name + '\'' +
+                ", Serial #" + serialNumber +
+                ", Paying Method is by =" + PayBy.toString().toLowerCase()+".";
+
     }
 }
