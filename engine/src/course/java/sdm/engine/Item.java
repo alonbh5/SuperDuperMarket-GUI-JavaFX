@@ -43,4 +43,12 @@ public  class Item implements HasName {
     public int hashCode() {
         return Objects.hash(serialNumber, Name, PayBy);
     }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public payByMethod getPayBy() {
+        return PayBy;
+    }
 }
