@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class Order implements Coordinatable{
 
-    private final Customer m_Customer;
+    private final Point m_userLocation;
     private final long m_serialNumber;
     private Date m_Date;
     private double m_TotalPrice=0;
@@ -16,28 +16,19 @@ public class Order implements Coordinatable{
     private final Set<Item> m_Basket = new HashSet<>(); //todo what about prices?
     //todo need stores?
 
-    Order(Long serialGenerator,Customer m_Customer, Date m_Date) {
+    Order(Long serialGenerator, Date i_Date,Point i_userLocation) {
+        this.m_userLocation = i_userLocation;
         this.m_serialNumber = serialGenerator;
-        this.m_Customer = m_Customer;
-        this.m_Date = m_Date;
+        this.m_Date = i_Date;
     }
 
-    public Order(Long serialGenerator,Customer m_Customer, Date m_Date, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice) {
+    public Order(Long serialGenerator, Date i_Date, double i_TotalPrice, double i_ShippingPrice, double i_ItemsPrice,Point i_userLocation) {
         this.m_serialNumber = serialGenerator;
-        this.m_Customer = m_Customer;
-        this.m_Date = m_Date;
-        this.m_TotalPrice = m_TotalPrice;
-        this.m_ShippingPrice = m_ShippingPrice;
-        this.m_ItemsPrice = m_ItemsPrice;
-    }
-
-    @Override
-    public Point getCoordinate() {
-        return m_Customer.getCoordinate();
-    }
-
-    public Customer getCustomer() {
-        return m_Customer;
+        this.m_Date = i_Date;
+        this.m_userLocation = i_userLocation;
+        this.m_TotalPrice = i_TotalPrice;
+        this.m_ShippingPrice = i_ShippingPrice;
+        this.m_ItemsPrice = i_ItemsPrice;
     }
 
     public long getSerialNumber() {
@@ -62,5 +53,10 @@ public class Order implements Coordinatable{
 
     public int getAmountOfItems() {
         return m_amountOfItems;
+    }
+
+    @Override
+    public Point getCoordinate() {
+        return m_userLocation;
     }
 }

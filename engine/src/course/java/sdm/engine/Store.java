@@ -34,6 +34,10 @@ public class Store implements HasName, Coordinatable{
         return PPK;
     }
 
+    public long getStoreID() {
+        return m_StoreID;
+    }
+
     public boolean addItemToStore (Item itemToAdd, double Price)
     {
         Long itemKey = itemToAdd.getSerialNumber();

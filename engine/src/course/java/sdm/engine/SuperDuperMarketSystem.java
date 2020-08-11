@@ -1,13 +1,11 @@
 package course.java.sdm.engine;
 
-import javafx.collections.transformation.SortedList;
-
+import course.java.sdm.exceptions.*;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
-
+//todo check all throws
 public class SuperDuperMarketSystem {
     //todo access modifier this is the only public!
 
@@ -29,32 +27,49 @@ public class SuperDuperMarketSystem {
 
     public void AddNewItem (long i_serialNumber,String i_Name, Item.payByMethod e_howItsPaid)
     {
-        if (m_ItemsInSystem.containsKey(i_serialNumber))
-            throw (new KeyAlreadyExistsException("The Serial Number " + i_serialNumber + " Exist already in system "));
-
         Item newItem = new Item(i_serialNumber,i_Name,e_howItsPaid);
-        m_ItemsInSystem.put(i_serialNumber,newItem);
+        AddNewItem(newItem);
     }
 
-    public void AddNewOrder (Long i_serialNumber,Customer m_Customer, Date m_Date)
+    public void AddNewItem (Item newItem)
     {
-        if (m_OrderHistory.containsKey(i_serialNumber))
-            throw (new KeyAlreadyExistsException("The Serial Number " + i_serialNumber + " Exist already in system "));
+        if (m_ItemsInSystem.containsKey(newItem.getSerialNumber()))
+            throw (new KeyAlreadyExistsException("The Item Serial Number " + newItem.getSerialNumber() + " Exist already in system "));
 
-        Order newOrder = new Order(i_serialNumber,m_Customer,m_Date);
-        m_OrderHistory.put(i_serialNumber,newOrder);
+        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+    }
+
+    public void AddNewOrder (Long i_serialNumber,Point m_Location, Date m_Date)
+    {
+        Order newOrder = new Order(i_serialNumber,m_Date,m_Location);
+        AddNewOrder(newOrder);
+    }
+
+    public void AddNewOrder (Order newOrder)
+    {
+        if (m_OrderHistory.containsKey(newOrder.getSerialNumber()))
+            throw (new KeyAlreadyExistsException("The Serial Number " + newOrder.getSerialNumber() + " Exist already in system "));
+
+        m_OrderHistory.put(newOrder.getSerialNumber(),newOrder);
     }
 
     public void AddNewStore (Long i_serialNumber,Point i_locationCoordinate,String m_Name, int i_PPK)
     {
-        if (m_SystemGrid.containsKey(i_locationCoordinate))
-            throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + i_locationCoordinate + ") in system "));
-        if (m_StoresInSystem.containsKey(i_serialNumber))
-            throw (new KeyAlreadyExistsException("The Serial Number " + i_serialNumber + " Exist already in system "));
-
         Store newStore = new Store(i_serialNumber,i_locationCoordinate,m_Name,i_PPK);
-        m_SystemGrid.put(i_locationCoordinate,newStore);
-        m_StoresInSystem.put(i_serialNumber,newStore);
+        AddNewStore (newStore);
+    }
+
+    public void AddNewStore (Store newStore)
+    {
+        if (m_SystemGrid.containsKey(newStore.getCoordinate()))
+            throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + newStore.getCoordinate() + ") in system "));
+        if (m_StoresInSystem.containsKey(newStore.getStoreID()))
+            throw (new KeyAlreadyExistsException("The Serial Number " + newStore.getStoreID() + " Exist already in system "));
+        if (!isCoordinateInRange(newStore.getCoordinate()))
+            throw (new PointOutOfGridException(newStore.getCoordinate()));
+
+        m_SystemGrid.put(newStore.getCoordinate(),newStore);
+        m_StoresInSystem.put(newStore.getStoreID(),newStore);
     }
 
 
@@ -92,6 +107,11 @@ public class SuperDuperMarketSystem {
     public int getAmountOfStoresInSystem ()
     {
         return m_SystemGrid.size();
+    }
+
+    public static boolean isCoordinateInRange(Point Coordinate)
+    {
+        return (((Coordinate.x <= MAX_COORDINATE) && (Coordinate.x >= MIN_COORDINATE) && ((Coordinate.y <= MAX_COORDINATE) && (Coordinate.y >= MIN_COORDINATE))));
     }
 
 }
