@@ -4,21 +4,22 @@ import course.java.sdm.exceptions.*;
 import javax.management.openmbean.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class Store implements HasName, Coordinatable{
 
     private final Point m_locationCoordinate;  //todo this need final?
     private final long m_StoreID;
     private double m_profitFromShipping = 0;
-    private Map<Long,Item> m_items = new HashMap<>();
-    private Map<Long,Double> m_itemsPrices = new HashMap<>();
-    private Map<Long,Integer> m_ItemsSold = new HashMap<>(); //todo this needs to wrok
-    private List<Order> m_OrderHistory = new LinkedList<>();
+    private final Map<Long,ProductInStore> m_items = new HashMap<>();
+    private final Map<Long,Order> m_OrderHistory = new HashMap<>();
     private String m_Name;
     private int PPK;
 
-    //TODO how to implemnt price for item
+    //private Map<Long,Double> m_itemsPrices = new HashMap<>();
+    //private Map<Long,Integer> m_ItemsSold = new HashMap<>(); //todo this needs to work
+    //private List<> m_OrderHistory = new LinkedList<>();
+
+    //TODO how to implement price for item
 
 
     Store(Long i_serialNumber,Point i_locationCoordinate,String m_Name, int i_PPK) {
@@ -40,34 +41,31 @@ public class Store implements HasName, Coordinatable{
         return m_profitFromShipping;
     }
 
-    public boolean addItemToStore (Item itemToAdd, double Price)
+    public void addItemToStore (ProductInStore ProductToAdd)
     {
-        Long itemKey = itemToAdd.getSerialNumber();
+        Long itemKey = ProductToAdd.getItem().getSerialNumber();
 
         if (m_items.containsKey(itemKey))
-            throw (new KeyAlreadyExistsException("The key for "+itemToAdd.getName()+" #"+itemKey+"is Already in Store #"+this.m_StoreID));
-        if (Price <=0)
-            throw (new NegativePrice(Price));
+            throw (new KeyAlreadyExistsException("The key for "+ProductToAdd.getItem().getName()+" #"+itemKey+"is Already in Store #"+this.m_StoreID));
+        if (ProductToAdd.getPricePerUnit() <=0)
+            throw (new NegativePrice(ProductToAdd.getPricePerUnit()));
+        if (ProductToAdd.getStore().getStoreID() != this.getStoreID())
+            throw (new IllegalArgumentException("the Product belongs to store #"+ProductToAdd.getStore().getStoreID()+"and does not match store #"+this.getStoreID()));
 
-        m_items.put(itemKey,itemToAdd);
-        m_itemsPrices.put(itemKey,Price);
-        return true;
+        m_items.put(itemKey,ProductToAdd);
     }
 
     public double getPriceForItem (Long ItemID)
     {
-        if (m_itemsPrices.containsKey(ItemID))
-            return (m_itemsPrices.get(ItemID));
+        if (m_items.containsKey(ItemID))
+            return (m_items.get(ItemID).getPricePerUnit());
         else
             throw (new InvalidKeyException("item #"+ItemID+" is not in Store"));
     }
 
-    public double getPriceForItem (Item ItemToCheck)
+    public double getPriceForItem (ProductInStore ItemToCheck)
     {
-        if (m_itemsPrices.containsKey(ItemToCheck.getSerialNumber()))
-            return (m_itemsPrices.get(ItemToCheck.getSerialNumber()));
-        else
-            throw (new InvalidKeyException(ItemToCheck.getName()+"#"+ItemToCheck.getSerialNumber()+" is not in Store"));
+        return getPriceForItem(ItemToCheck.getItem().serialNumber);
     }
 
     public boolean isItemInStore (Item ItemToCheck)
@@ -80,12 +78,12 @@ public class Store implements HasName, Coordinatable{
         return m_items.containsKey(ItemID);
     }
 
-
     public void addOrderToStoreHistory (Order NewOrder)
     {
-        if (NewOrder.get) //check if order contine me...
-        //todo check exception
-        m_OrderHistory.add(NewOrder);
+        if (NewOrder.isStoreInOrder(this)) //todo add here update for amount bought from store (not only +1)
+            m_OrderHistory.put(NewOrder.getOrderSerialNumber(), NewOrder);
+        else
+            throw (new IllegalArgumentException("Order #"+NewOrder.getOrderSerialNumber()+" does not buy from store #"+this.getStoreID()));
     }
 
     @Override
@@ -127,12 +125,8 @@ public class Store implements HasName, Coordinatable{
             res.append("Store in Empty of items!");
         else {
 
-            for (Item curItem : m_items.values()) {
-                res.append(i++ +". "+curItem+ " Cost:" + m_itemsPrices.get(curItem.getSerialNumber()));
-                if (m_ItemsSold.containsKey(curItem.getSerialNumber()))
-                    res.append(" and was Sold " + m_ItemsSold.get(curItem.getSerialNumber()) + " times.\n");
-                else
-                    res.append(" and was never sold in store");
+            for (ProductInStore curItem : m_items.values()) {
+                res.append(i++ +". "+curItem+"\n");
             }
         }
 
@@ -147,20 +141,25 @@ public class Store implements HasName, Coordinatable{
         if (m_OrderHistory.isEmpty())
             res.append("Store Has never made a sale!");
 
-        for (Order curOrder : m_OrderHistory)
+        for (Order curOrder : m_OrderHistory.values())
         {
-            res.append(i++ +". " +curOrder);
+            res.append(i++ +". Order#" + curOrder.getOrderSerialNumber() +
+                    "\n Number of Items: " + curOrder.getAmountOfItems() +
+                    "\n Cost of only Items: " + curOrder.getItemsPrice() +
+                    "\n Cost of Shipping: " + curOrder.getShippingPrice() +
+                    "\n Cost of Total Order: " + curOrder.getShippingPrice());
         }
         return res.toString();
     }
 
     public boolean equals(Store o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
         return (this.getStoreID() == o.getStoreID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(m_locationCoordinate, m_StoreID, m_profitFromShipping, m_items, m_itemsPrices, m_OrderHistory, m_Name, PPK);
+        return Objects.hash(m_locationCoordinate, m_StoreID, m_profitFromShipping, m_items, m_OrderHistory, m_Name, PPK);
     }
 }

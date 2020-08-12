@@ -43,11 +43,11 @@ public  class Item implements HasName {
         return Objects.hash(serialNumber, Name, PayBy);
     }
 
-    long getSerialNumber() {
+    protected long getSerialNumber() {
         return serialNumber;
     }
 
-    public payByMethod getPayBy() {
+    protected payByMethod getPayBy() {
         return PayBy;
     }
 

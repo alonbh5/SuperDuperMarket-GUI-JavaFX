@@ -5,14 +5,14 @@ import java.util.*;
 public class Order implements Coordinatable{
 
     private final long m_OrderSerialNumber;
-    private final Point m_userLocation;
     private Date m_Date;
+    private final Point m_userLocation;
     private double m_TotalPrice=0;
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;
     private int m_amountOfItems=0;
-    private final Set<Product> m_Basket = new HashSet<>();
-    private final Set<Long> m_StoreIDinOrder = new HashSet<>();
+    private final Set<ProductInOrder> m_Basket = new HashSet<>();
+    private final Set<Store> m_StoresInOrder = new HashSet<>();
 
     public Order(Point m_userLocation, long m_OrderSerialNumber, Date m_Date) {
         this.m_userLocation = m_userLocation;
@@ -40,21 +40,26 @@ public class Order implements Coordinatable{
         return m_ItemsPrice;
     }
 
-    public Set<Long> getStoreIDSet ()
+    public Set<Store> getStoreSet ()
     {
-        return m_StoreIDinOrder;
+        return m_StoresInOrder;
     }
 
     public int getAmountOfItems() {
         return m_amountOfItems;
     }
 
-    public void addProductToOrder (Product productToAdd,SuperDuperMarketSystem Sys)
+    public boolean isStoreInOrder (Store store)
     {
-        m_Basket.add(productToAdd);
-        m_StoreIDinOrder.add(productToAdd.getStoreID());
-        m_ItemsPrice += productToAdd.getTotalPrice();
-        m_ShippingPrice += Sys.CalculatePPK(productToAdd.getStoreID(),this.getCoordinate()); //todo check exc
+        return m_StoresInOrder.contains(store);
+    }
+
+    public void addProductToOrder (ProductInOrder productToAdd,SuperDuperMarketSystem Sys)
+    {
+        m_Basket.add(productToAdd); //add order
+        m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list
+        m_ItemsPrice += productToAdd.getPriceOfTotalItems();
+        m_ShippingPrice += Sys.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
         if (productToAdd.getPayBy().equals(Item.payByMethod.AMOUNT))
             m_amountOfItems += ((int) productToAdd.getAmount());
@@ -64,8 +69,8 @@ public class Order implements Coordinatable{
     }
 
     @Override
-    public String toString() {
-        return "Order#" + m_OrderSerialNumber +
+    public String toString() { //q5
+        return "Order#" + m_OrderSerialNumber + "at " + m_Date + //todo need to add here store but stoers with bonus!!!
                 "\n Number of Items: " + m_amountOfItems +
                 "\n Cost of only Items: " + m_ItemsPrice +
                 "\n Cost of Shipping: " + m_ShippingPrice +

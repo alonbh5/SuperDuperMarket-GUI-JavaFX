@@ -12,6 +12,7 @@ import java.util.List;
 //todo check all throws
 public class SuperDuperMarketSystem {
     //todo access modifier this is the only public!
+    //todo make serizible interface?
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
@@ -69,11 +70,10 @@ public class SuperDuperMarketSystem {
     }
 
     private void UpdateShippingProfitAfterOrder(Order newOrder) {
-        Set<Long> AllStoresFromOrder = newOrder.getStoreIDSet();
+        Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
 
-        for (Long curStoreID : AllStoresFromOrder) {
-            Store CurStore = m_StoresInSystem.get(curStoreID);
-            CurStore.newShippingFromStore(CalculatePPK(CurStore,newOrder.getCoordinate()));
+        for (Store curStore : AllStoresFromOrder) {
+            curStore.newShippingFromStore(CalculatePPK(curStore,newOrder.getCoordinate()));
         }
     }
 
@@ -145,14 +145,19 @@ public class SuperDuperMarketSystem {
 
     public Item.payByMethod getPayingMethod (Long itemID)
     {
-        if (isItemInSystem(itemID))
-            return (m_ItemsInSystem.get(itemID).PayBy);
-        else throw (new RuntimeException("Item Key #"+itemID+" is not is System"));
+        if (!isItemInSystem(itemID))
+            throw (new RuntimeException("Item Key #"+itemID+" is not is System"));
+
+        return (m_ItemsInSystem.get(itemID).PayBy);
+
     }
 
     public double getAvgPriceForItem (Long ItemID)
     {
-        //todo
+        return m_StoresInSystem.values().stream()
+                .filter(t->t.isItemInStore(ItemID))
+                .mapToDouble(t->t.getPriceForItem(ItemID))
+                .average().getAsDouble();
     }
 
     public void ItemHadBeenSold (Long ItemID)
