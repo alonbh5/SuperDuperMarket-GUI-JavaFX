@@ -8,9 +8,9 @@ public  class Item implements HasName {
         AMOUNT, WEIGHT
     }
 
-    private final long serialNumber;
-    private String Name;
-    private final payByMethod PayBy;
+    protected final long serialNumber;
+    protected String Name;
+    protected final payByMethod PayBy;
 
     Item(Long i_serialNumber,String i_Name, payByMethod e_howItsPaid) {
         this.serialNumber = i_serialNumber;
@@ -53,9 +53,9 @@ public  class Item implements HasName {
 
     @Override
     public String toString() {
-        return  "Name='" + Name + '\'' +
+        return  Name +
                 ", Serial #" + serialNumber +
-                ", Paying Method is by =" + PayBy.toString().toLowerCase()+".";
+                ", Paying Method is: By " + PayBy.toString().toLowerCase()+".";
 
     }
 }

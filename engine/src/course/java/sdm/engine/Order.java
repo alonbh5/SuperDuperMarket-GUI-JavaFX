@@ -1,38 +1,27 @@
 package course.java.sdm.engine;
 import java.awt.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Order implements Coordinatable{
 
+    private final long m_OrderSerialNumber;
     private final Point m_userLocation;
-    private final long m_serialNumber;
     private Date m_Date;
     private double m_TotalPrice=0;
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;
-    private int m_amountOfItems;
-    private final Set<Item> m_Basket = new HashSet<>(); //todo what about prices?
-    //todo need stores?
+    private int m_amountOfItems=0;
+    private final Set<Product> m_Basket = new HashSet<>();
+    private final Set<Long> m_StoreIDinOrder = new HashSet<>();
 
-    Order(Long serialGenerator, Date i_Date,Point i_userLocation) {
-        this.m_userLocation = i_userLocation;
-        this.m_serialNumber = serialGenerator;
-        this.m_Date = i_Date;
+    public Order(Point m_userLocation, long m_OrderSerialNumber, Date m_Date) {
+        this.m_userLocation = m_userLocation;
+        this.m_OrderSerialNumber = m_OrderSerialNumber;
+        this.m_Date = m_Date;
     }
 
-    public Order(Long serialGenerator, Date i_Date, double i_TotalPrice, double i_ShippingPrice, double i_ItemsPrice,Point i_userLocation) {
-        this.m_serialNumber = serialGenerator;
-        this.m_Date = i_Date;
-        this.m_userLocation = i_userLocation;
-        this.m_TotalPrice = i_TotalPrice;
-        this.m_ShippingPrice = i_ShippingPrice;
-        this.m_ItemsPrice = i_ItemsPrice;
-    }
-
-    public long getSerialNumber() {
-        return m_serialNumber;
+    public long getOrderSerialNumber() {
+        return m_OrderSerialNumber;
     }
 
     public Date getDate() {
@@ -51,8 +40,36 @@ public class Order implements Coordinatable{
         return m_ItemsPrice;
     }
 
+    public Set<Long> getStoreIDSet ()
+    {
+        return m_StoreIDinOrder;
+    }
+
     public int getAmountOfItems() {
         return m_amountOfItems;
+    }
+
+    public void addProductToOrder (Product productToAdd,SuperDuperMarketSystem Sys)
+    {
+        m_Basket.add(productToAdd);
+        m_StoreIDinOrder.add(productToAdd.getStoreID());
+        m_ItemsPrice += productToAdd.getTotalPrice();
+        m_ShippingPrice += Sys.CalculatePPK(productToAdd.getStoreID(),this.getCoordinate()); //todo check exc
+        m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
+        if (productToAdd.getPayBy().equals(Item.payByMethod.AMOUNT))
+            m_amountOfItems += ((int) productToAdd.getAmount());
+        else
+            m_amountOfItems++;
+        //todo sys.itemhadbensold from system?,
+    }
+
+    @Override
+    public String toString() {
+        return "Order#" + m_OrderSerialNumber +
+                "\n Number of Items: " + m_amountOfItems +
+                "\n Cost of only Items: " + m_ItemsPrice +
+                "\n Cost of Shipping: " + m_ShippingPrice +
+                "\n Cost of Total Order: " + m_TotalPrice;
     }
 
     @Override
