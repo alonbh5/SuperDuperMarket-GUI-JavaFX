@@ -5,9 +5,7 @@ import course.java.sdm.exceptions.*;
 import javax.management.openmbean.InvalidKeyException;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.awt.*;
-import java.security.KeyException;
 import java.util.*;
-import java.util.List;
 
 //todo check all throws
 public class SuperDuperMarketSystem {
