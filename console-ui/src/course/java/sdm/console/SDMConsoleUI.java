@@ -9,23 +9,30 @@ public class SDMConsoleUI {
     ConsoleMenuBuilder MainMenu = new ConsoleMenuBuilder("Super Duper Market");
 
     public SDMConsoleUI() { //todo input is XML
-
+        //get xml address...
+        BuildMainMenu();
+        MainMenu.Show();
     }
 
     private void BuildMainMenu ()
     {
-        ConsoleMenuBuilder mymenu = new ConsoleMenuBuilder("Main menu");
-        ConsoleMenuBuilder mymenu2 = new ConsoleMenuBuilder("seconde menu");
+        ConsoleMenuBuilder XMLMenu = new ConsoleMenuBuilder("Upload XML");
+        ConsoleMenuBuilder StoresMenu = new ConsoleMenuBuilder("View All Stores");
+        ConsoleMenuBuilder ItemsMenu = new ConsoleMenuBuilder("View All Items");
+        ConsoleMenuBuilder NewOrderMenu = new ConsoleMenuBuilder("Create Order");
+        ConsoleMenuBuilder OrderHistoryMenu = new ConsoleMenuBuilder("Show Orders History");
+        ConsoleMenuBuilder ExitMenu = new ConsoleMenuBuilder("Exit System");
 
-        mymenu.AddMenuItem("goo to", Main::goo);
+        MainMenu.AddMenuItem(XMLMenu);
+        MainMenu.AddMenuItem(StoresMenu);
+        MainMenu.AddMenuItem(ItemsMenu);
+        MainMenu.AddMenuItem(NewOrderMenu);
+        MainMenu.AddMenuItem(OrderHistoryMenu);
+        MainMenu.AddMenuItem(ExitMenu);
 
-        mymenu.AddMenuItem("foo to", Main::foo);
 
-        mymenu.AddMenuItem("koo to", Main::koo);
-        mymenu.AddMenuItem(mymenu2);
+        //MainMenu.AddMenuItem("View All Items", Main::koo);
 
-
-        mymenu.Show();
     }
 
     private static void printLineOfStars ()

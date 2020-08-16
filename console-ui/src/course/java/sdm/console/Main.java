@@ -21,22 +21,7 @@ public class Main {
 
         mymenu.Show();
 
-
+        SDMConsoleUI SDMByConsole = new SDMConsoleUI();
     }
 
-
-    public  static void foo ()
-    {
-        System.out.println("in foo");
-    }
-
-    public  static void koo ()
-    {
-        System.out.println("in koo");
-    }
-
-    public  static void goo ()
-    {
-        System.out.println("in goo");
-    }
 }

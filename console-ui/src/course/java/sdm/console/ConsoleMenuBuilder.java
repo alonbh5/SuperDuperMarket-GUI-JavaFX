@@ -53,10 +53,11 @@ public class ConsoleMenuBuilder {
             @Override
             public void run() {
                 Show();
-            }
-        });
+            }});
+        io_SubMenu.r_MenuItems.get(0).setClick(this::Show);
+        ;
 
-        AddMenuItem(io_SubMenu.m_Title,ConsoleMenuBuilder::exitSystem);
+        AddMenuItem(io_SubMenu.m_Title,io_SubMenu::Show);
         r_MenuItems.get(r_MenuItems.size() - 1).setMenu(true);
     }
 
@@ -102,14 +103,16 @@ public class ConsoleMenuBuilder {
         do {
             try {
                 userIntegerInput = scanner.nextInt();
-                if (userIntegerInput < 0 || userIntegerInput >= r_MenuItems.size())
-                    System.out.println("There is no option "+ userIntegerInput +"- Try Again!");
+                if (userIntegerInput < 0 || userIntegerInput >= r_MenuItems.size()) {
+                    System.out.println("There is no option " + userIntegerInput + " - Try Again!");
+                    scanner.nextLine();
+                }
                 else
                     validInput = true;
             } catch (InputMismatchException exception) {
                 System.out.println("This is not a number - Try Again!");
                 validInput = false;
-                System.out.println(scanner.nextLine());
+                scanner.nextLine();
             }
         } while (validInput == false);
 
