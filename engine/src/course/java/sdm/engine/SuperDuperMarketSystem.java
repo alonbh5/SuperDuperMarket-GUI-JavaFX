@@ -5,7 +5,9 @@ import course.java.sdm.exceptions.*;
 import javax.management.openmbean.InvalidKeyException;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 //todo check all throws
 public class SuperDuperMarketSystem {
@@ -18,11 +20,12 @@ public class SuperDuperMarketSystem {
     private static long StoreSerialGenerator = 300000;
     private static long OrdersSerialGenerator = 5000000; //todo thing about what to do - XML chooses the Serial somethinms
 
-    private Map<Long,Item> m_ItemsInSystem = new HashMap<>(); //todo array or map
-    private Map<Long,Integer> m_AmountOfTimeItemHasSold = new HashMap<>();
+    private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>(); //todo array or map
+    //private Map<Long,Integer> m_AmountOfTimeItemHasSold = new HashMap<>();
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>(); //Todo - Merge this shit
+    boolean locked = true;
 
 
     public static double CalculatePPK (Store FromStore, Point curLocation)
@@ -46,7 +49,8 @@ public class SuperDuperMarketSystem {
         if (m_ItemsInSystem.containsKey(newItem.getSerialNumber()))
             throw (new KeyAlreadyExistsException("The Item Serial Number " + newItem.getSerialNumber() + " Exist already in system "));
 
-        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+        ProductInSystem newProductSystem = new ProductInSystem(newItem);
+        m_ItemsInSystem.put(newItem.getSerialNumber(),newProductSystem);
     }
 
 //    public void AddNewOrder (Long i_serialNumber,Point m_Location, Date m_Date)
@@ -86,7 +90,7 @@ public class SuperDuperMarketSystem {
         if (m_SystemGrid.containsKey(newStore.getCoordinate()))
             throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + newStore.getCoordinate() + ") in system "));
         if (m_StoresInSystem.containsKey(newStore.getStoreID()))
-            throw (new KeyAlreadyExistsException("The Serial Number " + newStore.getStoreID() + " Exist already in system "));
+            throw (new KeyAlreadyExistsException("The Serial Number " + newStore.getStoreID() + " Already Exist in system "));
         if (!isCoordinateInRange(newStore.getCoordinate()))
             throw (new PointOutOfGridException(newStore.getCoordinate()));
 
@@ -146,7 +150,7 @@ public class SuperDuperMarketSystem {
         if (!isItemInSystem(itemID))
             throw (new RuntimeException("Item Key #"+itemID+" is not is System"));
 
-        return (m_ItemsInSystem.get(itemID).PayBy);
+        return (m_ItemsInSystem.get(itemID).getItem().PayBy);
 
     }
 
@@ -158,22 +162,79 @@ public class SuperDuperMarketSystem {
                 .average().getAsDouble();
     }
 
-    public void ItemHadBeenSold (Long ItemID)
+    public void addItemToStore (Long StoreID,ProductInStore productToAdd)
     {
-        //todo this do only per order and not by amont!!!!
-
-        if (m_AmountOfTimeItemHasSold.containsKey(ItemID))
-            m_AmountOfTimeItemHasSold.put(ItemID, m_AmountOfTimeItemHasSold.get(ItemID) + 1);
-        else
-            m_AmountOfTimeItemHasSold.put(ItemID,1);
+        try {
+            Store storeToAddTo = m_StoresInSystem.get(StoreID);
+            storeToAddTo.addItemToStore(productToAdd);
+            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
+        }
+        catch (Exception e){
+            //todo catch
+        }
     }
 
-    public int HowManyTimeItemWasSold (Long ItemID)//3.6
+    public void addProductToOrder (Long OrderID,ProductInOrder productToAdd)
     {
-        if (m_AmountOfTimeItemHasSold.containsKey(ItemID))
-            return m_AmountOfTimeItemHasSold.get(ItemID);
-        else
-            return 0;
+        try {
+            Order OrderToAddTo = m_OrderHistory.get(OrderID);
+            OrderToAddTo.addProductToOrder(productToAdd);
+            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addTimesSold(productToAdd.getAmountByPayingMethod()); //todo this is by tmount bougt
+            //if 2 shampoo => +2 , if 4.5 apples => +1
+        }
+        catch (Exception e){
+            //todo catch
+        }
     }
 
+
+    public List<String> getListOfAllStoresInSystem () //todo return string Builder?
+    {
+        if (locked)
+            throw new NoValidXMLException();
+
+        StringBuilder str = new StringBuilder();
+        List<String> res = new ArrayList<>();
+
+        for (Store CurStore : m_StoresInSystem.values())
+            res.add(CurStore.toString());
+
+        return res;
+    }
+
+    public List<String> getListOfAllItems ()
+    {
+        if (locked)
+            throw new NoValidXMLException();
+
+        StringBuilder str = new StringBuilder();
+        List<String> res = new ArrayList<>();
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+
+        for (ProductInSystem curItem : m_ItemsInSystem.values())
+        {
+            str.append(curItem.getItem().toString());
+            str.append("Being Sold in "+curItem.getNumberOfSellingStores() +" Stores. \n");
+            str.append("Average Price is : "+df.format(getAvgPriceForItem(curItem.getSerialNumber()))); //todo all avg needs to be 2 digit
+            str.append("\nWas sold  : "+curItem.getAmountOfItemWasSold() +" times.");
+            res.add(str.toString());
+            str = null;
+        }
+
+        return res;
+    }
+
+    public List<String> getListOfAllOrderInSystem() {
+        if (locked)
+            throw new NoValidXMLException();
+
+
+        List<String> res = new ArrayList<>();
+
+        for (Order CurOrder : m_OrderHistory.values())
+            res.add(CurOrder.toString());
+
+        return res;
+    }
 }

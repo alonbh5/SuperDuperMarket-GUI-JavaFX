@@ -18,6 +18,8 @@ public class ProductInStore {
         this.pricePerUnit = pricePerUnit;
     }
 
+    long getSerialNumber () {return item.serialNumber;}
+
     public double getPricePerUnit() {
         return pricePerUnit;
     }
@@ -51,10 +53,7 @@ public class ProductInStore {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductInStore that = (ProductInStore) o;
-        return Double.compare(that.pricePerUnit, pricePerUnit) == 0 &&
-                store == that.store &&
-                amountSoldInStore == that.amountSoldInStore &&
-                Objects.equals(item, that.item);
+        return that.getItem().serialNumber == this.item.serialNumber;
     }
 
     @Override

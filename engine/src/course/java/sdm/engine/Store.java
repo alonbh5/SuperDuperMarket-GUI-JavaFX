@@ -37,11 +37,11 @@ public class Store implements HasName, Coordinatable{
         return m_StoreID;
     }
 
-    public double getProfitFromShipping() {
+     double getProfitFromShipping() {
         return m_profitFromShipping;
     }
 
-    public void addItemToStore (ProductInStore ProductToAdd)
+     void addItemToStore (ProductInStore ProductToAdd)
     {
         Long itemKey = ProductToAdd.getItem().getSerialNumber();
 
@@ -53,9 +53,10 @@ public class Store implements HasName, Coordinatable{
             throw (new IllegalArgumentException("the Product belongs to store #"+ProductToAdd.getStore().getStoreID()+"and does not match store #"+this.getStoreID()));
 
         m_items.put(itemKey,ProductToAdd);
+        //todo make sure when called system update sellingStore list
     }
 
-    public double getPriceForItem (Long ItemID)
+    double getPriceForItem (Long ItemID)
     {
         if (m_items.containsKey(ItemID))
             return (m_items.get(ItemID).getPricePerUnit());
@@ -63,22 +64,22 @@ public class Store implements HasName, Coordinatable{
             throw (new InvalidKeyException("item #"+ItemID+" is not in Store"));
     }
 
-    public double getPriceForItem (ProductInStore ItemToCheck)
+    double getPriceForItem (ProductInStore ItemToCheck)
     {
         return getPriceForItem(ItemToCheck.getItem().serialNumber);
     }
 
-    public boolean isItemInStore (Item ItemToCheck)
+    boolean isItemInStore (Item ItemToCheck)
     {
         return m_items.containsKey(ItemToCheck.getSerialNumber());
     }
 
-    public boolean isItemInStore (Long ItemID)
+    boolean isItemInStore (Long ItemID)
     {
         return m_items.containsKey(ItemID);
     }
 
-    public void addOrderToStoreHistory (Order NewOrder)
+    void addOrderToStoreHistory (Order NewOrder)
     {
         if (NewOrder.isStoreInOrder(this)) //todo add here update for amount bought from store (not only +1)
             m_OrderHistory.put(NewOrder.getOrderSerialNumber(), NewOrder);
@@ -152,10 +153,12 @@ public class Store implements HasName, Coordinatable{
         return res.toString();
     }
 
-    public boolean equals(Store o) {
-        if (this == o)
-            return true;
-        return (this.getStoreID() == o.getStoreID());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Store store = (Store) o;
+         return (this.getStoreID() == store.getStoreID());
     }
 
     @Override

@@ -54,18 +54,16 @@ public class Order implements Coordinatable{
         return m_StoresInOrder.contains(store);
     }
 
-    public void addProductToOrder (ProductInOrder productToAdd,SuperDuperMarketSystem Sys)
+    public void addProductToOrder (ProductInOrder productToAdd)
     {
         m_Basket.add(productToAdd); //add order
         m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list
         m_ItemsPrice += productToAdd.getPriceOfTotalItems();
-        m_ShippingPrice += Sys.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
+        m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
-        if (productToAdd.getPayBy().equals(Item.payByMethod.AMOUNT))
-            m_amountOfItems += ((int) productToAdd.getAmount());
-        else
-            m_amountOfItems++;
-        //todo sys.itemhadbensold from system?,
+        m_amountOfItems += productToAdd.getAmountByPayingMethod();
+        //Sys.OnItemHadBeenSold(productToAdd.getSerialNumber(),addedAmount);
+        // todo make sure this works - updating amount sold SYstem need to take care of that!!!!
     }
 
     @Override

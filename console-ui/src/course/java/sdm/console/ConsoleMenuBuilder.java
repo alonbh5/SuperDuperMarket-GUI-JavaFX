@@ -78,7 +78,7 @@ public class ConsoleMenuBuilder {
             if (r_MenuItems.get(choice).IsMenu()) {
                 quit = true;
             } else {
-                System.out.println("Press Enter to continue...");
+                System.out.println("Press Enter to continue..."); // todo fix enter will continue
                 scanner.next();
                 printMenu();
             }
@@ -86,6 +86,8 @@ public class ConsoleMenuBuilder {
     }
 
     private void printMenu() {
+
+        System.out.println("=================="+this.m_Title+"==================");
 
         for(MenuItem currMenuItem : r_MenuItems)
         {
@@ -98,7 +100,7 @@ public class ConsoleMenuBuilder {
         boolean validInput = false;
 
 
-        System.out.println("Please choose one of these options:");
+        System.out.println("Please Choose One Of Options Above By Number:");
 
         do {
             try {

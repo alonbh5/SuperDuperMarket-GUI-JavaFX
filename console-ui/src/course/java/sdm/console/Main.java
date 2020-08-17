@@ -8,19 +8,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ConsoleMenuBuilder mymenu = new ConsoleMenuBuilder("Main menu");
-        ConsoleMenuBuilder mymenu2 = new ConsoleMenuBuilder("seconde menu");
-
-        mymenu.AddMenuItem("goo to", Main::goo);
-
-        mymenu.AddMenuItem("foo to", Main::foo);
-
-        mymenu.AddMenuItem("koo to", Main::koo);
-        mymenu.AddMenuItem(mymenu2);
-
-
-        mymenu.Show();
-
         SDMConsoleUI SDMByConsole = new SDMConsoleUI();
     }
 
