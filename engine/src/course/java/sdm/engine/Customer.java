@@ -5,6 +5,8 @@ import java.awt.*;
 public class Customer extends Person implements Coordinatable {
 
     private Point m_currentLocation;
+    //order history
+
 
     public Customer(int i_IDNumber, String i_Name, Point i_currentLocation) {
         super(i_IDNumber, i_Name);

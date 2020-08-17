@@ -41,10 +41,6 @@ public class SDMConsoleUI {
         MainMenu.AddMenuItem(ChangeItemsMenu);
         MainMenu.AddMenuItem(SaveOrderMenu);
         MainMenu.AddMenuItem(LoadOrderMenu);
-
-
-        //MainMenu.AddMenuItem("View All Items", Main::koo);
-
     }
 
     private static void printLineOfStars ()
