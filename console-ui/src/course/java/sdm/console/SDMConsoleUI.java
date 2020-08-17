@@ -13,30 +13,58 @@ public class SDMConsoleUI {
     public SDMConsoleUI() { //todo input is XML
         //get xml address...
         BuildMainMenu();
+        MainSDMSystem = new SuperDuperMarketSystem(); //change..
         MainMenu.Show();
     }
 
     private void BuildMainMenu ()
     {
-        ConsoleMenuBuilder XMLMenu = new ConsoleMenuBuilder("Upload XML");
-        //ConsoleMenuBuilder StoresMenu = new ConsoleMenuBuilder("View All Stores");
-        ConsoleMenuBuilder ItemsMenu = new ConsoleMenuBuilder("View All Items");
-        ConsoleMenuBuilder NewOrderMenu = new ConsoleMenuBuilder("Create Order");
-        //ConsoleMenuBuilder OrderHistoryMenu = new ConsoleMenuBuilder("Show Orders History");
-        ConsoleMenuBuilder ExitMenu = new ConsoleMenuBuilder("Exit System");
+        ConsoleMenuBuilder UploadXMLMenu = new ConsoleMenuBuilder("Upload System XML");
+        ConsoleMenuBuilder NewOrderMenu = new ConsoleMenuBuilder("Create New Order");
+        ConsoleMenuBuilder SaveOrderMenu = new ConsoleMenuBuilder("Save Orders To XML");
+        ConsoleMenuBuilder LoadOrderMenu = new ConsoleMenuBuilder("Load Orders XML");
+        ConsoleMenuBuilder ChangeItemsMenu = new ConsoleMenuBuilder("Change,Add or Delete Item In Store");
 
+        ChangeItemsMenu.AddMenuItem("Delete Item From Store",this::DeleteItemFromStore);
+        ChangeItemsMenu.AddMenuItem("Add new Item To Store",this::AddItemToStore);
+        ChangeItemsMenu.AddMenuItem("Change Item's Price From Store",this::ChangeItemPrice);
 
-
-        MainMenu.AddMenuItem(XMLMenu);
+        ChangeItemsMenu.AddMenuItem("Static Order",this::StaticOrder);
+        ChangeItemsMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
+        
+        
+        MainMenu.AddMenuItem(UploadXMLMenu);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
         MainMenu.AddMenuItem("View All Items",this::showAllItems);
         MainMenu.AddMenuItem(NewOrderMenu);
         MainMenu.AddMenuItem("Show Orders History",this::showAllOrders);
-        MainMenu.AddMenuItem(ExitMenu);
+        MainMenu.AddMenuItem(ChangeItemsMenu);
+        MainMenu.AddMenuItem(SaveOrderMenu);
+        MainMenu.AddMenuItem(LoadOrderMenu);
 
 
         //MainMenu.AddMenuItem("View All Items", Main::koo);
 
+    }
+
+    private static void printLineOfStars ()
+    {
+        System.out.println("********************************************************");
+    }
+
+    private void StaticOrder() {
+    }
+
+    private void DynamicOrder() { //bonus
+    }
+
+    private void AddItemToStore() { //bonus
+    }
+
+    private void DeleteItemFromStore() { //bonus
+    }
+
+    private void ChangeItemPrice() { //bonus
     }
 
     private void showAllOrders() {
@@ -54,7 +82,7 @@ public class SDMConsoleUI {
         }
         catch (NoValidXMLException e) //todo more exception??
         {
-            System.out.println("Please Enter a Valid XML before Trying this Options!");
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
         }
     }
 
@@ -93,11 +121,7 @@ public class SDMConsoleUI {
         }
         catch (NoValidXMLException e) //todo more exception??
         {
-            System.out.println("Please Enter a Valid XML before Trying this Options!");
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
     }}
 
-    private static void printLineOfStars ()
-    {
-        System.out.println("********************************************************");
-    }
 }
