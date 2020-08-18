@@ -49,7 +49,12 @@ public class SDMConsoleUI {
         while (flag) {
             System.out.println("Please Enter Full Path for XML file:");
             str = scanner.nextLine();
-            MainSDMSystem.UploadInfoFromXML(str);
+            if( checkValidXmlNameEnding(str)) {
+                str = "/files1/ex1-small.xml";
+                MainSDMSystem.UploadInfoFromXML(str);
+            }
+            else
+                System.out.println("Error - not Type XML (needs to end with <xml name>.xml");
         }
     }
 
@@ -130,5 +135,14 @@ public class SDMConsoleUI {
     {
         System.out.println("********************************************************");
     }
+
+    private boolean checkValidXmlNameEnding (String str) {
+        int len = str.length();
+        if (len < 4)
+            return false;
+        String strEnding = str.substring(len - 4 ).toLowerCase();
+        return (strEnding.equals(".xml"));
+    }
+
 
 }

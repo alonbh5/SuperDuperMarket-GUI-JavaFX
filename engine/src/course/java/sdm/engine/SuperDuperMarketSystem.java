@@ -248,6 +248,6 @@ public class SuperDuperMarketSystem {
     }
 
     private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) {
-        System.out.println(superDuperMarketDescriptor.getSDMItems().getSDMItem().get(0).getName());
+
     }
 }

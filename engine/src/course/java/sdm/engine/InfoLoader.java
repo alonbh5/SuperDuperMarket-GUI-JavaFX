@@ -13,7 +13,7 @@ public class InfoLoader {
 
     public static SuperDuperMarketDescriptor TryingFIle (String str)  {
 
-        InputStream inputStream = InfoLoader.class.getResourceAsStream("/files1/ex1-small.xml");
+        InputStream inputStream = InfoLoader.class.getResourceAsStream(str);
         SuperDuperMarketDescriptor superDuperMarketDescriptor = null;
         try {
             superDuperMarketDescriptor = deserializeFrom(inputStream);
