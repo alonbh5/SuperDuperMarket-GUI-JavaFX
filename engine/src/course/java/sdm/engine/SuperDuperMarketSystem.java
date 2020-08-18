@@ -273,6 +273,7 @@ public class SuperDuperMarketSystem {
             Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
             ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
             newStore.addItemToStore(newItemForStore);
+            m_ItemsInSystem.get(ItemID).addSellingStore();
         }
 
         m_StoresInSystem.put(newStore.getStoreID(),newStore);
