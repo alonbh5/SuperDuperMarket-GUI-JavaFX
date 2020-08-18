@@ -5,7 +5,6 @@ import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
 import javax.management.openmbean.*;
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class SuperDuperMarketSystem {
     private static long OrdersSerialGenerator = 5000000; //todo thing about what to do - XML chooses the Serial somethinms
 
     private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>(); //todo array or map
-    //private Map<Long,Integer> m_AmountOfTimeItemHasSold = new HashMap<>();
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>(); //Todo - Merge this shit
@@ -38,12 +36,6 @@ public class SuperDuperMarketSystem {
         return CalculatePPK(getStoreByID(FromStoreID),curLocation);
     }
 
-//    public void AddNewItem (long i_serialNumber,String i_Name, Item.payByMethod e_howItsPaid)
-//    {
-//        Item newItem = new Item(i_serialNumber,i_Name,e_howItsPaid);
-//        AddNewItem(newItem);
-//    }
-
     public void AddNewItem (Item newItem)
     {
         if (m_ItemsInSystem.containsKey(newItem.getSerialNumber()))
@@ -52,13 +44,6 @@ public class SuperDuperMarketSystem {
         ProductInSystem newProductSystem = new ProductInSystem(newItem);
         m_ItemsInSystem.put(newItem.getSerialNumber(),newProductSystem);
     }
-
-//    public void AddNewOrder (Long i_serialNumber,Point m_Location, Date m_Date)
-//    {
-//        Order newOrder = new Order(i_serialNumber,m_Date,m_Location);
-//        AddNewOrder(newOrder);
-//    }
-
 
     public void AddNewOrder (Order newOrder)
     {
@@ -78,12 +63,6 @@ public class SuperDuperMarketSystem {
             curStore.newShippingFromStore(CalculatePPK(curStore,newOrder.getCoordinate()));
         }
     }
-
-//    public void AddNewStore (Long i_serialNumber,Point i_locationCoordinate,String m_Name, int i_PPK)
-//    {
-//        Store newStore = new Store(i_serialNumber,i_locationCoordinate,m_Name,i_PPK);
-//        AddNewStore (newStore);
-//    }
 
     public void AddNewStore (Store newStore)
     {
@@ -179,7 +158,7 @@ public class SuperDuperMarketSystem {
         try {
             Order OrderToAddTo = m_OrderHistory.get(OrderID);
             OrderToAddTo.addProductToOrder(productToAdd);
-            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addTimesSold(productToAdd.getAmountByPayingMethod()); //todo this is by tmount bougt
+            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addTimesSold(productToAdd.getAmountByPayingMethod());
             //if 2 shampoo => +2 , if 4.5 apples => +1
         }
         catch (Exception e){
@@ -188,7 +167,7 @@ public class SuperDuperMarketSystem {
     }
 
 
-    public List<StoreInfo> getListOfAllStoresInSystem () //todo return string Builder?
+    public List<StoreInfo> getListOfAllStoresInSystem ()
     {
         if (locked)
             throw new NoValidXMLException();
@@ -260,5 +239,56 @@ public class SuperDuperMarketSystem {
 
     private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) {
 
+        for (SDMItem Item : superDuperMarketDescriptor.getSDMItems().getSDMItem()) {
+            if (!isItemInSystem(Item.getId()))
+                crateNewItemInSystem(Item);
+            else throw new DuplicateItemIDException(Item.getId());
+        }
+
+        for (SDMStore Store : superDuperMarketDescriptor.getSDMStores().getSDMStore()) {
+            if (!isStoreInSystem(Store.getId()))
+                crateNewStoreInSystem(Store);
+            else throw new DuplicateStoreInSystemException(Store.getId());
+        }
+    }
+
+    private void crateNewStoreInSystem(SDMStore store) {
+        Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
+        if (!isCoordinateInRange(StoreLocation))
+            throw new PointOutOfGridException(StoreLocation);
+        Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
+
+        for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
+            Long ItemID = (long)curItem.getItemId();
+            double itemPrice = curItem.getPrice();
+
+            if (itemPrice<=0)
+                throw new NegativePriceException(itemPrice);
+            if (!isItemInSystem(ItemID))
+                throw new StoreItemNotInSystemException(ItemID);
+            if (newStore.isItemInStore(ItemID))
+                throw new DuplicateItemInStoreException(ItemID);
+
+            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
+            ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
+        }
+
+        m_StoresInSystem.put(newStore.getStoreID(),newStore);
+    }
+
+    private void crateNewItemInSystem(SDMItem item) {
+        Item.payByMethod ePayBy;
+
+        if (item.getPurchaseCategory().equals("Weight"))
+            ePayBy = Item.payByMethod.WEIGHT;
+        else
+            if (item.getPurchaseCategory().equals("Quantity"))
+                 ePayBy = Item.payByMethod.AMOUNT;
+            else
+                throw new WrongPayingMethodException(item.getPurchaseCategory());
+
+        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
+        ProductInSystem newItem = new ProductInSystem(newBaseItem);
+        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
     }
 }

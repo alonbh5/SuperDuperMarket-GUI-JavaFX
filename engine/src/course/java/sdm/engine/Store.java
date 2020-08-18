@@ -50,7 +50,7 @@ public class Store implements HasName, Coordinatable{
         if (m_items.containsKey(itemKey))
             throw (new KeyAlreadyExistsException("The key for "+ProductToAdd.getItem().getName()+" #"+itemKey+"is Already in Store #"+this.m_StoreID));
         if (ProductToAdd.getPricePerUnit() <=0)
-            throw (new NegativePrice(ProductToAdd.getPricePerUnit()));
+            throw (new NegativePriceException(ProductToAdd.getPricePerUnit()));
         if (ProductToAdd.getStore().getStoreID() != this.getStoreID())
             throw (new IllegalArgumentException("the Product belongs to store #"+ProductToAdd.getStore().getStoreID()+"and does not match store #"+this.getStoreID()));
 

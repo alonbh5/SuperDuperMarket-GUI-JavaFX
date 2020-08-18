@@ -12,10 +12,9 @@ public class SDMConsoleUI {
     Scanner scanner = new Scanner(System.in);
     ConsoleMenuBuilder MainMenu = new ConsoleMenuBuilder("Super Duper Market");
 
-    public SDMConsoleUI() { //todo input is XML
-        //get xml address...
+    public SDMConsoleUI() {
         BuildMainMenu();
-        MainSDMSystem = new SuperDuperMarketSystem(); //change..
+        MainSDMSystem = new SuperDuperMarketSystem();
         MainMenu.Show();
     }
 
@@ -51,7 +50,7 @@ public class SDMConsoleUI {
         while (flag) {
             System.out.println("Please Enter Full Path for XML file:");
             str = scanner.nextLine();
-            if( checkValidXmlNameEnding(str)) {
+            if(checkValidXmlNameEnding(str)) {
                 str = "/files1/ex1-small.xml";
                 MainSDMSystem.UploadInfoFromXML(str);
             }
@@ -100,8 +99,10 @@ public class SDMConsoleUI {
                     str.append("Number of Items: " + CurOrder.m_amountOfItems +
                             "\n Cost of only Items: " + CurOrder.m_ItemsPrice +
                             "\n Cost of Shipping: " + CurOrder.m_ShippingPrice +
-                            "\n Cost of Total Order: " + CurOrder.m_TotalPrice;
+                            "\n Cost of Total Order: " + CurOrder.m_TotalPrice);
+                    printLineOfStars();
                     System.out.println(str);
+                    printLineOfStars();
                     str = null;
                 }
 

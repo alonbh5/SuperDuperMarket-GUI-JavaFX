@@ -1,8 +1,5 @@
 package course.java.sdm.engine;
 
-import course.java.sdm.exceptions.NegativePrice;
-
-import java.security.InvalidParameterException;
 import java.util.Objects;
 
 public class ProductInStore {
