@@ -19,7 +19,6 @@ public class SDMConsoleUI {
 
     private void BuildMainMenu ()
     {
-        ConsoleMenuBuilder UploadXMLMenu = new ConsoleMenuBuilder("Upload System XML");
         ConsoleMenuBuilder NewOrderMenu = new ConsoleMenuBuilder("Create New Order");
         ConsoleMenuBuilder SaveOrderMenu = new ConsoleMenuBuilder("Save Orders To XML");
         ConsoleMenuBuilder LoadOrderMenu = new ConsoleMenuBuilder("Load Orders XML");
@@ -33,7 +32,7 @@ public class SDMConsoleUI {
         ChangeItemsMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
         
         
-        MainMenu.AddMenuItem(UploadXMLMenu);
+        MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
         MainMenu.AddMenuItem("View All Items",this::showAllItems);
         MainMenu.AddMenuItem(NewOrderMenu);
@@ -43,10 +42,17 @@ public class SDMConsoleUI {
         MainMenu.AddMenuItem(LoadOrderMenu);
     }
 
-    private static void printLineOfStars ()
-    {
-        System.out.println("********************************************************");
+    private void UploadXML() {
+        String str;
+        boolean flag = true;
+
+        while (flag) {
+            System.out.println("Please Enter Full Path for XML file:");
+            str = scanner.nextLine();
+
+        }
     }
+
 
     private void StaticOrder() {
     }
@@ -119,5 +125,10 @@ public class SDMConsoleUI {
         {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
     }}
+
+    private static void printLineOfStars ()
+    {
+        System.out.println("********************************************************");
+    }
 
 }
