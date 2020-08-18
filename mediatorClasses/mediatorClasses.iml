@@ -7,7 +7,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="engine" scope="PROVIDED" />
-    <orderEntry type="module" module-name="mediatorClasses" />
   </component>
 </module>

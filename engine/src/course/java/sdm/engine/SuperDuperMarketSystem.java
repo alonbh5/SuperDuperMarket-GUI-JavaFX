@@ -1,12 +1,10 @@
 package course.java.sdm.engine;
 
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
-
-import javax.management.openmbean.InvalidKeyException;
-import javax.management.openmbean.KeyAlreadyExistsException;
+import javax.management.openmbean.*;
 import java.awt.*;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -190,52 +188,65 @@ public class SuperDuperMarketSystem {
     }
 
 
-    public List<String> getListOfAllStoresInSystem () //todo return string Builder?
+    public List<StoreInfo> getListOfAllStoresInSystem () //todo return string Builder?
     {
         if (locked)
             throw new NoValidXMLException();
 
         StringBuilder str = new StringBuilder();
-        List<String> res = new ArrayList<>();
+        List<StoreInfo> res = new ArrayList<>();
 
-        for (Store CurStore : m_StoresInSystem.values())
-            res.add(CurStore.toString());
+        for (Store CurStore : m_StoresInSystem.values()){
+            List<ItemInStoreInfo> items = CurStore.getItemList();
+            List<OrdersInStoreInfo> orders = CurStore.getOrderHistoryList();
+
+            StoreInfo newStore = new StoreInfo(CurStore.getCoordinate(),CurStore.getStoreID(),
+                    CurStore.getName(),CurStore.getPPK(),items,orders, CurStore.getProfitFromShipping());
+            res.add(newStore);
+        }
+
 
         return res;
     }
 
-    public List<String> getListOfAllItems ()
+    public List<ItemInfo> getListOfAllItems ()
     {
         if (locked)
             throw new NoValidXMLException();
 
         StringBuilder str = new StringBuilder();
-        List<String> res = new ArrayList<>();
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
+        List<ItemInfo> res = new ArrayList<>();
 
         for (ProductInSystem curItem : m_ItemsInSystem.values())
         {
-            str.append(curItem.getItem().toString());
-            str.append("Being Sold in "+curItem.getNumberOfSellingStores() +" Stores. \n");
-            str.append("Average Price is : "+df.format(getAvgPriceForItem(curItem.getSerialNumber()))); //todo all avg needs to be 2 digit
-            str.append("\nWas sold  : "+curItem.getAmountOfItemWasSold() +" times.");
-            res.add(str.toString());
-            str = null;
+            Item theItemObj = curItem.getItem();
+            ItemInfo newItem = new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
+                    ,theItemObj.PayBy.toString(),getAvgPriceForItem(curItem.getSerialNumber()),
+                            curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
+            res.add(newItem);
         }
 
         return res;
     }
 
-    public List<String> getListOfAllOrderInSystem() {
+    public List<OrderInfo> getListOfAllOrderInSystem() {
         if (locked)
             throw new NoValidXMLException();
 
+        List<OrderInfo> res = new ArrayList<>();
 
-        List<String> res = new ArrayList<>();
+        for (Order CurOrder : m_OrderHistory.values()) {
 
-        for (Order CurOrder : m_OrderHistory.values())
-            res.add(CurOrder.toString());
+            Set<Store> stores = CurOrder.getStoreSet();
+            List<String> storesList = new ArrayList<>();
+
+            for (Store curStore : stores)
+                storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
+
+            OrderInfo newOrder = new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
+                    storesList,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
+            res.add(newOrder);
+        }
 
         return res;
     }

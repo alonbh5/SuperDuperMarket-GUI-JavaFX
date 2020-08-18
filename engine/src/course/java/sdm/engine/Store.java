@@ -1,9 +1,11 @@
 package course.java.sdm.engine;
 
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import javax.management.openmbean.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Store implements HasName, Coordinatable{
 
@@ -111,46 +113,33 @@ public class Store implements HasName, Coordinatable{
     public String toString() { //2.3
         return "Store #" + m_StoreID +
                 "\" " + m_Name +
-                "\" \n Sold Items:\n" + ItemListToString() +
-                "\n Order History is:\n" + OrderHistoryToString() +
                 "\n PPK is: " + PPK +
                 " So Far Profit from Shipping is :" + m_profitFromShipping +"\n";
     }
 
-    private String ItemListToString ()
+    List<ItemInStoreInfo> getItemList ()
     {
-        StringBuilder res = new StringBuilder();
-        int i = 1;
-
-        if (m_items.isEmpty())
-            res.append("Store in Empty of items!");
-        else {
-
+        List<ItemInStoreInfo> res = new ArrayList<ItemInStoreInfo>();
             for (ProductInStore curItem : m_items.values()) {
-                res.append(i++ +". "+curItem+"\n");
+                ItemInStoreInfo newItem = new ItemInStoreInfo(curItem.getSerialNumber(),curItem.getItem().getName(),
+                        curItem.getItem().PayBy.toString(),curItem.getPricePerUnit(),curItem.getAmountSold());
+                res.add(newItem);
             }
-        }
-
-        return res.toString();
+            return res;
     }
 
-    private String OrderHistoryToString()
+    List<OrdersInStoreInfo> getOrderHistoryList()
     {
-        StringBuilder res = new StringBuilder();
-        int i = 1;
-
-        if (m_OrderHistory.isEmpty())
-            res.append("Store Has never made a sale!");
+        List<OrdersInStoreInfo> res = new ArrayList<OrdersInStoreInfo>();
 
         for (Order curOrder : m_OrderHistory.values())
         {
-            res.append(i++ +". Order#" + curOrder.getOrderSerialNumber() +
-                    "\n Number of Items: " + curOrder.getAmountOfItems() +
-                    "\n Cost of only Items: " + curOrder.getItemsPrice() +
-                    "\n Cost of Shipping: " + curOrder.getShippingPrice() +
-                    "\n Cost of Total Order: " + curOrder.getShippingPrice());
+            OrdersInStoreInfo newOrder = new OrdersInStoreInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),curOrder.getTotalPrice()
+            ,curOrder.getShippingPrice(),curOrder.getItemsPrice(),curOrder.getAmountOfItems());
+            res.add(newOrder);
         }
-        return res.toString();
+
+        return res;
     }
 
     @Override
