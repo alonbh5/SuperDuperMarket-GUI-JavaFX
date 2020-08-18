@@ -49,7 +49,7 @@ public class SDMConsoleUI {
         while (flag) {
             System.out.println("Please Enter Full Path for XML file:");
             str = scanner.nextLine();
-
+            MainSDMSystem.UploadInfoFromXML(str);
         }
     }
 

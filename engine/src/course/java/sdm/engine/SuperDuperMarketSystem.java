@@ -1,10 +1,12 @@
 package course.java.sdm.engine;
 
 import course.java.sdm.exceptions.*;
+import course.java.sdm.generatedClasses.*;
 
 import javax.management.openmbean.InvalidKeyException;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.awt.*;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -238,8 +240,14 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public void TryingFIle (String str)    {
+    public boolean UploadInfoFromXML (String XMLPath) //todo throw exception from method...
+    {
+        SuperDuperMarketDescriptor superDuperMarketDescriptor = InfoLoader.TryingFIle(XMLPath);
+        CopyInfoFromXMLClasses(superDuperMarketDescriptor);
+        return !locked;
+    }
 
-
+    private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) {
+        System.out.println(superDuperMarketDescriptor.getSDMItems().getSDMItem().get(0).getName());
     }
 }
