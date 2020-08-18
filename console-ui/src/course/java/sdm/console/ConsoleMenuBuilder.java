@@ -1,6 +1,7 @@
 package course.java.sdm.console;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -79,7 +80,11 @@ public class ConsoleMenuBuilder {
                 quit = true;
             } else {
                 System.out.println("Press Enter to continue..."); // todo fix enter will continue
-                scanner.next();
+                try {
+                    System.in.read();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 printMenu();
             }
         }

@@ -53,6 +53,7 @@ public class SDMConsoleUI {
             if(checkValidXmlNameEnding(str)) {
                 str = "/files1/ex1-small.xml";
                 MainSDMSystem.UploadInfoFromXML(str);
+                flag=false;
             }
             else
                 System.out.println("Error - not Type XML (needs to end with <xml name>.xml");
@@ -103,7 +104,7 @@ public class SDMConsoleUI {
                     printLineOfStars();
                     System.out.println(str);
                     printLineOfStars();
-                    str = null;
+                    str = new StringBuilder();
                 }
 
             printLineOfStars();
@@ -134,7 +135,7 @@ public class SDMConsoleUI {
                     str.append("Average Price is : " + df.format(CurItem.AvgPrice)); //todo all avg needs to be 2 digit
                     str.append("\nWas sold  : " + CurItem.SoldCount + " times.");
                     System.out.println(str);
-                    str = null;
+                    str = new StringBuilder();
                 }
 
             printLineOfStars();
@@ -159,17 +160,17 @@ public class SDMConsoleUI {
                 for (StoreInfo CurStore : StoresList) {
                     str.append(i++ + ". ");
 
-                    str.append("Store #" + CurStore.StoreID + "\" " + CurStore.Name + "\" \n" +
+                    str.append("Store #" + CurStore.StoreID + " \""+ CurStore.Name + "\" \n" +
                             "PPK is: " + CurStore.PPK +
-                            " So Far Profit from Shipping is :" + CurStore.profitFromShipping + "\n");
+                            " and So Far her Profit from Shipping is :" + CurStore.profitFromShipping + "\n");
 
                     if (CurStore.Items.isEmpty())
                         str.append("Does Not Sell Items Yet!\n");
                     else {
-                        str.append("Sold Items:\n");
+                        str.append("Selling Items:\n");
                         for (ItemInStoreInfo curItem : CurStore.Items)
-                            str.append(curItem.Name + " #" + curItem.serialNumber + " Paying method is " + curItem.PayBy.toLowerCase() +
-                                    "cost " + curItem.PriceInStore + " and was Sold " + curItem.SoldCounter + " times. \n");
+                            str.append(curItem.Name + " #" + curItem.serialNumber + " Paying method is by " + curItem.PayBy.toLowerCase() +
+                                    " and it's cost " + curItem.PriceInStore + " , Sold " + ((int) curItem.SoldCounter) + " times. \n");
                     }
 
                     if (CurStore.OrderHistory.isEmpty())
@@ -185,7 +186,7 @@ public class SDMConsoleUI {
                     }
 
                     System.out.println(str);
-                    str = null;
+                    str = new StringBuilder();
                 }
 
             printLineOfStars();

@@ -135,9 +135,9 @@ public class SuperDuperMarketSystem {
 
     public double getAvgPriceForItem (Long ItemID)
     {
-        return m_StoresInSystem.values().stream()
-                .filter(t->t.isItemInStore(ItemID))
-                .mapToDouble(t->t.getPriceForItem(ItemID))
+        return Arrays.stream(m_StoresInSystem.values().stream()
+                .filter(t -> t.isItemInStore(ItemID))
+                .mapToDouble(t -> t.getPriceForItem(ItemID)).toArray())
                 .average().getAsDouble();
     }
 
@@ -250,6 +250,7 @@ public class SuperDuperMarketSystem {
                 crateNewStoreInSystem(Store);
             else throw new DuplicateStoreInSystemException(Store.getId());
         }
+        locked = false;
     }
 
     private void crateNewStoreInSystem(SDMStore store) {
@@ -271,6 +272,7 @@ public class SuperDuperMarketSystem {
 
             Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
             ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
+            newStore.addItemToStore(newItemForStore);
         }
 
         m_StoresInSystem.put(newStore.getStoreID(),newStore);
