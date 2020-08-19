@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 public class NegativePriceException extends RuntimeException {
 
-    public double PriceReceived;
+    public final double PriceReceived;
 
     public NegativePriceException(double i_PriceReceived) {
         super("Negative Number of "+i_PriceReceived+" was sent for pricing");

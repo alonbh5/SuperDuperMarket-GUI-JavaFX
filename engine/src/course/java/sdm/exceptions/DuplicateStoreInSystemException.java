@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 public class DuplicateStoreInSystemException extends RuntimeException {
 
-    long id;
+    public final long id;
 
     public DuplicateStoreInSystemException(long id) {
         this.id = id;

@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 public class WrongPayingMethodException extends RuntimeException{
 
-    String PayingInput;
+    public final String PayingInput;
 
     public WrongPayingMethodException(String payingInput) {
         PayingInput = payingInput;

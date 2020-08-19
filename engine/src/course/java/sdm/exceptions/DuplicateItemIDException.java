@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 public class DuplicateItemIDException extends RuntimeException {
 
-    long id;
+    public final long id;
 
     public DuplicateItemIDException(long id) {
         this.id = id;

@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 public class StoreItemNotInSystemException extends RuntimeException {
 
-    long ItemIdInput;
+    public final long ItemIdInput;
 
     public StoreItemNotInSystemException(long id) {
         this.ItemIdInput = id;

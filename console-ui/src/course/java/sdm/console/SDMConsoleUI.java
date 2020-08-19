@@ -51,7 +51,7 @@ public class SDMConsoleUI {
             System.out.println("Please Enter Full Path for XML file:");
             str = scanner.nextLine();
             if(checkValidXmlNameEnding(str)) {
-                str = "/files1/ex1-small.xml";
+                str = "/files1/ex1-big.xml";
                 MainSDMSystem.UploadInfoFromXML(str);
                 flag=false;
             }
@@ -103,7 +103,6 @@ public class SDMConsoleUI {
                             "\n Cost of Total Order: " + CurOrder.m_TotalPrice);
                     printLineOfStars();
                     System.out.println(str);
-                    printLineOfStars();
                     str = new StringBuilder();
                 }
 
@@ -129,6 +128,7 @@ public class SDMConsoleUI {
                 System.out.println("No Items In System Yet!");
             else
                 for (ItemInfo CurItem : itemsList) {
+                    printLineOfEqual();
                     str.append(i++ + ". ");
                     str.append(CurItem.Name +", Serial #" + CurItem.serialNumber +", Paying Method is: By " + CurItem.PayBy.toLowerCase()+".\n");
                     str.append("Being Sold in " + CurItem.NumOfSellingStores + " Stores. \n");
@@ -158,6 +158,7 @@ public class SDMConsoleUI {
                 System.out.println("No Stores In System Yet!");
             else
                 for (StoreInfo CurStore : StoresList) {
+                    printLineOfEqual();
                     str.append(i++ + ". ");
 
                     str.append("Store #" + CurStore.StoreID + " \""+ CurStore.Name + "\" \n" +
@@ -196,7 +197,10 @@ public class SDMConsoleUI {
         }
     } //check
 
-    private static void printLineOfStars () {System.out.println("********************************************************");
+    private static void printLineOfStars () {System.out.println("***************************************************************************************");
+    }
+
+    private static void printLineOfEqual () {System.out.println("=======================================================================================");
     }
 
     private boolean checkValidXmlNameEnding (String str) {

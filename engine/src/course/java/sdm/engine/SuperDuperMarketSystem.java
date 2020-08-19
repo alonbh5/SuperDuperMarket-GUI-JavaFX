@@ -11,7 +11,7 @@ import java.util.List;
 //todo check all throws
 public class SuperDuperMarketSystem {
     //todo access modifier this is the only public!
-    //todo make serizible interface?
+    //todo make serializable interface?
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
@@ -23,10 +23,10 @@ public class SuperDuperMarketSystem {
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>(); //Todo - Merge this shit
-    boolean locked = true;
+    private boolean locked = true;
 
 
-    public static double CalculatePPK (Store FromStore, Point curLocation)
+    static double CalculatePPK(Store FromStore, Point curLocation)
     {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
     }
@@ -48,7 +48,7 @@ public class SuperDuperMarketSystem {
     public void AddNewOrder (Order newOrder)
     {
         //after the order is done
-        //todo check that when i create order the coordanite of store is good....
+        //todo check that when i create order the coordinate of store is good....
         if (m_OrderHistory.containsKey(newOrder.getOrderSerialNumber()))
             throw (new KeyAlreadyExistsException("The Serial Number " + newOrder.getOrderSerialNumber() + " Exist already in system "));
 
@@ -239,24 +239,53 @@ public class SuperDuperMarketSystem {
 
     private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) {
 
-        for (SDMItem Item : superDuperMarketDescriptor.getSDMItems().getSDMItem()) {
-            if (!isItemInSystem(Item.getId()))
-                crateNewItemInSystem(Item);
-            else throw new DuplicateItemIDException(Item.getId());
+        Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
+        Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
+        Map<Long,Store> tempStoresInSystem = m_StoresInSystem;
+
+        m_ItemsInSystem = new HashMap<>();
+        m_SystemGrid = new HashMap<>();
+        m_StoresInSystem = new HashMap<>();
+
+        try {
+
+            for (SDMItem Item : superDuperMarketDescriptor.getSDMItems().getSDMItem()) {
+                if (!isItemInSystem(Item.getId()))
+                    crateNewItemInSystem(Item);
+                else throw new DuplicateItemIDException(Item.getId());
+            }
+
+            for (SDMStore Store : superDuperMarketDescriptor.getSDMStores().getSDMStore()) {
+                if (!isStoreInSystem(Store.getId()))
+                    crateNewStoreInSystem(Store);
+                else throw new DuplicateStoreInSystemException(Store.getId());
+            }
+            checkMissingItem();
+
+        } catch (RuntimeException e) //if from any reason xml was bas - restore data
+        {
+            m_ItemsInSystem= tempItemsInSystem;
+            m_SystemGrid = tempSystemGrid;
+            m_StoresInSystem=tempStoresInSystem;
+            throw e;
         }
 
-        for (SDMStore Store : superDuperMarketDescriptor.getSDMStores().getSDMStore()) {
-            if (!isStoreInSystem(Store.getId()))
-                crateNewStoreInSystem(Store);
-            else throw new DuplicateStoreInSystemException(Store.getId());
-        }
         locked = false;
+    }
+
+    private void checkMissingItem() {
+        for (ProductInSystem curItem : m_ItemsInSystem.values())
+            if (curItem.getNumberOfSellingStores() == 0)
+                throw new ItemIsNotSoldAtAllException(curItem.getSerialNumber(),curItem.getItem().getName());
     }
 
     private void crateNewStoreInSystem(SDMStore store) {
         Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
         if (!isCoordinateInRange(StoreLocation))
             throw new PointOutOfGridException(StoreLocation);
+        if (isLocationTaken(StoreLocation))
+            throw new DuplicatePointOnGridException(StoreLocation);
+
         Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
 
         for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
@@ -276,7 +305,11 @@ public class SuperDuperMarketSystem {
             m_ItemsInSystem.get(ItemID).addSellingStore();
         }
 
+        if (newStore.getItemList().isEmpty())
+            throw new StoreDoesNotSellItemException(newStore.getStoreID());
+
         m_StoresInSystem.put(newStore.getStoreID(),newStore);
+        m_SystemGrid.put(newStore.getCoordinate(),newStore);
     }
 
     private void crateNewItemInSystem(SDMItem item) {

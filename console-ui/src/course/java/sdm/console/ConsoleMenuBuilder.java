@@ -105,7 +105,7 @@ public class ConsoleMenuBuilder {
         boolean validInput = false;
 
 
-        System.out.println("Please Choose One Of Options Above By Number:");
+        System.out.println("Please Choose One Of The Options Above By Number:");
 
         do {
             try {
