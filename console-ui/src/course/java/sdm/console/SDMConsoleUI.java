@@ -62,6 +62,8 @@ public class SDMConsoleUI {
 
 
     private void StaticOrder() {
+
+       // ArrayList
     }
 
     private void DynamicOrder() { //bonus
