@@ -1,4 +1,4 @@
 package course.java.sdm.exceptions;
 
-public class NoValidXMLException extends RuntimeException {
+public class NoValidXMLException extends Exception {
 }

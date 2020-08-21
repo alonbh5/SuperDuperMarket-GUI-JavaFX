@@ -31,6 +31,11 @@ public class SuperDuperMarketSystem {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
     }
 
+    static double CalculatePPK(StoreInfo FromStore, Point curLocation)
+    {
+        return (double)FromStore.PPK * FromStore.locationCoordinate.distance(curLocation);
+    }
+
     public double CalculatePPK (Long FromStoreID, Point curLocation)
     {
         return CalculatePPK(getStoreByID(FromStoreID),curLocation);
@@ -45,7 +50,7 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.put(newItem.getSerialNumber(),newProductSystem);
     }
 
-    public void AddNewOrder (Order newOrder)
+    public void AddNewOrder (List<ItemInfo> OrderBasket,)
     {
         //after the order is done
         //todo check that when i create order the coordinate of store is good....
@@ -153,7 +158,7 @@ public class SuperDuperMarketSystem {
         }
     }
 
-    public void addProductToOrder (Long OrderID,ProductInOrder productToAdd)
+    private void addProductToOrder (Long OrderID,ProductInOrder productToAdd)
     {
         try {
             Order OrderToAddTo = m_OrderHistory.get(OrderID);
@@ -167,7 +172,7 @@ public class SuperDuperMarketSystem {
     }
 
 
-    public List<StoreInfo> getListOfAllStoresInSystem ()
+    public List<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException
     {
         if (locked)
             throw new NoValidXMLException();
@@ -188,7 +193,7 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<ItemInfo> getListOfAllItems ()
+    public List<ItemInfo> getListOfAllItems () throws NoValidXMLException
     {
         if (locked)
             throw new NoValidXMLException();
@@ -208,7 +213,8 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<OrderInfo> getListOfAllOrderInSystem() {
+    public List<OrderInfo> getListOfAllOrderInSystem() throws NoValidXMLException
+    {
         if (locked)
             throw new NoValidXMLException();
 
@@ -326,5 +332,15 @@ public class SuperDuperMarketSystem {
         Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
         ProductInSystem newItem = new ProductInSystem(newBaseItem);
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+    }
+
+    public boolean isItemSoldInStore(Long storeID,Long itemID) {
+        Store store = getStoreByID(storeID);
+        return store.isItemInStore(itemID);
+    }
+
+    public double getItemPriceInStore(long storeID, long ItemID) {
+            Store store = getStoreByID(storeID);
+           return store.getPriceForItem(ItemID);
     }
 }
