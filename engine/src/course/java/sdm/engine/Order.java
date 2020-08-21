@@ -14,47 +14,56 @@ public class Order implements Coordinatable{
     private final Set<ProductInOrder> m_Basket = new HashSet<>();
     private final Set<Store> m_StoresInOrder = new HashSet<>();
 
-    public Order(Point m_userLocation, long m_OrderSerialNumber, Date m_Date) {
+     Order(Point m_userLocation, long m_OrderSerialNumber, Date m_Date) {
         this.m_userLocation = m_userLocation;
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
     }
 
-    public long getOrderSerialNumber() {
+     long getOrderSerialNumber() {
         return m_OrderSerialNumber;
     }
 
-    public Date getDate() {
+     Date getDate() {
         return m_Date;
     }
 
-    public double getTotalPrice() {
+     double getTotalPrice() {
         return m_TotalPrice;
     }
 
-    public double getShippingPrice() {
+     double getShippingPrice() {
         return m_ShippingPrice;
     }
 
-    public double getItemsPrice() {
+     double getItemsPrice() {
         return m_ItemsPrice;
     }
 
-    public Set<Store> getStoreSet ()
+     Set<Store> getStoreSet ()
     {
         return m_StoresInOrder;
     }
 
-    public int getAmountOfItems() {
+     int getAmountOfItems() {
         return m_amountOfItems;
     }
 
-    public boolean isStoreInOrder (Store store)
+     boolean isStoreInOrder (Store store)
     {
         return m_StoresInOrder.contains(store);
     }
 
-    public void addProductToOrder (ProductInOrder productToAdd)
+    Set<ProductInOrder> getBasket() {
+        return m_Basket;
+    }
+
+    boolean isItemInBasket (ProductInOrder check)
+    {
+        return m_Basket.contains(check);
+    }
+
+    void addProductToOrder (ProductInOrder productToAdd)
     {
         m_Basket.add(productToAdd); //add order
         m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list

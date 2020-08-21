@@ -1,8 +1,10 @@
 package course.java.sdm.console;
+import course.java.sdm.engine.Item;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.classesForUI.*;
 
+import javax.management.openmbean.InvalidKeyException;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -14,6 +16,7 @@ public class SDMConsoleUI {
 
     //todo check all scanner
     //todo check all exceptions is checked
+    //todo scanner is only nextline
 
     SuperDuperMarketSystem MainSDMSystem;
     Scanner scanner = new Scanner(System.in);
@@ -71,42 +74,27 @@ public class SDMConsoleUI {
     private void StaticOrder() {
 
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat();
             List<StoreInfo> listOfAllStoresInSystem = MainSDMSystem.getListOfAllStoresInSystem();
             Date inputDate;
+            Point curLocation;
             if (listOfAllStoresInSystem.isEmpty()) {
                 System.out.println("Cant Use This Option - No Store in System Yet");
                 return;
             }
+
             for (StoreInfo curStore : listOfAllStoresInSystem)
                 System.out.println(String.format("store #%d - #s PPK is %d", curStore.StoreID, curStore.Name, curStore.PPK));
 
             System.out.println("Please Type Store ID from the list above:");
+
             StoreInfo StoreChosen = checkValidStore();//4.1
+            inputDate = getValidDate(); //4.2
+            curLocation = getValidPoint(); //4.3
+            Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
 
-            System.out.println("Please Type Order Date in the form of dd/mm-hh:mm (E.g 02/11-13:56):");
-            String inputDateString = scanner.next();
-            dateFormat.applyPattern("dd/MM-hh:mm");
-            try {
-                inputDate = dateFormat.parse(inputDateString);
-            } catch (ParseException e) {
-                System.out.println("Date Entered is not in the Form dd/MM-hh:mm");
-                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
-                return;
-            } //4.2
-
-            System.out.println("Please Enter Current Location On Grid (between 0-50 for X and Y)");
-            System.out.print("For X: ");
-            int x = scanner.nextInt();
-            System.out.print("For Y: ");
-            int y = scanner.nextInt();
-            Point X = getValidCoord();//4.3
-
-            List<ItemInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
-
-            if (approveOrder(ItemsChosen))//4.5
+            if (approveOrder(ItemsChosen,MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation)))//4.5
             {
-                MainSDMSystem.addOrder();
+                MainSDMSystem.addStaticOrderToSystem(ItemsChosen,StoreChosen,curLocation,inputDate); //leahed many item to one!
                 System.out.println("Order Added To System!");
             }
             else
@@ -118,42 +106,166 @@ public class SDMConsoleUI {
         }
     }
 
-    private boolean approveOrder(List<ItemInfo> itemsChosen) {
+    private Point getValidPoint() {
+        Point res = new Point(-1,-1);
+        boolean flag = true;
+        int x=-1,y=-1;
+
+        while (flag) {
+            System.out.println("Please Enter Current Location On Grid (between 0-50 for X and Y)");
+            System.out.print("For X: ");
+            String xStr = scanner.nextLine();
+            System.out.print("For Y: ");
+            String yStr = scanner.nextLine();
+            try {
+            x = Integer.parseInt(xStr);
+            y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
+                System.out.println("Wrong Input - try again");
+            }
+            res = new Point(x,y);
+            if (!SuperDuperMarketSystem.isCoordinateInRange(res))
+                System.out.println("Please Enter Points between 0-50");
+            else
+                flag=false;
+        }
+        return res;
+    }
+
+    private Date getValidDate() {
+        Date res=null;
+        boolean flag=true;
+
+        while (flag) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat();
+            System.out.println("Please Type Order Date in the form of dd/mm-hh:mm (E.g 02/11-13:56):");
+            String inputDateString = scanner.next();
+            dateFormat.applyPattern("dd/MM-hh:mm");
+            try {
+                res = dateFormat.parse(inputDateString);
+                flag=false;
+            } catch (ParseException e) {
+                System.out.println("Date Entered is not in the Form dd/MM-hh:mm");
+                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
+            } //4.2
+        }
+
+        return res;
+    }
+
+    private StoreInfo checkValidStore() {
+        boolean flag = true;
+
+        while (flag) {
+            long input = getValidIDNumber();
+            try {
+                StoreInfo storeInfo = MainSDMSystem.GetStoreInfoByID(input);
+                return storeInfo;
+            } catch (InvalidKeyException e) {
+                System.out.println("Error - Please choose Store ID by the list above!");
+            }
+        }
+        return null;
+    }
+
+    private boolean approveOrder(Collection<ItemInOrderInfo> itemsChosen,double PPK) {
         if (itemsChosen.isEmpty())
             return false;
 
+        printLineOfStars();
+        for (ItemInOrderInfo curItem : itemsChosen)
+            System.out.println(String.format("Item #%d (%s) Pay by %s, Price per Unit is %.2f Amount is %.2f, Total Cost %.2f."
+            ,curItem.serialNumber,curItem.Name,curItem.PricePerUint,curItem.amountBought,(curItem.amountBought*curItem.PricePerUint)));
+
+        System.out.println(String.format("Shipping will Cost you %.2f",PPK));
+        printLineOfStars();
+
+        System.out.println("Type Y to Complete Order, or Anything Else To Cancel ");
+        String ans =  scanner.nextLine();
+        if (ans.equals("Y"))
+            return true;
+        return false;
 
 
     }
 
-    private List<ItemInfo> getValidItemsForOrder(StoreInfo storeChosen) {
+    private Collection<ItemInOrderInfo> getValidItemsForOrder(StoreInfo storeChosen) {
 
-        List<ItemInfo> allItem =null;
+        List<ItemInfo> allItem = null;
         long ItemID;
+        double amountWanted = 0;
+        Map<Long,ItemInOrderInfo> Basket = new HashMap<>();
         boolean flag = true;
         try {
             allItem = MainSDMSystem.getListOfAllItems();
         } catch (NoValidXMLException e) {
-            System.out.println("Please Upload a Valid XML before Trying this Options!");
+            System.out.println("Please Upload a Valid XML before Trying this Options!"); //can ignore here..
         }
-        List<ItemInfo> Basket = new ArrayList<>();
+
         printLineOfEqual();
-        for (ItemInfo curItem : allItem)
-        {
-            System.out.print(String.format("%d - %s sold by %s",curItem.serialNumber,curItem.Name,curItem.PayBy));
-            if (MainSDMSystem.isItemSoldInStore(storeChosen.StoreID,curItem.serialNumber))
-                System.out.println("Price in Store - "+MainSDMSystem.getItemPriceInStore(storeChosen.StoreID,curItem.serialNumber));
+        for (ItemInfo curItem : allItem) {
+            System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
+            if (MainSDMSystem.isItemSoldInStore(storeChosen.StoreID, curItem.serialNumber))
+                System.out.println("Price in Store - " + MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, curItem.serialNumber));
             else
-                System.out.println("Item is Not Being Sold In Store");}
+                System.out.println("Item is Not Being Sold In Store");
+        }
         printLineOfEqual();
+
 
         while (flag) {
-
             System.out.println("Please Enter Item ID you Want to add to Basket, Enter q to Quit");
-            ItemID = getValidIDNumber();
+            String str = scanner.nextLine();
+            if (str.equals("q"))
+                flag = false;
+            else {
+                try{
+                ItemID = Long.parseLong(str);
+                if (!MainSDMSystem.isItemSoldInStore(storeChosen.StoreID, ItemID))
+                    System.out.println("Item #"+ItemID + " is not sold in "+storeChosen.Name);
+                else{
+                    ItemInfo wantedItem = MainSDMSystem.getItemInfo(ItemID);
+                    if (wantedItem.PayBy.toLowerCase().equals("amount"))
+                    {
+                        System.out.println("Please Enter How Many "+wantedItem.Name+"'s you want");
+                        amountWanted = (double)getValidIDNumber();
+                    }
+                    else
+                    {
+                        System.out.println("Please Enter How Many Kg of " +wantedItem.Name+"You Want (dec. is possible)");
+                        boolean end = false;
+                        while (!end) {
+                            try {
+                                amountWanted = scanner.nextDouble();
+                                if (amountWanted <= 0)
+                                    System.out.println("Please Enter a Positive Number");
+                                else
+                                    end = true;
+                            }catch (InputMismatchException e) {
+                                System.out.println("Not a Number! - try again");
+                            }
+                        }
+                    }
+
+                    if (Basket.containsKey(wantedItem.serialNumber)) {
+                        System.out.println("Already in Basket - Adding "+ amountWanted);
+                        Basket.get(wantedItem.serialNumber).amountBought += amountWanted;
+                    }
+                    else
+                    {
+                        Basket.put(wantedItem.serialNumber,new ItemInOrderInfo(wantedItem.serialNumber,
+                                wantedItem.Name,wantedItem.PayBy,storeChosen.StoreID,
+                                amountWanted,MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, wantedItem.serialNumber)));
+                    }
+
+                }
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong Input- Try Again!");
+                }
+            }
         }
-        return Basket;
+        return Basket.values();
     }
+
 
     private long getValidIDNumber ()
     {
@@ -163,6 +275,9 @@ public class SDMConsoleUI {
         {
             try {
                 res = scanner.nextLong();
+                if (res <= 0)
+                    System.out.println("Please Enter a Positive Number");
+                else
                 flag =false;
         }catch (Exception e) {
             System.out.println("Please enter a number!");

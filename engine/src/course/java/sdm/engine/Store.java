@@ -43,6 +43,11 @@ public class Store implements HasName, Coordinatable{
         return m_profitFromShipping;
     }
 
+    ProductInStore getProductInStoreByID (Long itemID)
+    {
+            return m_items.get(itemID);
+    }
+
      void addItemToStore (ProductInStore ProductToAdd)
     {
         Long itemKey = ProductToAdd.getItem().getSerialNumber();

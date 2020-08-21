@@ -31,7 +31,7 @@ public class SuperDuperMarketSystem {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
     }
 
-    static double CalculatePPK(StoreInfo FromStore, Point curLocation)
+    public static double CalculatePPK(StoreInfo FromStore, Point curLocation)
     {
         return (double)FromStore.PPK * FromStore.locationCoordinate.distance(curLocation);
     }
@@ -48,17 +48,6 @@ public class SuperDuperMarketSystem {
 
         ProductInSystem newProductSystem = new ProductInSystem(newItem);
         m_ItemsInSystem.put(newItem.getSerialNumber(),newProductSystem);
-    }
-
-    public void AddNewOrder (List<ItemInfo> OrderBasket,)
-    {
-        //after the order is done
-        //todo check that when i create order the coordinate of store is good....
-        if (m_OrderHistory.containsKey(newOrder.getOrderSerialNumber()))
-            throw (new KeyAlreadyExistsException("The Serial Number " + newOrder.getOrderSerialNumber() + " Exist already in system "));
-
-        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
-        UpdateShippingProfitAfterOrder(newOrder);
     }
 
     private void UpdateShippingProfitAfterOrder(Order newOrder) {
@@ -225,11 +214,20 @@ public class SuperDuperMarketSystem {
             Set<Store> stores = CurOrder.getStoreSet();
             List<String> storesList = new ArrayList<>();
 
+            Set<ProductInOrder> Items = CurOrder.getBasket();
+            List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
+
             for (Store curStore : stores)
                 storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
 
+            for (ProductInOrder curProd : Items)
+                itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
+                        curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
+                        ,curProd.getAmountByPayingMethod(),curProd.getPriceOfTotalItems()));
+
             OrderInfo newOrder = new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                    storesList,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
+                    storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
+
             res.add(newOrder);
         }
 
@@ -342,5 +340,71 @@ public class SuperDuperMarketSystem {
     public double getItemPriceInStore(long storeID, long ItemID) {
             Store store = getStoreByID(storeID);
            return store.getPriceForItem(ItemID);
+    }
+
+    public StoreInfo GetStoreInfoByID (Long storeID) throws InvalidKeyException
+    {
+        if (isStoreInSystem(storeID))
+            {
+                Store curStore = m_StoresInSystem.get(storeID);
+                List<ItemInStoreInfo> items = curStore.getItemList();
+                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList();
+
+                return new StoreInfo(curStore.getCoordinate(),curStore.getStoreID(),
+                        curStore.getName(),curStore.getPPK(),items,orders, curStore.getProfitFromShipping());
+
+            }
+        throw  (new InvalidKeyException("Store #"+storeID+" is not in System"));
+
+    }
+
+    public ItemInfo getItemInfo(long itemID) {
+        if (isItemInSystem(itemID))
+        {
+            ProductInSystem curItem = m_ItemsInSystem.get(itemID);
+            Item theItemObj = curItem.getItem();
+            ItemInfo res = new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
+                    ,theItemObj.PayBy.toString(),getAvgPriceForItem(curItem.getSerialNumber()),
+                    curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
+            return res;
+        }
+        return null;
+    }
+
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) {
+
+        if (!isCoordinateInRange(curLoc))
+            throw (new PointOutOfGridException(curLoc));
+        if (m_SystemGrid.containsKey(curLoc))
+            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
+        if (m_StoresInSystem.containsKey(storeChosen.StoreID))
+            throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
+        if (itemsChosen.isEmpty())
+            throw (new RuntimeException("Empty List"));
+
+        Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
+        while (m_OrderHistory.containsKey(OrdersSerialGenerator))
+            OrdersSerialGenerator++;
+
+        Order newOrder = new Order (curLoc,OrdersSerialGenerator++,OrderDate);
+
+        for (ItemInOrderInfo curItem : itemsChosen) {
+            if (!curStore.isItemInStore(curItem.serialNumber))
+                throw (new StoreDoesNotSellItemException(curItem.serialNumber));
+            if (curItem.amountBought <= 0)
+                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
+
+            ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
+            ProductInOrder newItem = new ProductInOrder(curProd);
+            newItem.setAmountBought(curItem.amountBought);
+            //todo check here also and combine if you got 2 shampoo (from the same store only!) - remember this is static order
+            newOrder.addProductToOrder(newItem);
+        }
+
+        for (ProductInOrder curItem :newOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(1);
+
+        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
+        UpdateShippingProfitAfterOrder(newOrder);
     }
 }

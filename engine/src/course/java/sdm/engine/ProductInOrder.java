@@ -2,9 +2,23 @@ package course.java.sdm.engine;
 
 public class ProductInOrder {
 
-        private ProductInStore productInStore;
+        private final ProductInStore productInStore;
         private double amountBought;
         private double PriceOfTotalItems;
+
+    public ProductInOrder(ProductInStore productInStore) {
+        this.productInStore = productInStore;
+    }
+
+    public void setAmountBought(double amountBought) {
+        this.amountBought = amountBought;
+        this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
+    }
+
+    public void addAmountBought(double amountBought) {
+        this.amountBought += amountBought;
+        this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
+    }
 
 
 
