@@ -1,5 +1,7 @@
 package course.java.sdm.engine;
 
+import java.util.Objects;
+
 public class ProductInOrder {
 
         private final ProductInStore productInStore;
@@ -47,5 +49,21 @@ public class ProductInOrder {
     }
 
     // todo hash equals toString
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductInOrder that = (ProductInOrder) o;
+        return Double.compare(that.amountBought, amountBought) == 0 &&
+                Double.compare(that.PriceOfTotalItems, PriceOfTotalItems) == 0 &&
+                productInStore.equals(that.productInStore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productInStore, amountBought, PriceOfTotalItems);
+    }
 }
 

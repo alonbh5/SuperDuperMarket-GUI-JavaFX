@@ -1,6 +1,6 @@
 package course.java.sdm.exceptions;
 
-public class ItemIsNotSoldAtAllException extends RuntimeException {
+public class ItemIsNotSoldAtAllException extends Exception {
 
     public final long ItemID;
     public final String ItemName;

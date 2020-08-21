@@ -1,6 +1,6 @@
 package course.java.sdm.exceptions;
 
-public class DuplicateItemInStoreException extends RuntimeException{
+public class DuplicateItemInStoreException extends Exception{
 
     public final long id;
 

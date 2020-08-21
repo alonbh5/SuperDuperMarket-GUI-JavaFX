@@ -1,15 +1,15 @@
 package course.java.sdm.exceptions;
 
-public class DuplicateStoreInSystemException extends RuntimeException {
+public class DuplicateStoreInSystemException extends Exception {
 
-    public final long id;
+    public final long Storeid;
 
     public DuplicateStoreInSystemException(long id) {
-        this.id = id;
+        this.Storeid = id;
     }
 
     public DuplicateStoreInSystemException(String message, long id) {
         super(message);
-        this.id = id;
+        this.Storeid = id;
     }
 }

@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 import java.awt.*;
 
-public class DuplicatePointOnGridException extends RuntimeException {
+public class DuplicatePointOnGridException extends Exception {
 
     public final Point PointInput;
 

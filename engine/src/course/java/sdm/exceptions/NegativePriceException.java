@@ -1,6 +1,6 @@
 package course.java.sdm.exceptions;
 
-public class NegativePriceException extends RuntimeException {
+public class NegativePriceException extends Exception {
 
     public final double PriceReceived;
 

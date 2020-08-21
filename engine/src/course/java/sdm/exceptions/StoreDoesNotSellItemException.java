@@ -1,6 +1,6 @@
 package course.java.sdm.exceptions;
 
-public class StoreDoesNotSellItemException extends RuntimeException {
+public class StoreDoesNotSellItemException extends Exception {
 
     public final long StoreID;
 

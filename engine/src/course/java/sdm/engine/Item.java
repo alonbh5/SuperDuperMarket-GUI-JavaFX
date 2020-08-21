@@ -40,7 +40,7 @@ public  class Item implements HasName {
 
     @Override
     public int hashCode() {
-        return Objects.hash(serialNumber, Name, PayBy);
+        return Objects.hash(serialNumber);
     }
 
     protected long getSerialNumber() {

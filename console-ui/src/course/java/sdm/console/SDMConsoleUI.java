@@ -1,11 +1,12 @@
 package course.java.sdm.console;
 import course.java.sdm.engine.Item;
 import course.java.sdm.engine.SuperDuperMarketSystem;
-import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.exceptions.*;
 import course.java.sdm.classesForUI.*;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.awt.*;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,8 +40,8 @@ public class SDMConsoleUI {
         ChangeItemsMenu.AddMenuItem("Add new Item To Store",this::AddItemToStore);
         ChangeItemsMenu.AddMenuItem("Change Item's Price From Store",this::ChangeItemPrice);
 
-        ChangeItemsMenu.AddMenuItem("Static Order",this::StaticOrder);
-        ChangeItemsMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
+        NewOrderMenu.AddMenuItem("Static Order",this::StaticOrder);
+        NewOrderMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
         
         
         MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
@@ -59,11 +60,37 @@ public class SDMConsoleUI {
 
         while (flag) {
             System.out.println("Please Enter Full Path for XML file:");
-            str = scanner.nextLine();
+            str = scanner.next();
             if(checkValidXmlNameEnding(str)) {
                 str = "/files1/ex1-big.xml";
-                MainSDMSystem.UploadInfoFromXML(str);
-                flag=false;
+                try {
+                    MainSDMSystem.UploadInfoFromXML(str);
+                    flag = false;
+                } catch (PointOutOfGridException e) {
+                    System.out.println("Error! - Location is not in [0-50]!!");
+                    System.out.println(e.getMessage());
+                } catch (NoValidXMLException e) {
+                    System.out.println("Error! - XML location was not found - please check path");
+                } catch (DuplicateItemInStoreException e) {
+                    System.out.println("Error! - XML contains 2 Items with the same id at one store: "+e.id);
+                } catch (StoreDoesNotSellItemException e) {
+                    System.out.println("Error - XML contains Store ("+e.StoreID+") that does not sell any item");
+                } catch (DuplicateStoreInSystemException e) {
+                    System.out.println("Error! - XML contains 2 points at the same location ("+e.Storeid+").");
+                } catch (DuplicatePointOnGridException e) {
+                    System.out.println("Error! - XML contains 2 points at the same location "+e.PointInput+" !!");
+                } catch (ItemIsNotSoldAtAllException e) {
+                    System.out.println("Error! -Item #"+e.ItemID + "("+e.ItemName+") has no store that sell it");
+                } catch (StoreItemNotInSystemException e) {
+                    System.out.println("Error! - Some Store is trying to sell an item that's not in system ("+e.ItemIdInput+")");
+                } catch (WrongPayingMethodException e) {
+                    System.out.println("Error! - Wrong input Paying method - "+e.PayingInput);
+                } catch (DuplicateItemIDException e) {
+                    System.out.println("Error! - XML contains 2 Items with the same id : "+e.id);
+                } catch (NegativePriceException e) {
+                    System.out.println("Error! - XML contains a Negative Price "+e.PriceReceived+" for Item!");
+                }
+
             }
             else
                 System.out.println("Error - not Type XML (needs to end with <xml name>.xml");
@@ -83,7 +110,7 @@ public class SDMConsoleUI {
             }
 
             for (StoreInfo curStore : listOfAllStoresInSystem)
-                System.out.println(String.format("store #%d - #s PPK is %d", curStore.StoreID, curStore.Name, curStore.PPK));
+                System.out.println("store #"+curStore.StoreID+ " - "+curStore.Name+" PPK is "+curStore.PPK);
 
             System.out.println("Please Type Store ID from the list above:");
 
@@ -92,7 +119,8 @@ public class SDMConsoleUI {
             curLocation = getValidPoint(); //4.3
             Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
 
-            if (approveOrder(ItemsChosen,MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation)))//4.5
+            double ppk = MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation);
+            if (approveOrder(ItemsChosen,ppk))//4.5
             {
                 MainSDMSystem.addStaticOrderToSystem(ItemsChosen,StoreChosen,curLocation,inputDate); //leahed many item to one!
                 System.out.println("Order Added To System!");
@@ -121,6 +149,7 @@ public class SDMConsoleUI {
             x = Integer.parseInt(xStr);
             y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
                 System.out.println("Wrong Input - try again");
+                scanner.nextLine();
             }
             res = new Point(x,y);
             if (!SuperDuperMarketSystem.isCoordinateInRange(res))
@@ -132,21 +161,26 @@ public class SDMConsoleUI {
     }
 
     private Date getValidDate() {
+        scanner.nextLine();
         Date res=null;
         boolean flag=true;
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        dateFormat.applyPattern("dd/MM-hh:mm");
         while (flag) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat();
+
             System.out.println("Please Type Order Date in the form of dd/mm-hh:mm (E.g 02/11-13:56):");
-            String inputDateString = scanner.next();
-            dateFormat.applyPattern("dd/MM-hh:mm");
+            String inputDateString = scanner.nextLine();
+
             try {
                 res = dateFormat.parse(inputDateString);
-                flag=false;
+                flag=false; //todo valid input - its allow 15/15
             } catch (ParseException e) {
                 System.out.println("Date Entered is not in the Form dd/MM-hh:mm");
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
-            } //4.2
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
+                scanner.nextLine();} //4.2
         }
 
         return res;
@@ -162,6 +196,7 @@ public class SDMConsoleUI {
                 return storeInfo;
             } catch (InvalidKeyException e) {
                 System.out.println("Error - Please choose Store ID by the list above!");
+                scanner.nextLine();
             }
         }
         return null;
@@ -173,14 +208,16 @@ public class SDMConsoleUI {
 
         printLineOfStars();
         for (ItemInOrderInfo curItem : itemsChosen)
-            System.out.println(String.format("Item #%d (%s) Pay by %s, Price per Unit is %.2f Amount is %.2f, Total Cost %.2f."
-            ,curItem.serialNumber,curItem.Name,curItem.PricePerUint,curItem.amountBought,(curItem.amountBought*curItem.PricePerUint)));
+            System.out.println("Item #"+curItem.serialNumber+" ("+curItem.Name+") Pay by "+curItem.PayBy+"," +
+                    " Price per Unit is "+curItem.PricePerUint+" Amount is "+curItem.amountBought+"," +
+                    " Total Cost "+(curItem.amountBought*curItem.PricePerUint)+".");
+
 
         System.out.println(String.format("Shipping will Cost you %.2f",PPK));
         printLineOfStars();
 
         System.out.println("Type Y to Complete Order, or Anything Else To Cancel ");
-        String ans =  scanner.nextLine();
+        String ans =  scanner.next();
         if (ans.equals("Y"))
             return true;
         return false;
@@ -205,16 +242,16 @@ public class SDMConsoleUI {
         for (ItemInfo curItem : allItem) {
             System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
             if (MainSDMSystem.isItemSoldInStore(storeChosen.StoreID, curItem.serialNumber))
-                System.out.println("Price in Store - " + MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, curItem.serialNumber));
+                System.out.println(" Price in Store - " + MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, curItem.serialNumber));
             else
-                System.out.println("Item is Not Being Sold In Store");
+                System.out.println(" Item is Not Being Sold In Store");
         }
         printLineOfEqual();
 
 
         while (flag) {
             System.out.println("Please Enter Item ID you Want to add to Basket, Enter q to Quit");
-            String str = scanner.nextLine();
+            String str = scanner.next();
             if (str.equals("q"))
                 flag = false;
             else {
@@ -231,7 +268,7 @@ public class SDMConsoleUI {
                     }
                     else
                     {
-                        System.out.println("Please Enter How Many Kg of " +wantedItem.Name+"You Want (dec. is possible)");
+                        System.out.println("Please Enter How Many Kg of " +wantedItem.Name+" You Want (dec. is possible)");
                         boolean end = false;
                         while (!end) {
                             try {
@@ -242,9 +279,11 @@ public class SDMConsoleUI {
                                     end = true;
                             }catch (InputMismatchException e) {
                                 System.out.println("Not a Number! - try again");
+                                scanner.nextLine();
                             }
                         }
                     }
+                    scanner.nextLine();
 
                     if (Basket.containsKey(wantedItem.serialNumber)) {
                         System.out.println("Already in Basket - Adding "+ amountWanted);
@@ -255,6 +294,7 @@ public class SDMConsoleUI {
                         Basket.put(wantedItem.serialNumber,new ItemInOrderInfo(wantedItem.serialNumber,
                                 wantedItem.Name,wantedItem.PayBy,storeChosen.StoreID,
                                 amountWanted,MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, wantedItem.serialNumber)));
+                        System.out.println("Added "+ wantedItem.Name+" To Basket!");
                     }
 
                 }
@@ -281,6 +321,7 @@ public class SDMConsoleUI {
                 flag =false;
         }catch (Exception e) {
             System.out.println("Please enter a number!");
+            scanner.nextLine();
         }}
         return res;
     }
@@ -298,6 +339,7 @@ public class SDMConsoleUI {
 
     private void showAllOrders() {
         try {
+
             int i = 1;
             StringBuilder str = new StringBuilder();
             List<OrderInfo> OrderList= MainSDMSystem.getListOfAllOrderInSystem();
@@ -307,9 +349,10 @@ public class SDMConsoleUI {
             else
                 for (OrderInfo CurOrder : OrderList) {
                     str.append(i++ + ". ");
-                    str.append("Order#" + CurOrder.m_OrderSerialNumber + "at " + CurOrder.m_Date.toString());
+                    str.append("Order #" + CurOrder.m_OrderSerialNumber + " at ");
+                    str.append(CurOrder.m_Date);
                     if (CurOrder.Stores.size() == 1)
-                        str.append("From "+ CurOrder.Stores.get(0));
+                        str.append(" From "+ CurOrder.Stores.get(0));
                     else {
                         int j = 1;
                         str.append("Stores in Order are :");
@@ -317,7 +360,7 @@ public class SDMConsoleUI {
                             str.append(j++ + curStore + ".\n");
                     }
 
-                    str.append("Number of Items: " + CurOrder.m_amountOfItems +
+                    str.append("\nThe Number of Items in Order: " + CurOrder.m_amountOfItems +
                             "\n Cost of only Items: " + CurOrder.m_ItemsPrice +
                             "\n Cost of Shipping: " + CurOrder.m_ShippingPrice +
                             "\n Cost of Total Order: " + CurOrder.m_TotalPrice);

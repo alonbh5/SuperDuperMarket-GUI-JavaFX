@@ -11,7 +11,7 @@ public class InfoLoader {
 
     private final static String JAXB_XML_SDM_PACKAGE_NAME = "course.java.sdm.generatedClasses";
 
-    public static SuperDuperMarketDescriptor TryingFIle (String str)  {
+    public static SuperDuperMarketDescriptor UploadFile (String str)  {
 
         InputStream inputStream = InfoLoader.class.getResourceAsStream(str);
         SuperDuperMarketDescriptor superDuperMarketDescriptor = null;

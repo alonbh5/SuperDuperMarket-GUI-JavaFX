@@ -157,6 +157,6 @@ public class Store implements HasName, Coordinatable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(m_locationCoordinate, m_StoreID, m_profitFromShipping, m_items, m_OrderHistory, m_Name, PPK);
+        return Objects.hash(m_StoreID);
     }
 }

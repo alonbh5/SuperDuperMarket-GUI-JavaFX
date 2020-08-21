@@ -234,9 +234,11 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public boolean UploadInfoFromXML (String XMLPath) //todo throw exception from method...
+    public boolean UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
+    ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
+            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException//todo throw exception from method...
     {
-        SuperDuperMarketDescriptor superDuperMarketDescriptor = InfoLoader.TryingFIle(XMLPath);
+        SuperDuperMarketDescriptor superDuperMarketDescriptor = InfoLoader.UploadFile(XMLPath);
         CopyInfoFromXMLClasses(superDuperMarketDescriptor);
         return !locked;
     }
@@ -246,10 +248,12 @@ public class SuperDuperMarketSystem {
         Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
         Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
         Map<Long,Store> tempStoresInSystem = m_StoresInSystem;
+        Map<Long,Order> tempOrderInSystem = m_OrderHistory;
 
         m_ItemsInSystem = new HashMap<>();
         m_SystemGrid = new HashMap<>();
         m_StoresInSystem = new HashMap<>();
+        m_OrderHistory = new HashMap<>();
 
         try {
 
@@ -271,6 +275,7 @@ public class SuperDuperMarketSystem {
             m_ItemsInSystem= tempItemsInSystem;
             m_SystemGrid = tempSystemGrid;
             m_StoresInSystem=tempStoresInSystem;
+            m_OrderHistory = tempOrderInSystem;
             throw e;
         }
 
@@ -377,7 +382,7 @@ public class SuperDuperMarketSystem {
             throw (new PointOutOfGridException(curLoc));
         if (m_SystemGrid.containsKey(curLoc))
             throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
-        if (m_StoresInSystem.containsKey(storeChosen.StoreID))
+        if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
             throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
         if (itemsChosen.isEmpty())
             throw (new RuntimeException("Empty List"));

@@ -2,7 +2,7 @@ package course.java.sdm.exceptions;
 
 import java.awt.*;
 
-public class PointOutOfGridException extends RuntimeException{
+public class PointOutOfGridException extends Exception{
 
     public final Point PointReceived;
 
