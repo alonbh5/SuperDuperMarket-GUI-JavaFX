@@ -48,8 +48,7 @@ public class Store implements HasName, Coordinatable{
             return m_items.get(itemID);
     }
 
-     void addItemToStore (ProductInStore ProductToAdd)
-    {
+     void addItemToStore (ProductInStore ProductToAdd) throws NegativePriceException {
         Long itemKey = ProductToAdd.getItem().getSerialNumber();
 
         if (m_items.containsKey(itemKey))

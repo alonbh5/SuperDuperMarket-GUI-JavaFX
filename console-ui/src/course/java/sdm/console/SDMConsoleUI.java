@@ -1,12 +1,11 @@
 package course.java.sdm.console;
-import course.java.sdm.engine.Item;
-import course.java.sdm.engine.SuperDuperMarketSystem;
+
+import course.java.sdm.engine.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.classesForUI.*;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.awt.*;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +61,8 @@ public class SDMConsoleUI {
             System.out.println("Please Enter Full Path for XML file:");
             str = scanner.next();
             if(checkValidXmlNameEnding(str)) {
-                str = "/files1/ex1-big.xml";
+                //str = "/files1/ex1-big.xml";
+                str = "/files1/ex1-error-3.6.xml";
                 try {
                     MainSDMSystem.UploadInfoFromXML(str);
                     flag = false;
@@ -131,6 +131,10 @@ public class SDMConsoleUI {
 
         } catch (NoValidXMLException e) {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (StoreDoesNotSellItemException e) {
+            System.out.println("There was a problem - the store does not sell : "+e.StoreID);
+        } catch (PointOutOfGridException e) {
+            System.out.println("Current loction is not on grid [0-50] "+e.PointReceived);
         }
     }
 

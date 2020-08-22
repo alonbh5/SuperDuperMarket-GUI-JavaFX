@@ -58,8 +58,7 @@ public class SuperDuperMarketSystem {
         }
     }
 
-    public void AddNewStore (Store newStore)
-    {
+    public void AddNewStore (Store newStore) throws PointOutOfGridException,KeyAlreadyExistsException {
         if (m_SystemGrid.containsKey(newStore.getCoordinate()))
             throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + newStore.getCoordinate() + ") in system "));
         if (m_StoresInSystem.containsKey(newStore.getStoreID()))
@@ -238,12 +237,12 @@ public class SuperDuperMarketSystem {
     ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
             StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException//todo throw exception from method...
     {
-        SuperDuperMarketDescriptor superDuperMarketDescriptor = InfoLoader.UploadFile(XMLPath);
+        SuperDuperMarketDescriptor superDuperMarketDescriptor = course.java.sdm.engine.InfoLoader.UploadFile(XMLPath);
         CopyInfoFromXMLClasses(superDuperMarketDescriptor);
         return !locked;
     }
 
-    private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) {
+    private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
 
         Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
         Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
@@ -270,7 +269,7 @@ public class SuperDuperMarketSystem {
             }
             checkMissingItem();
 
-        } catch (RuntimeException e) //if from any reason xml was bas - restore data
+        } catch (Exception e) //if from any reason xml was bas - restore data
         {
             m_ItemsInSystem= tempItemsInSystem;
             m_SystemGrid = tempSystemGrid;
@@ -282,13 +281,13 @@ public class SuperDuperMarketSystem {
         locked = false;
     }
 
-    private void checkMissingItem() {
+    private void checkMissingItem() throws ItemIsNotSoldAtAllException {
         for (ProductInSystem curItem : m_ItemsInSystem.values())
             if (curItem.getNumberOfSellingStores() == 0)
                 throw new ItemIsNotSoldAtAllException(curItem.getSerialNumber(),curItem.getItem().getName());
     }
 
-    private void crateNewStoreInSystem(SDMStore store) {
+    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
         Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
         if (!isCoordinateInRange(StoreLocation))
             throw new PointOutOfGridException(StoreLocation);
@@ -321,7 +320,7 @@ public class SuperDuperMarketSystem {
         m_SystemGrid.put(newStore.getCoordinate(),newStore);
     }
 
-    private void crateNewItemInSystem(SDMItem item) {
+    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
         Item.payByMethod ePayBy;
 
         if (item.getPurchaseCategory().equals("Weight"))
@@ -376,7 +375,7 @@ public class SuperDuperMarketSystem {
         return null;
     }
 
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) {
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
 
         if (!isCoordinateInRange(curLoc))
             throw (new PointOutOfGridException(curLoc));
