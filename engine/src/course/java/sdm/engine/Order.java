@@ -1,7 +1,11 @@
 package course.java.sdm.engine;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 import java.util.*;
 
+@XmlRootElement
 public class Order implements Coordinatable{
 
     private final long m_OrderSerialNumber;
@@ -27,7 +31,7 @@ public class Order implements Coordinatable{
      Date getDate() {
         return m_Date;
     }
-
+     @XmlAttribute
      double getTotalPrice() {
         return m_TotalPrice;
     }
@@ -108,5 +112,41 @@ public class Order implements Coordinatable{
     @Override
     public int hashCode() {
         return Objects.hash(m_OrderSerialNumber, m_Date, m_userLocation, m_TotalPrice, m_ShippingPrice, m_ItemsPrice, m_amountOfItems, m_Basket, m_StoresInOrder);
+    }
+
+    public long getM_OrderSerialNumber() {
+        return m_OrderSerialNumber;
+    }
+
+    public Date getM_Date() {
+        return m_Date;
+    }
+
+    public Point getM_userLocation() {
+        return m_userLocation;
+    }
+
+    public double getM_TotalPrice() {
+        return m_TotalPrice;
+    }
+
+    public double getM_ShippingPrice() {
+        return m_ShippingPrice;
+    }
+
+    public double getM_ItemsPrice() {
+        return m_ItemsPrice;
+    }
+
+    public int getM_amountOfItems() {
+        return m_amountOfItems;
+    }
+
+    public Set<ProductInOrder> getM_Basket() {
+        return m_Basket;
+    }
+
+    public Set<Store> getM_StoresInOrder() {
+        return m_StoresInOrder;
     }
 }

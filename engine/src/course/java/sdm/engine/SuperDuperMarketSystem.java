@@ -4,8 +4,11 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
 import javax.management.openmbean.*;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -436,6 +439,20 @@ public class SuperDuperMarketSystem {
 
     public void SaveOrdersToXml(String strPath) {
         //create the empty file xml
+        try {
         Path myPath = Paths.get(strPath);
+        File myFile = myPath.toFile();
+        JAXBContext jc = JAXBContext.newInstance(Order.class);
+        Marshaller marshaller = jc.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+
+        for(Order curOrder : m_OrderHistory.values())
+            marshaller.marshal(curOrder,System.out);
+
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        //todo just to txt
+
     }
 }
