@@ -61,38 +61,40 @@ public class SDMConsoleUI {
         boolean flag = true;
 
         while (flag) {
-            System.out.println("Please Enter Full Path for XML file:");
+            System.out.println("Please Enter Full Path for XML file (Type Back to return):");
             str = scanner.nextLine();
+            if (str.toLowerCase().equals("back"))
+                return;
             if(checkValidXmlNameEnding(str)) {
-                //str = "/files1/ex1-big.xml";
-               // str = "/files1/ex1-error-3.6.xml";
-                try {
-                    MainSDMSystem.UploadInfoFromXML(str);
-                    System.out.println("XML Loaded Successfully!");
-                    flag = false;
-                } catch (PointOutOfGridException e) {
-                    System.out.println("Error! - Location is not in [0-50]!!");
-                    System.out.println(e.getMessage());
-                } catch (NoValidXMLException e) {
-                    System.out.println("Error! - XML location was not found - please check path");
-                } catch (DuplicateItemInStoreException e) {
-                    System.out.println("Error! - XML contains 2 Items with the same id at one store: "+e.id);
-                } catch (StoreDoesNotSellItemException e) {
-                    System.out.println("Error - XML contains Store ("+e.StoreID+") that does not sell any item");
-                } catch (DuplicateStoreInSystemException e) {
-                    System.out.println("Error! - XML contains 2 points at the same location ("+e.Storeid+").");
-                } catch (DuplicatePointOnGridException e) {
-                    System.out.println("Error! - XML contains 2 points at the same location "+e.PointInput+" !!");
-                } catch (ItemIsNotSoldAtAllException e) {
-                    System.out.println("Error! -Item #"+e.ItemID + "("+e.ItemName+") has no store that sell it");
-                } catch (StoreItemNotInSystemException e) {
-                    System.out.println("Error! - Store #"+e.StoreIdInput+" is trying to sell an item that's not in system (Item #"+e.ItemIdInput+")");
-                } catch (WrongPayingMethodException e) {
-                    System.out.println("Error! - Wrong input Paying method - "+e.PayingInput);
-                } catch (DuplicateItemIDException e) {
-                    System.out.println("Error! - XML contains 2 Items with the same id : "+e.id);
-                } catch (NegativePriceException e) {
-                    System.out.println("Error! - XML contains a Negative Price "+e.PriceReceived+" for Item!");
+                 {
+                    try {
+                        MainSDMSystem.UploadInfoFromXML(str);
+                        System.out.println("XML Loaded Successfully!");
+                        flag = false;
+                    } catch (PointOutOfGridException e) {
+                        System.out.println("Error! - Location is not in [0-50]!!");
+                        System.out.println(e.getMessage());
+                    } catch (NoValidXMLException e) {
+                        System.out.println("Error! - XML location was not found - please check path");
+                    } catch (DuplicateItemInStoreException e) {
+                        System.out.println("Error! - XML contains 2 Items with the same id at one store: " + e.id);
+                    } catch (StoreDoesNotSellItemException e) {
+                        System.out.println("Error - XML contains Store (" + e.StoreID + ") that does not sell any item");
+                    } catch (DuplicateStoreInSystemException e) {
+                        System.out.println("Error! - XML contains 2 points at the same location (" + e.Storeid + ").");
+                    } catch (DuplicatePointOnGridException e) {
+                        System.out.println("Error! - XML contains 2 points at the same location " + e.PointInput + " !!");
+                    } catch (ItemIsNotSoldAtAllException e) {
+                        System.out.println("Error! -Item #" + e.ItemID + "(" + e.ItemName + ") has no store that sell it");
+                    } catch (StoreItemNotInSystemException e) {
+                        System.out.println("Error! - Store #" + e.StoreIdInput + " is trying to sell an item that's not in system (Item #" + e.ItemIdInput + ")");
+                    } catch (WrongPayingMethodException e) {
+                        System.out.println("Error! - Wrong input Paying method - " + e.PayingInput);
+                    } catch (DuplicateItemIDException e) {
+                        System.out.println("Error! - XML contains 2 Items with the same id : " + e.id);
+                    } catch (NegativePriceException e) {
+                        System.out.println("Error! - XML contains a Negative Price " + e.PriceReceived + " for Item!");
+                    }
                 }
 
             }

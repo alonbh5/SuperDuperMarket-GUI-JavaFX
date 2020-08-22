@@ -6,33 +6,28 @@ import course.java.sdm.generatedClasses.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
 
 
- class InfoLoader {
+class InfoLoader {
 
     private final static String JAXB_XML_SDM_PACKAGE_NAME = "course.java.sdm.generatedClasses";
 
      static SuperDuperMarketDescriptor UploadFile (String str) throws JAXBException, NoValidXMLException {
 
-        File XmlFile = new File(str);
 
-        //InputStream inputStream = InfoLoader.class.getResourceAsStream(str);
+         Path XmlPath = Paths.get(str); // C:\Users\alon8\Desktop\ga ga\files1\ex1-big.xml
+         File XmlFile = XmlPath.toFile();
+         if (!XmlFile.exists())
+             throw new NoValidXMLException();
+         SuperDuperMarketDescriptor superDuperMarketDescriptor = deserializeFrom(XmlFile);
 
-        //if (inputStream == null)
-           // throw new NoValidXMLException();
-
-         if (XmlFile.isFile())
-              throw new NoValidXMLException();
-
-        SuperDuperMarketDescriptor superDuperMarketDescriptor = null;
-       // superDuperMarketDescriptor = deserializeFrom(inputStream);
-         superDuperMarketDescriptor = deserializeFrom(XmlFile);
-
-        return superDuperMarketDescriptor;
-    }
+         return superDuperMarketDescriptor;
+     }
 
     private static SuperDuperMarketDescriptor deserializeFrom(InputStream inputStream) throws JAXBException {
 

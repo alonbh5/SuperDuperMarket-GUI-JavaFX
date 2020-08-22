@@ -32,23 +32,9 @@ public class SuperDuperMarketSystem {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
     }
 
-    public static double CalculatePPK(StoreInfo FromStore, Point curLocation)
-    {
-        return (double)FromStore.PPK * FromStore.locationCoordinate.distance(curLocation);
-    }
-
     public double CalculatePPK (Long FromStoreID, Point curLocation)
     {
         return CalculatePPK(getStoreByID(FromStoreID),curLocation);
-    }
-
-    public void AddNewItem (Item newItem)
-    {
-        if (m_ItemsInSystem.containsKey(newItem.getSerialNumber()))
-            throw (new KeyAlreadyExistsException("The Item Serial Number " + newItem.getSerialNumber() + " Exist already in system "));
-
-        ProductInSystem newProductSystem = new ProductInSystem(newItem);
-        m_ItemsInSystem.put(newItem.getSerialNumber(),newProductSystem);
     }
 
     private void UpdateShippingProfitAfterOrder(Order newOrder) {
@@ -65,18 +51,6 @@ public class SuperDuperMarketSystem {
         for (ProductInOrder curItem : AllItemsFromOrder) {
             curItem.getProductInStore().addAmount(curItem.getAmountByPayingMethod());
         }
-    }
-
-    public void AddNewStore (Store newStore) throws PointOutOfGridException,KeyAlreadyExistsException {
-        if (m_SystemGrid.containsKey(newStore.getCoordinate()))
-            throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + newStore.getCoordinate() + ") in system "));
-        if (m_StoresInSystem.containsKey(newStore.getStoreID()))
-            throw (new KeyAlreadyExistsException("The Serial Number " + newStore.getStoreID() + " Already Exist in system "));
-        if (!isCoordinateInRange(newStore.getCoordinate()))
-            throw (new PointOutOfGridException(newStore.getCoordinate()));
-
-        m_SystemGrid.put(newStore.getCoordinate(),newStore);
-        m_StoresInSystem.put(newStore.getStoreID(),newStore);
     }
 
     private Store getStoreByID (Long StoreID) throws InvalidKeyException
@@ -133,15 +107,6 @@ public class SuperDuperMarketSystem {
         return (((Coordinate.x <= MAX_COORDINATE) && (Coordinate.x >= MIN_COORDINATE) && ((Coordinate.y <= MAX_COORDINATE) && (Coordinate.y >= MIN_COORDINATE))));
     }
 
-    public Item.payByMethod getPayingMethod (Long itemID)
-    {
-        if (!isItemInSystem(itemID))
-            throw (new RuntimeException("Item Key #"+itemID+" is not is System"));
-
-        return (m_ItemsInSystem.get(itemID).getItem().PayBy);
-
-    }
-
     public double getAvgPriceForItem (Long ItemID)
     {
         return Arrays.stream(m_StoresInSystem.values().stream()
@@ -156,20 +121,6 @@ public class SuperDuperMarketSystem {
             storeToAddTo.addItemToStore(productToAdd);
             m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
     }
-
-    private void addProductToOrder (Long OrderID,ProductInOrder productToAdd)
-    {
-        try {
-            Order OrderToAddTo = m_OrderHistory.get(OrderID);
-            OrderToAddTo.addProductToOrder(productToAdd);
-            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addTimesSold(productToAdd.getAmountByPayingMethod());
-            //if 2 shampoo => +2 , if 4.5 apples => +1
-        }
-        catch (Exception e){
-            //todo catch
-        }
-    }
-
 
     public List<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException
     {
@@ -449,7 +400,6 @@ public class SuperDuperMarketSystem {
 
     public void ChangePrice(long itemID, long storeID, double newPrice) throws NegativePriceException, StoreDoesNotSellItemException {
         Store storeByID = getStoreByID(storeID);
-        ProductInSystem itemByID = getItemByID(itemID);
 
         if (!storeByID.isItemInStore(itemID))
             throw new StoreDoesNotSellItemException(storeID);
