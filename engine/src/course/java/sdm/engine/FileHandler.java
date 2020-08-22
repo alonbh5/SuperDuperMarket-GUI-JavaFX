@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 
-class InfoLoader {
+class FileHandler {
 
     private final static String JAXB_XML_SDM_PACKAGE_NAME = "course.java.sdm.generatedClasses";
 
@@ -29,7 +29,7 @@ class InfoLoader {
          return superDuperMarketDescriptor;
      }
 
-    private static SuperDuperMarketDescriptor deserializeFrom(InputStream inputStream) throws JAXBException {
+    static SuperDuperMarketDescriptor deserializeFrom(InputStream inputStream) throws JAXBException {
 
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_SDM_PACKAGE_NAME);
         Unmarshaller unmarshaller = jc.createUnmarshaller();

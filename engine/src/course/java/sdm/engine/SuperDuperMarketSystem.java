@@ -6,6 +6,8 @@ import course.java.sdm.generatedClasses.*;
 import javax.management.openmbean.*;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -201,7 +203,7 @@ public class SuperDuperMarketSystem {
     {
         SuperDuperMarketDescriptor superDuperMarketDescriptor = null;
         try {
-            superDuperMarketDescriptor = InfoLoader.UploadFile(XMLPath);
+            superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
         } catch (JAXBException e) {
             throw new NoValidXMLException();
         }
@@ -251,55 +253,6 @@ public class SuperDuperMarketSystem {
         for (ProductInSystem curItem : m_ItemsInSystem.values())
             if (curItem.getNumberOfSellingStores() == 0)
                 throw new ItemIsNotSoldAtAllException(curItem.getSerialNumber(),curItem.getItem().getName());
-    }
-
-    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
-        Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
-        if (!isCoordinateInRange(StoreLocation))
-            throw new PointOutOfGridException(StoreLocation);
-        if (isLocationTaken(StoreLocation))
-            throw new DuplicatePointOnGridException(StoreLocation);
-
-        Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
-
-        for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
-            Long ItemID = (long)curItem.getItemId();
-            double itemPrice = curItem.getPrice();
-
-            if (itemPrice<=0)
-                throw new NegativePriceException(itemPrice);
-            if (!isItemInSystem(ItemID))
-                throw new StoreItemNotInSystemException(ItemID,newStore.getStoreID());
-            if (newStore.isItemInStore(ItemID))
-                throw new DuplicateItemInStoreException(ItemID);
-
-            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
-            ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
-            newStore.addItemToStore(newItemForStore);
-            m_ItemsInSystem.get(ItemID).addSellingStore();
-        }
-
-        if (newStore.getItemList().isEmpty())
-            throw new StoreDoesNotSellItemException(newStore.getStoreID());
-
-        m_StoresInSystem.put(newStore.getStoreID(),newStore);
-        m_SystemGrid.put(newStore.getCoordinate(),newStore);
-    }
-
-    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
-        Item.payByMethod ePayBy;
-
-        if (item.getPurchaseCategory().equals("Weight"))
-            ePayBy = Item.payByMethod.WEIGHT;
-        else
-            if (item.getPurchaseCategory().equals("Quantity"))
-                 ePayBy = Item.payByMethod.AMOUNT;
-            else
-                throw new WrongPayingMethodException(item.getPurchaseCategory());
-
-        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
-        ProductInSystem newItem = new ProductInSystem(newBaseItem);
-        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
     }
 
     public boolean isItemSoldInStore(Long storeID,Long itemID) {
@@ -426,5 +379,63 @@ public class SuperDuperMarketSystem {
 
         ProductInStore newProduct = new ProductInStore(itemByID.getItem(),Price,storeByID);
         addItemToStore(storeID,newProduct);
+    }
+
+    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
+        Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
+        if (!isCoordinateInRange(StoreLocation))
+            throw new PointOutOfGridException(StoreLocation);
+        if (isLocationTaken(StoreLocation))
+            throw new DuplicatePointOnGridException(StoreLocation);
+
+        Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
+
+        for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
+            Long ItemID = (long)curItem.getItemId();
+            double itemPrice = curItem.getPrice();
+
+            if (itemPrice<=0)
+                throw new NegativePriceException(itemPrice);
+            if (!isItemInSystem(ItemID))
+                throw new StoreItemNotInSystemException(ItemID,newStore.getStoreID());
+            if (newStore.isItemInStore(ItemID))
+                throw new DuplicateItemInStoreException(ItemID);
+
+            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
+            ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
+            newStore.addItemToStore(newItemForStore);
+            m_ItemsInSystem.get(ItemID).addSellingStore();
+        }
+
+        if (newStore.getItemList().isEmpty())
+            throw new StoreDoesNotSellItemException(newStore.getStoreID());
+
+        m_StoresInSystem.put(newStore.getStoreID(),newStore);
+        m_SystemGrid.put(newStore.getCoordinate(),newStore);
+    }
+
+    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
+        Item.payByMethod ePayBy;
+
+        if (item.getPurchaseCategory().equals("Weight"))
+            ePayBy = Item.payByMethod.WEIGHT;
+        else
+        if (item.getPurchaseCategory().equals("Quantity"))
+            ePayBy = Item.payByMethod.AMOUNT;
+        else
+            throw new WrongPayingMethodException(item.getPurchaseCategory());
+
+        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
+        ProductInSystem newItem = new ProductInSystem(newBaseItem);
+        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+    }
+
+    private void crateNewOrderInSystem(SDMSell order)  {
+
+    }
+
+    public void SaveOrdersToXml(String strPath) {
+        //create the empty file xml
+        Path myPath = Paths.get(strPath);
     }
 }

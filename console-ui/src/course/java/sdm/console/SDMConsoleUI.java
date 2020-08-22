@@ -31,8 +31,8 @@ public class SDMConsoleUI {
         MainMenu.Show();
     }
 
-    private void BuildMainMenu ()
-    {
+    private void BuildMainMenu ()    {
+
         ConsoleMenuBuilder NewOrderMenu = new ConsoleMenuBuilder("Create New Order");
         ConsoleMenuBuilder LoadAndSaveOrderMenu = new ConsoleMenuBuilder("Save/Load Orders XML");
         ConsoleMenuBuilder ChangeItemsMenu = new ConsoleMenuBuilder("Change,Add or Delete Item In Store");
@@ -101,7 +101,7 @@ public class SDMConsoleUI {
 
             }
             else
-                System.out.println("Error - not Type XML (needs to end with <xml name>.xml");
+                System.out.println("Error - Please Enter Path That's Ends With ..<Path>../<File Name>.xml");
         }
         if (MainSDMSystem.isLocked())
             System.out.println("System is Locked!");
@@ -334,11 +334,37 @@ public class SDMConsoleUI {
     } //6-3 bonus
 
     private void SaveOrderToXML() {
+        if (MainSDMSystem.isLocked()) {
+
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+            return;
+        }
+        if (MainSDMSystem.getAmountOfOrdersInSystem() == 0) {
+            System.out.println("Sorry! it's seem there is no Orders in System Yet!");
+            return;
+        }
+
+        System.out.println("Please Enter Full Path You Wish To Save Order (XML file will be created there)");
+        String strPath = scanner.nextLine();
+        strPath="C:\\Users\\alon8\\Desktop\\ga ga\\files1\\orders.xml";
+        MainSDMSystem.SaveOrdersToXml(strPath);
 
     } //7-1 bonus
 
     private void LoadOrderToXML() {
+        if (MainSDMSystem.isLocked()) {
 
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+            return;
+        }
+
+
+        System.out.println("Please Enter Full Path of Order (XML File)");
+        String strPath = scanner.nextLine();
+        if (checkValidXmlNameEnding(strPath))
+            System.out.println("Please Enter Path That's Ends With ..<Path>../<File Name>.xml");
+        else
+            MainSDMSystem.isLocked(); //todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     } //7-2 bonus
 
     //------------------------------------------------------------------------------
