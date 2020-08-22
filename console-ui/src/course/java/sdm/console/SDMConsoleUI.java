@@ -9,12 +9,13 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 
 public class SDMConsoleUI {
 
-    //todo check all scanner
+    //todo check stupid input
     //todo check all exceptions is checked
     //todo scanner is only nextline
 
@@ -61,7 +62,7 @@ public class SDMConsoleUI {
 
         while (flag) {
             System.out.println("Please Enter Full Path for XML file:");
-            str = scanner.next();
+            str = scanner.nextLine();
             if(checkValidXmlNameEnding(str)) {
                 //str = "/files1/ex1-big.xml";
                // str = "/files1/ex1-error-3.6.xml";
@@ -182,28 +183,61 @@ public class SDMConsoleUI {
 
     private Date getValidDate() {
         scanner.nextLine();
-        Date res=null;
+        Date res= Date.from(Instant.now());
         boolean flag=true;
         SimpleDateFormat dateFormat = new SimpleDateFormat();
+
         dateFormat.applyPattern("dd/MM-hh:mm");
+
+
         while (flag) {
 
             System.out.println("Please Type Order Date in the form of dd/mm-hh:mm (E.g 02/11-13:56):");
             String inputDateString = scanner.nextLine();
 
             try {
-                res = dateFormat.parse(inputDateString);
-                flag=false; //todo valid input - its allow 15/15
+                dateFormat.parse(inputDateString);
+                if(isDateOk(inputDateString)) {
+                    res = dateFormat.parse(inputDateString);
+                    flag = false;
+                }
+                else
+                    System.out.println("Error - Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
             } catch (ParseException e) {
                 System.out.println("Date Entered is not in the Form dd/MM-hh:mm");
-                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
+                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
                 scanner.nextLine();
             } catch (Exception e) {
-                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)"); //todo this date
+                System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
                 scanner.nextLine();} //4.2
         }
 
         return res;
+    }
+
+    private boolean isDateOk(String inputDateString) { //only when checked..
+
+        if (inputDateString.length() != "dd/MM-hh:mm".length())
+            return false;
+
+        char[] strArray = inputDateString.toCharArray();
+
+        if (strArray[0] >= '4')
+            return false;
+        if (strArray[0] == '3' && strArray[1] >= '2') //biggest dd 31
+            return false;
+        if (strArray[3] >= '2')
+            return false;
+        if (strArray[3] == '1' && strArray[4] >= '3') //biggest mm = 12
+            return false;
+        if (strArray[6] >= '3')
+            return false;
+        if (strArray[6] == '2' && strArray[7] >= '5') //biggest hh 24 == 00
+            return false;
+        if (strArray[9] >= '6')
+            return false;
+
+     return true;
     }
 
     private StoreInfo checkValidStore() {
@@ -394,7 +428,6 @@ public class SDMConsoleUI {
         return res;
     }
 
-
     private void DeleteItemFromStore() { //bonus
         try {
             simplePrintOfAllStores();
@@ -478,10 +511,12 @@ public class SDMConsoleUI {
 
     private void showAllOrders() {
         try {
-
             int i = 1;
             StringBuilder str = new StringBuilder();
             List<OrderInfo> OrderList= MainSDMSystem.getListOfAllOrderInSystem();
+            SimpleDateFormat dateFormat = new SimpleDateFormat();
+
+            dateFormat.applyPattern("dd/MM-hh:mm");
             printLineOfStars();
             if (OrderList.isEmpty())
                 System.out.println("No Orders In System Yet!");
@@ -489,7 +524,7 @@ public class SDMConsoleUI {
                 for (OrderInfo CurOrder : OrderList) {
                     str.append(i++ + ". ");
                     str.append("Order #" + CurOrder.m_OrderSerialNumber + " at ");
-                    str.append(CurOrder.m_Date);
+                    str.append(dateFormat.format(CurOrder.m_Date));
                     if (CurOrder.Stores.size() == 1)
                         str.append(" From "+ CurOrder.Stores.get(0));
                     else {
@@ -500,9 +535,9 @@ public class SDMConsoleUI {
                     }
 
                     str.append("\nThe Number of Items in Order: " + CurOrder.m_amountOfItems +
-                            "\n Cost of only Items: " + df.format(CurOrder.m_ItemsPrice) +
-                            "\n Cost of Shipping: " + df.format(CurOrder.m_ShippingPrice) +
-                            "\n Cost of Total Order: " + df.format(CurOrder.m_TotalPrice));
+                            "\n-Cost of only Items: " + df.format(CurOrder.m_ItemsPrice) +
+                            "\n-Cost of Shipping: " + df.format(CurOrder.m_ShippingPrice) +
+                            "\n-Cost of Total Order: " + df.format(CurOrder.m_TotalPrice));
                     printLineOfStars();
                     System.out.println(str);
                     str = new StringBuilder();

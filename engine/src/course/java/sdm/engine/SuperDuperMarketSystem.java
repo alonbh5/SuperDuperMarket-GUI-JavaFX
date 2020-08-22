@@ -4,6 +4,7 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
 import javax.management.openmbean.*;
+import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -243,13 +244,17 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public boolean UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
+    public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
     ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
             StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException//todo throw exception from method...
     {
-        SuperDuperMarketDescriptor superDuperMarketDescriptor = course.java.sdm.engine.InfoLoader.UploadFile(XMLPath);
+        SuperDuperMarketDescriptor superDuperMarketDescriptor = null;
+        try {
+            superDuperMarketDescriptor = InfoLoader.UploadFile(XMLPath);
+        } catch (JAXBException e) {
+            throw new NoValidXMLException();
+        }
         CopyInfoFromXMLClasses(superDuperMarketDescriptor);
-        return !locked;
     }
 
     private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
