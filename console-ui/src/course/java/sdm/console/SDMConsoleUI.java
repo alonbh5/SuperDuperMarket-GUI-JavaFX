@@ -18,11 +18,13 @@ public class SDMConsoleUI {
     //todo check all exceptions is checked
     //todo scanner is only nextline
 
-    SuperDuperMarketSystem MainSDMSystem;
-    Scanner scanner = new Scanner(System.in);
-    ConsoleMenuBuilder MainMenu = new ConsoleMenuBuilder("Super Duper Market");
+    private SuperDuperMarketSystem MainSDMSystem;
+    private Scanner scanner = new Scanner(System.in);
+    private ConsoleMenuBuilder MainMenu = new ConsoleMenuBuilder("Super Duper Market");
+    private DecimalFormat df = new DecimalFormat();
 
     public SDMConsoleUI() {
+        df.setMaximumFractionDigits(2);
         BuildMainMenu();
         MainSDMSystem = new SuperDuperMarketSystem();
         MainMenu.Show();
@@ -62,9 +64,10 @@ public class SDMConsoleUI {
             str = scanner.next();
             if(checkValidXmlNameEnding(str)) {
                 //str = "/files1/ex1-big.xml";
-                str = "/files1/ex1-error-3.6.xml";
+               // str = "/files1/ex1-error-3.6.xml";
                 try {
                     MainSDMSystem.UploadInfoFromXML(str);
+                    System.out.println("XML Loaded Successfully!");
                     flag = false;
                 } catch (PointOutOfGridException e) {
                     System.out.println("Error! - Location is not in [0-50]!!");
@@ -82,7 +85,7 @@ public class SDMConsoleUI {
                 } catch (ItemIsNotSoldAtAllException e) {
                     System.out.println("Error! -Item #"+e.ItemID + "("+e.ItemName+") has no store that sell it");
                 } catch (StoreItemNotInSystemException e) {
-                    System.out.println("Error! - Some Store is trying to sell an item that's not in system ("+e.ItemIdInput+")");
+                    System.out.println("Error! - Store #"+e.StoreIdInput+" is trying to sell an item that's not in system (Item #"+e.ItemIdInput+")");
                 } catch (WrongPayingMethodException e) {
                     System.out.println("Error! - Wrong input Paying method - "+e.PayingInput);
                 } catch (DuplicateItemIDException e) {
@@ -95,31 +98,41 @@ public class SDMConsoleUI {
             else
                 System.out.println("Error - not Type XML (needs to end with <xml name>.xml");
         }
+        if (MainSDMSystem.isLocked())
+            System.out.println("System is Locked!");
+        else
+            System.out.println("System Unlocked!");
+
     }
 
+    private void simplePrintOfAllStores () throws NoValidXMLException {
+        List<StoreInfo> listOfAllStoresInSystem = MainSDMSystem.getListOfAllStoresInSystem();
+
+        if (listOfAllStoresInSystem.isEmpty()) {
+            System.out.println("Cant Use This Option - No Store in System Yet");
+            return;
+        }
+
+        for (StoreInfo curStore : listOfAllStoresInSystem)
+            System.out.println("store #"+curStore.StoreID+ " - "+curStore.Name+" PPK is "+curStore.PPK);
+
+    }
 
     private void StaticOrder() {
 
         try {
-            List<StoreInfo> listOfAllStoresInSystem = MainSDMSystem.getListOfAllStoresInSystem();
             Date inputDate;
             Point curLocation;
-            if (listOfAllStoresInSystem.isEmpty()) {
-                System.out.println("Cant Use This Option - No Store in System Yet");
-                return;
-            }
 
-            for (StoreInfo curStore : listOfAllStoresInSystem)
-                System.out.println("store #"+curStore.StoreID+ " - "+curStore.Name+" PPK is "+curStore.PPK);
-
+            simplePrintOfAllStores();
             System.out.println("Please Type Store ID from the list above:");
 
             StoreInfo StoreChosen = checkValidStore();//4.1
             inputDate = getValidDate(); //4.2
             curLocation = getValidPoint(); //4.3
             Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
-
             double ppk = MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation);
+
             if (approveOrder(ItemsChosen,ppk))//4.5
             {
                 MainSDMSystem.addStaticOrderToSystem(ItemsChosen,StoreChosen,curLocation,inputDate); //leahed many item to one!
@@ -134,7 +147,7 @@ public class SDMConsoleUI {
         } catch (StoreDoesNotSellItemException e) {
             System.out.println("There was a problem - the store does not sell : "+e.StoreID);
         } catch (PointOutOfGridException e) {
-            System.out.println("Current loction is not on grid [0-50] "+e.PointReceived);
+            System.out.println("Current location is not on grid [0-50] "+e.PointReceived);
         }
     }
 
@@ -159,7 +172,10 @@ public class SDMConsoleUI {
             if (!SuperDuperMarketSystem.isCoordinateInRange(res))
                 System.out.println("Please Enter Points between 0-50");
             else
-                flag=false;
+                if (MainSDMSystem.isLocationTaken(res))
+                    System.out.println("There is a Store at this Location - try Again");
+                else
+                    flag = false;
         }
         return res;
     }
@@ -231,26 +247,20 @@ public class SDMConsoleUI {
 
     private Collection<ItemInOrderInfo> getValidItemsForOrder(StoreInfo storeChosen) {
 
-        List<ItemInfo> allItem = null;
+
         long ItemID;
         double amountWanted = 0;
         Map<Long,ItemInOrderInfo> Basket = new HashMap<>();
         boolean flag = true;
         try {
-            allItem = MainSDMSystem.getListOfAllItems();
+
+        printLineOfEqual();
+        printAllItemsWithFilterOfStore(storeChosen);
+        printLineOfEqual();
+
         } catch (NoValidXMLException e) {
             System.out.println("Please Upload a Valid XML before Trying this Options!"); //can ignore here..
         }
-
-        printLineOfEqual();
-        for (ItemInfo curItem : allItem) {
-            System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
-            if (MainSDMSystem.isItemSoldInStore(storeChosen.StoreID, curItem.serialNumber))
-                System.out.println(" Price in Store - " + MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, curItem.serialNumber));
-            else
-                System.out.println(" Item is Not Being Sold In Store");
-        }
-        printLineOfEqual();
 
 
         while (flag) {
@@ -310,8 +320,19 @@ public class SDMConsoleUI {
         return Basket.values();
     }
 
+    private void printAllItemsWithFilterOfStore(StoreInfo storeChosen) throws NoValidXMLException {
+        List<ItemInfo> allItem = MainSDMSystem.getListOfAllItems();
 
-    private long getValidIDNumber ()
+        for (ItemInfo curItem : allItem) {
+            System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
+            if (MainSDMSystem.isItemSoldInStore(storeChosen.StoreID, curItem.serialNumber))
+                System.out.println(" Price in Store - " + MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, curItem.serialNumber));
+            else
+                System.out.println(" Item is Not Being Sold In Store");
+        }
+    }
+
+    private long getValidIDNumber () 
     {
         boolean flag= true;
         long res = 0;
@@ -330,15 +351,129 @@ public class SDMConsoleUI {
         return res;
     }
     private void DynamicOrder() { //bonus
-    }
+
+    } //bonus
 
     private void AddItemToStore() { //bonus
+        try {
+            simplePrintOfAllStores();
+            System.out.println("Please Type Store ID from the list above for which you wish to add an Item To:");
+            StoreInfo StoreChosen = checkValidStore();
+            printAllItemsWithFilterOfStore(StoreChosen);
+            System.out.println("Please Type Item ID from the list above that not being sold at store and you want to add it to store:");
+            long ItemID = getItemNotInStore(StoreChosen);
+            System.out.println("Please Enter Price for item:");
+            double price =getPosPrice();
+            MainSDMSystem.addItemToStore(StoreChosen.StoreID,new ItemInStoreInfo(ItemID,price));
+            System.out.println("New Item Added To System!");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (NegativePriceException e) {
+            System.out.println("Error - Negtice Price "+e.PriceReceived);
+        } catch (DuplicateItemInStoreException e) {
+            System.out.println("This Item is Already in Store - if You Want Go back and Choose the 'Change Price' Option");
+        } catch (StoreItemNotInSystemException e) {
+            System.out.println("Error - the item you picked is not in System");
+        }
     }
+
+    private long getItemNotInStore(StoreInfo storeChosen) {
+        boolean flag = true;
+        long res = -1;
+
+        while (flag) {
+            res = getValidIDNumber();
+            if (storeChosen.isItemIDinStore(res))
+                System.out.println("Please Choose item ID from the list above that's not sold in store!");
+            else
+                if(MainSDMSystem.isItemInSystem(res))
+                     flag=false;
+                else
+                    System.out.println("Please Choose item ID from the list above! (The Number after #xxxxxxx)");
+        }
+        return res;
+    }
+
 
     private void DeleteItemFromStore() { //bonus
+        try {
+            simplePrintOfAllStores();
+            System.out.println("Please Type Store ID from the list above for which you wish to delete an item from:");
+            StoreInfo StoreChosen = checkValidStore();
+            printAllItemsFromStore(StoreChosen);
+            System.out.println("Please Type Item ID from the list above you wish to delete from Store:");
+            long ItemID = getValidItemFromStore(StoreChosen);
+            MainSDMSystem.DeleteItemFromStore(ItemID,StoreChosen.StoreID);
+            System.out.println("Item has been deleted!");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (ItemIsNotSoldAtAllException e) {
+            System.out.println("This Item is not being sold at this store!.");
+        } catch (StoreDoesNotSellItemException e) {
+            System.out.println("Sorry! This is the only Store that sell this Item - Deletion is not possible.");
+        }
+
+    } //bonus
+
+    private long getValidItemFromStore(StoreInfo storeChosen) {
+
+        boolean flag = true;
+        long res = -1;
+
+        while (flag) {
+            res = getValidIDNumber();
+            if (storeChosen.isItemIDinStore(res))
+                flag = false;
+            else
+                System.out.println("Please Choose item ID from the list above! (The Number after #xxxxxxx)");
+        }
+        return res;
     }
 
-    private void ChangeItemPrice() { //bonus
+    private void ChangeItemPrice()  { //bonus
+        try {
+            simplePrintOfAllStores();
+            System.out.println("Please Type Store ID from the list above for which you wish to Change Price of an item from:");
+            StoreInfo StoreChosen = checkValidStore();
+            printAllItemsFromStore(StoreChosen);
+            System.out.println("Please Type Item ID from the list above you wish to Change Price:");
+            long ItemID = getValidItemFromStore(StoreChosen);
+            System.out.println("Please Enter your new Price:");
+            double newPrice = getPosPrice();
+            MainSDMSystem.ChangePrice(ItemID,StoreChosen.StoreID,newPrice);
+            System.out.println("Item Price has been Changed!");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        }  catch (StoreDoesNotSellItemException e) {
+            System.out.println("Sorry! This is the only Store that sell this Item - Deletion is not possible.");
+        } catch (NegativePriceException e) {
+            System.out.println("Error - Negative Price Received by System!");
+        }
+    } //bonus
+
+    private double getPosPrice() {
+        boolean flag= true;
+        double res = 0;
+        while (flag)
+        {
+            try {
+                res = scanner.nextDouble();
+                if (res <= 0)
+                    System.out.println("Please Enter a Positive Number");
+                else
+                    flag =false;
+            }catch (Exception e) {
+                System.out.println("Please enter a number!");
+                scanner.nextLine();
+            }}
+        return res;
+    }
+
+    private void printAllItemsFromStore (StoreInfo storeToShow)
+    {
+        int i=1;
+        for (ItemInStoreInfo curItem : storeToShow.Items)
+            System.out.println(i++ +". "+curItem.Name + " ID #"+curItem.serialNumber+" Cost "+df.format(curItem.PriceInStore)+".");
     }
 
     private void showAllOrders() {
@@ -365,9 +500,9 @@ public class SDMConsoleUI {
                     }
 
                     str.append("\nThe Number of Items in Order: " + CurOrder.m_amountOfItems +
-                            "\n Cost of only Items: " + CurOrder.m_ItemsPrice +
-                            "\n Cost of Shipping: " + CurOrder.m_ShippingPrice +
-                            "\n Cost of Total Order: " + CurOrder.m_TotalPrice);
+                            "\n Cost of only Items: " + df.format(CurOrder.m_ItemsPrice) +
+                            "\n Cost of Shipping: " + df.format(CurOrder.m_ShippingPrice) +
+                            "\n Cost of Total Order: " + df.format(CurOrder.m_TotalPrice));
                     printLineOfStars();
                     System.out.println(str);
                     str = new StringBuilder();
@@ -385,8 +520,7 @@ public class SDMConsoleUI {
 
         try {
             int i = 1;
-            DecimalFormat df = new DecimalFormat();
-            df.setMaximumFractionDigits(2);
+
             StringBuilder str = new StringBuilder();
             List<ItemInfo> itemsList= MainSDMSystem.getListOfAllItems();
 
@@ -415,8 +549,6 @@ public class SDMConsoleUI {
     private void showAllStore () {
         try {
             int i = 1;
-            DecimalFormat df = new DecimalFormat();
-            df.setMaximumFractionDigits(2);
             StringBuilder str = new StringBuilder();
             List<StoreInfo> StoresList = MainSDMSystem.getListOfAllStoresInSystem();
 
@@ -429,8 +561,8 @@ public class SDMConsoleUI {
                     str.append(i++ + ". ");
 
                     str.append("Store #" + CurStore.StoreID + " \""+ CurStore.Name + "\" \n" +
-                            "PPK is: " + CurStore.PPK +
-                            " and So Far her Profit from Shipping is :" + CurStore.profitFromShipping + "\n");
+                            "PPK is: " + CurStore.PPK + ", Location on Grid is ("+CurStore.locationCoordinate.x+","+CurStore.locationCoordinate.y+
+                            ")\nSo Far her Profit from Shipping is :" + df.format(CurStore.profitFromShipping) + "\n");
 
                     if (CurStore.Items.isEmpty())
                         str.append("Does Not Sell Items Yet!\n");
@@ -438,7 +570,7 @@ public class SDMConsoleUI {
                         str.append("Selling Items:\n");
                         for (ItemInStoreInfo curItem : CurStore.Items)
                             str.append(curItem.Name + " #" + curItem.serialNumber + " Paying method is by " + curItem.PayBy.toLowerCase() +
-                                    " and it's cost " + curItem.PriceInStore + " , Sold " + ((int) curItem.SoldCounter) + " times. \n");
+                                    " and it's cost " + df.format(curItem.PriceInStore) + " , Sold " + ((int) curItem.SoldCounter) + " times. \n");
                     }
 
                     if (CurStore.OrderHistory.isEmpty())

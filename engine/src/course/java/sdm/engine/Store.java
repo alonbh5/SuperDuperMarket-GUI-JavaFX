@@ -158,4 +158,18 @@ public class Store implements HasName, Coordinatable{
     public int hashCode() {
         return Objects.hash(m_StoreID);
     }
+
+    void DeleteItem(long itemID) {
+
+        if (!m_items.containsKey(itemID))
+            throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
+
+        m_items.remove(itemID);
+    }
+
+    public void changePrice(long itemID, double newPrice) {
+        if (!m_items.containsKey(itemID))
+            throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
+        m_items.get(itemID).setPrice(newPrice);
+    }
 }

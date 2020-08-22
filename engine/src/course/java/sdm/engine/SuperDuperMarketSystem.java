@@ -58,6 +58,14 @@ public class SuperDuperMarketSystem {
         }
     }
 
+    private void UpdateSoldCounterInStore(Order newOrder) {
+        Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
+
+        for (ProductInOrder curItem : AllItemsFromOrder) {
+            curItem.getProductInStore().addAmount(curItem.getAmountByPayingMethod());
+        }
+    }
+
     public void AddNewStore (Store newStore) throws PointOutOfGridException,KeyAlreadyExistsException {
         if (m_SystemGrid.containsKey(newStore.getCoordinate()))
             throw (new KeyAlreadyExistsException("There is a Store at Coordinate (" + newStore.getCoordinate() + ") in system "));
@@ -70,11 +78,18 @@ public class SuperDuperMarketSystem {
         m_StoresInSystem.put(newStore.getStoreID(),newStore);
     }
 
-    private Store getStoreByID (Long StoreID)
+    private Store getStoreByID (Long StoreID) throws InvalidKeyException
     {
         if (isStoreInSystem(StoreID))
             return m_StoresInSystem.get(StoreID);
         throw  ( new InvalidKeyException("Store #"+StoreID+" is not in System"));
+    }
+
+    private ProductInSystem getItemByID (Long ItemID) throws InvalidKeyException
+    {
+        if (isItemInSystem(ItemID))
+            return m_ItemsInSystem.get(ItemID);
+        throw  ( new InvalidKeyException("Item #"+ItemID+" is not in System"));
     }
 
     public boolean isItemInSystem (long i_serialNumber)
@@ -134,16 +149,11 @@ public class SuperDuperMarketSystem {
                 .average().getAsDouble();
     }
 
-    public void addItemToStore (Long StoreID,ProductInStore productToAdd)
-    {
-        try {
+    private void addItemToStore (Long StoreID,ProductInStore productToAdd) throws NegativePriceException {
+
             Store storeToAddTo = m_StoresInSystem.get(StoreID);
             storeToAddTo.addItemToStore(productToAdd);
             m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
-        }
-        catch (Exception e){
-            //todo catch
-        }
     }
 
     private void addProductToOrder (Long OrderID,ProductInOrder productToAdd)
@@ -303,7 +313,7 @@ public class SuperDuperMarketSystem {
             if (itemPrice<=0)
                 throw new NegativePriceException(itemPrice);
             if (!isItemInSystem(ItemID))
-                throw new StoreItemNotInSystemException(ItemID);
+                throw new StoreItemNotInSystemException(ItemID,newStore.getStoreID());
             if (newStore.isItemInStore(ItemID))
                 throw new DuplicateItemInStoreException(ItemID);
 
@@ -409,6 +419,57 @@ public class SuperDuperMarketSystem {
             m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(1);
 
         m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
-        UpdateShippingProfitAfterOrder(newOrder);
+        UpdateShippingProfitAfterOrder(newOrder); //update shipping profit
+        UpdateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus
+
+        Store storeByID = getStoreByID(storeID);
+        ProductInSystem itemByID = getItemByID(itemID);
+
+        if (!storeByID.isItemInStore(itemID))
+            throw new StoreDoesNotSellItemException(storeID);
+
+        if (itemByID.getNumberOfSellingStores() == 1)
+            throw new ItemIsNotSoldAtAllException(itemByID.getSerialNumber(), itemByID.getItem().getName());
+
+        storeByID.DeleteItem(itemID);
+        m_ItemsInSystem.get(itemID).removeSellingStore();
+    }
+
+    public void ChangePrice(long itemID, long storeID, double newPrice) throws NegativePriceException, StoreDoesNotSellItemException {
+        Store storeByID = getStoreByID(storeID);
+        ProductInSystem itemByID = getItemByID(itemID);
+
+        if (!storeByID.isItemInStore(itemID))
+            throw new StoreDoesNotSellItemException(storeID);
+        if (newPrice<=0)
+            throw new NegativePriceException(newPrice);
+
+        storeByID.changePrice(itemID,newPrice);
+    }
+
+    public void addItemToStore(long storeID, ItemInStoreInfo itemInStoreInfo) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
+        Store storeByID = getStoreByID(storeID);
+        long itemID = itemInStoreInfo.serialNumber;
+        double Price = itemInStoreInfo.PriceInStore;
+        ProductInSystem itemByID = getItemByID(itemID);
+
+        if (!isItemInSystem(itemID))
+            throw new StoreItemNotInSystemException(itemID,storeID);
+
+        if (storeByID.isItemInStore(itemID))
+            throw new DuplicateItemInStoreException(storeID);
+
+        if (Price<=0)
+            throw new NegativePriceException(Price);
+
+        ProductInStore newProduct = new ProductInStore(itemByID.getItem(),Price,storeByID);
+        addItemToStore(storeID,newProduct);
     }
 }

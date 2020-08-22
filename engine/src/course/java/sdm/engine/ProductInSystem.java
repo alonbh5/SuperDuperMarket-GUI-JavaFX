@@ -31,4 +31,8 @@ public class ProductInSystem {
     void addSellingStore() {NumberOfSellingStores++;}
 
     void addTimesSold(int amountToAdd) {AmountOfItemWasSold+=amountToAdd;}
+
+    public void removeSellingStore() {
+        NumberOfSellingStores--;
+    }
 }

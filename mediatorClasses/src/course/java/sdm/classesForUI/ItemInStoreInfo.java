@@ -16,4 +16,12 @@ public class ItemInStoreInfo {
         PriceInStore = priceInStore;
         SoldCounter = soldCount;
     }
+
+    public ItemInStoreInfo(long serialNumber, double priceInStore) {
+        this.serialNumber = serialNumber;
+        PriceInStore = priceInStore;
+        this.Name=null;
+        this.PayBy=null;
+        this.SoldCounter=0;
+    }
 }

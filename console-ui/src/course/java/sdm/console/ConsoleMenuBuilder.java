@@ -79,12 +79,13 @@ public class ConsoleMenuBuilder {
             if (r_MenuItems.get(choice).IsMenu()) {
                 quit = true;
             } else {
-                System.out.println("Press Enter to continue..."); // todo fix enter will continue
-                try {
-                    System.in.read();
+                //System.out.println("Press Enter to continue..."); // todo fix enter will continue
+                System.out.println("____________________________________________________________________________________________________________________________________");
+                /*try {
+                    //System.in.read();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 printMenu();
             }
         }

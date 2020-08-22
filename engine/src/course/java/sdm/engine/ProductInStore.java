@@ -21,6 +21,8 @@ public class ProductInStore {
         return pricePerUnit;
     }
 
+
+
     public Item getItem() {
         return item;
     }
@@ -56,6 +58,10 @@ public class ProductInStore {
     @Override
     public int hashCode() {
         return Objects.hash(item, pricePerUnit, store, amountSoldInStore);
+    }
+
+    public void setPrice(double newPrice) {
+        this.pricePerUnit = newPrice;
     }
 }
 
