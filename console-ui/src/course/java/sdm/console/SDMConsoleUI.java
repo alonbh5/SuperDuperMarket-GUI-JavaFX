@@ -44,8 +44,8 @@ public class SDMConsoleUI {
         NewOrderMenu.AddMenuItem("Static Order",this::StaticOrder);
         NewOrderMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
 
-        LoadAndSaveOrderMenu.AddMenuItem("Save Orders XML",this::SaveOrderToXML);
-        LoadAndSaveOrderMenu.AddMenuItem("Load Orders XML",this::LoadOrderToXML);
+        LoadAndSaveOrderMenu.AddMenuItem("Save Orders XML",this::SaveOrderToFile);
+        LoadAndSaveOrderMenu.AddMenuItem("Load Orders XML",this::LoadOrderToFile);
         
         MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
@@ -333,7 +333,7 @@ public class SDMConsoleUI {
         }
     } //6-3 bonus
 
-    private void SaveOrderToXML() {
+    private void SaveOrderToFile() {
         if (MainSDMSystem.isLocked()) {
 
             System.out.println("Please Upload a Valid XML before Trying this Options!");
@@ -347,24 +347,21 @@ public class SDMConsoleUI {
         System.out.println("Please Enter Full Path You Wish To Save Order (XML file will be created there)");
         String strPath = scanner.nextLine();
         strPath="C:\\Users\\alon8\\Desktop\\ga ga\\files1\\orders.xml";
-        MainSDMSystem.SaveOrdersToXml(strPath);
+        MainSDMSystem.SaveOrdersToBin(strPath);
 
     } //7-1 bonus
 
-    private void LoadOrderToXML() {
+    private void LoadOrderToFile() {
         if (MainSDMSystem.isLocked()) {
-
             System.out.println("Please Upload a Valid XML before Trying this Options!");
             return;
         }
-
-
-        System.out.println("Please Enter Full Path of Order (XML File)");
+        System.out.println("Please Enter Full Path of Order File. NOTE - Orders Will Be Added To System And Will Not Overwrite Them");
         String strPath = scanner.nextLine();
         if (checkValidXmlNameEnding(strPath))
             System.out.println("Please Enter Path That's Ends With ..<Path>../<File Name>.xml");
         else
-            MainSDMSystem.isLocked(); //todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            MainSDMSystem.LoadOrderFromFile(); //todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     } //7-2 bonus
 
     //------------------------------------------------------------------------------

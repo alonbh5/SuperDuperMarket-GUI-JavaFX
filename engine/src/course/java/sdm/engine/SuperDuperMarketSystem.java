@@ -4,12 +4,11 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
 import javax.management.openmbean.*;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import java.awt.*;
 import java.io.File;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.file.*;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.List;
 public class SuperDuperMarketSystem {
     //todo access modifier this is the only public!
     //todo make serializable interface?
+    //todo delete * in import
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
@@ -40,22 +40,6 @@ public class SuperDuperMarketSystem {
     public double CalculatePPK (Long FromStoreID, Point curLocation)
     {
         return CalculatePPK(getStoreByID(FromStoreID),curLocation);
-    }
-
-    private void UpdateShippingProfitAfterOrder(Order newOrder) {
-        Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
-
-        for (Store curStore : AllStoresFromOrder) {
-            curStore.newShippingFromStore(CalculatePPK(curStore,newOrder.getCoordinate()));
-        }
-    }
-
-    private void UpdateSoldCounterInStore(Order newOrder) {
-        Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
-
-        for (ProductInOrder curItem : AllItemsFromOrder) {
-            curItem.getProductInStore().addAmount(curItem.getAmountByPayingMethod());
-        }
     }
 
     private Store getStoreByID (Long StoreID) throws InvalidKeyException
@@ -335,6 +319,22 @@ public class SuperDuperMarketSystem {
         UpdateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
     }
 
+    private void UpdateShippingProfitAfterOrder(Order newOrder) {
+        Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
+
+        for (Store curStore : AllStoresFromOrder) {
+            curStore.newShippingFromStore(CalculatePPK(curStore,newOrder.getCoordinate()));
+        }
+    }
+
+    private void UpdateSoldCounterInStore(Order newOrder) {
+        Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
+
+        for (ProductInOrder curItem : AllItemsFromOrder) {
+            curItem.getProductInStore().addAmount(curItem.getAmountByPayingMethod());
+        }
+    }
+
     public boolean isLocked() {
         return locked;
     }
@@ -433,26 +433,45 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
     }
 
-    private void crateNewOrderInSystem(SDMSell order)  {
+    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException {
+        if (locked)
+            throw new NoValidXMLException();
+
+        Path myPath = Paths.get(strPath);
+        File theFile = myPath.toFile();
+        if (!theFile.exists())
+            throw new FileNotFoundException();
+        Collection<Order> NewOrders;
+        FileInputStream OrderFile = new FileInputStream(theFile);
+        ObjectInputStream in = new ObjectInputStream(OrderFile);
+        NewOrders = (Collection<Order>) in.readObject();
+        CheckOrdersAndInsertToSystem(NewOrders);
+    }
+
+    private void CheckOrdersAndInsertToSystem(Collection<Order> newOrders) throws NegativePriceException {
+        for (Order curOrder : newOrders){
+            if(!isOrderInSystem(curOrder.getOrderSerialNumber())) { //if order is not in system already
+                if (curOrder.getShippingPrice() > 0 && curOrder.getItemsPrice() > 0 && curOrder.getTotalPrice() > 0) { //and all prices are ok
+                    m_OrderHistory.put(curOrder.getOrderSerialNumber(),curOrder);
+                    UpdateShippingProfitAfterOrder(curOrder); //update shipping profit
+                    UpdateSoldCounterInStore(curOrder); // updated the counter of item in the store (how many times has been sold)
+                }
+                else
+                    throw new NegativePriceException(curOrder.getTotalPrice());
+            }
+        }
 
     }
 
-    public void SaveOrdersToXml(String strPath) {
-        //create the empty file xml
-        try {
+    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException {
+        if (locked)
+            throw new NoValidXMLException();
+
         Path myPath = Paths.get(strPath);
         File myFile = myPath.toFile();
-        JAXBContext jc = JAXBContext.newInstance(Order.class);
-        Marshaller marshaller = jc.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
 
-        for(Order curOrder : m_OrderHistory.values())
-            marshaller.marshal(curOrder,System.out);
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-        //todo just to txt
-
+        FileOutputStream newFile = new FileOutputStream(myFile);
+        ObjectOutputStream out = new ObjectOutputStream(newFile);
+        out.writeObject(m_OrderHistory.values());
     }
 }
