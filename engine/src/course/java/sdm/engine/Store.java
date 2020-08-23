@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public class Store implements HasName, Coordinatable, Serializable {
+public class Store implements HasName, Coordinatable,Serializable {
 
     private final Point m_locationCoordinate;  //todo this need final?
     private final long m_StoreID;

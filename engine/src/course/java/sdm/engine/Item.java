@@ -1,8 +1,9 @@
 package course.java.sdm.engine;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public  class Item implements HasName {
+public  class Item implements HasName, Serializable {
 
     public enum payByMethod {
         AMOUNT, WEIGHT

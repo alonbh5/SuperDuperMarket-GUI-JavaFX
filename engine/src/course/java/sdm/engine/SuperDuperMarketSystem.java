@@ -3,6 +3,8 @@ package course.java.sdm.engine;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
+import sun.dc.path.PathException;
+
 import javax.management.openmbean.*;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
@@ -433,20 +435,33 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
     }
 
-    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException {
+    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException, PathException {
         if (locked)
             throw new NoValidXMLException();
 
         Path myPath = Paths.get(strPath);
+        if (myPath == null)
+            throw new PathException("Path Was Not Found");
+
+        if (!strPath.contains(".dat"))
+             throw new PathException("File Should be .dat File");
+        ObjectInputStream in = null;
+        FileInputStream OrderFile = null;
         File theFile = myPath.toFile();
         if (!theFile.exists())
             throw new FileNotFoundException();
-        Collection<Order> NewOrders;
-        FileInputStream OrderFile = new FileInputStream(theFile);
-        ObjectInputStream in = new ObjectInputStream(OrderFile);
-        NewOrders = (Collection<Order>) in.readObject();
-        CheckOrdersAndInsertToSystem(NewOrders);
+        try {
+            Collection<Order> NewOrders;
+            OrderFile = new FileInputStream(theFile);
+            in = new ObjectInputStream(OrderFile);
+            NewOrders = (Collection<Order>) in.readObject();
+            CheckOrdersAndInsertToSystem(NewOrders);
+        }finally {
+        OrderFile.close();
+        in.close();
     }
+
+}
 
     private void CheckOrdersAndInsertToSystem(Collection<Order> newOrders) throws NegativePriceException {
         for (Order curOrder : newOrders){
@@ -463,15 +478,26 @@ public class SuperDuperMarketSystem {
 
     }
 
-    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException {
+    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException, PathException {
         if (locked)
             throw new NoValidXMLException();
 
         Path myPath = Paths.get(strPath);
-        File myFile = myPath.toFile();
+        ObjectOutputStream out=null;
+        FileOutputStream newFile= null;
 
-        FileOutputStream newFile = new FileOutputStream(myFile);
-        ObjectOutputStream out = new ObjectOutputStream(newFile);
-        out.writeObject(m_OrderHistory.values());
+        if (!myPath.isAbsolute())
+            throw new PathException("Please Enter Absolute Path");
+
+        File myFile = new File(strPath+"\\Orders.dat");
+        try {
+            newFile = new FileOutputStream(myFile);
+            out = new ObjectOutputStream(newFile);
+            out.writeObject(new ArrayList(m_OrderHistory.values()));
+
+        }finally {
+            newFile.close();
+            out.close();
+        }
     }
 }

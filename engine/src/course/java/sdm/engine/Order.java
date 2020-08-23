@@ -3,10 +3,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.*;
 
 @XmlRootElement
-public class Order implements Coordinatable{
+public class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
     private Date m_Date;

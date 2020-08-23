@@ -1,8 +1,9 @@
 package course.java.sdm.engine;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ProductInOrder {
+public class ProductInOrder implements Serializable {
 
         private final ProductInStore productInStore;
         private double amountBought;

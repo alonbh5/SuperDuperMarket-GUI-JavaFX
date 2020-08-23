@@ -3,9 +3,11 @@ package course.java.sdm.console;
 import course.java.sdm.engine.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.classesForUI.*;
+import sun.dc.path.PathException;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.awt.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +31,7 @@ public class SDMConsoleUI {
         BuildMainMenu();
         MainSDMSystem = new SuperDuperMarketSystem();
         MainMenu.Show();
-    }
+    } // C:\Users\alon8\Desktop\ga ga\files1\ex1-big.xml
 
     private void BuildMainMenu ()    {
 
@@ -54,8 +56,8 @@ public class SDMConsoleUI {
         MainMenu.AddMenuItem("Show Orders History",this::showAllOrders);
         MainMenu.AddMenuItem(ChangeItemsMenu);
         MainMenu.AddMenuItem(LoadAndSaveOrderMenu);
-    }
-
+    }         //C:\\Users\\alon8\\Desktop\\ga ga\\files1\\
+// C:\\Users\\alon8\\Desktop\\ga ga\\files1\\Orders.dat
     //------------------------------------------------------------------------------
 
     private void UploadXML() {
@@ -96,6 +98,8 @@ public class SDMConsoleUI {
                         System.out.println("Error! - XML contains 2 Items with the same id : " + e.id);
                     } catch (NegativePriceException e) {
                         System.out.println("Error! - XML contains a Negative Price " + e.PriceReceived + " for Item!");
+                    } catch (Exception e) {
+                        System.out.println("Unknown Error!");
                     }
                 }
 
@@ -346,8 +350,18 @@ public class SDMConsoleUI {
 
         System.out.println("Please Enter Full Path You Wish To Save Order (XML file will be created there)");
         String strPath = scanner.nextLine();
-        strPath="C:\\Users\\alon8\\Desktop\\ga ga\\files1\\orders.xml";
-        MainSDMSystem.SaveOrdersToBin(strPath);
+        try {
+            MainSDMSystem.SaveOrdersToBin(strPath);
+            System.out.println("Orders Were Save Successfully to Path: "+strPath + "\\Orders.dat!");
+        } catch (IOException e) {
+            System.out.println("Error Creating File!");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (PathException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
+        }
 
     } //7-1 bonus
 
@@ -358,10 +372,23 @@ public class SDMConsoleUI {
         }
         System.out.println("Please Enter Full Path of Order File. NOTE - Orders Will Be Added To System And Will Not Overwrite Them");
         String strPath = scanner.nextLine();
-        if (checkValidXmlNameEnding(strPath))
-            System.out.println("Please Enter Path That's Ends With ..<Path>../<File Name>.xml");
-        else
-            MainSDMSystem.LoadOrderFromFile(); //todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        try {
+            MainSDMSystem.LoadOrderFromFile(strPath);
+            System.out.println("Orders Added To System!!");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (IOException e) {
+            System.out.println("Error! - File Was Not Found!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Sorry! The File Seems To Be Corrupted!");
+        } catch (NegativePriceException e) {
+            System.out.println("File Contained Negative Price in Order");
+        } catch (PathException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
+        }
+
     } //7-2 bonus
 
     //------------------------------------------------------------------------------

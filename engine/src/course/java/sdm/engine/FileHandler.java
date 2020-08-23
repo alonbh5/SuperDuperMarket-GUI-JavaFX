@@ -20,7 +20,7 @@ class FileHandler {
      static SuperDuperMarketDescriptor UploadFile (String str) throws JAXBException, NoValidXMLException {
 
 
-         Path XmlPath = Paths.get(str); // C:\Users\alon8\Desktop\ga ga\files1\ex1-big.xml
+         Path XmlPath = Paths.get(str);
          File XmlFile = XmlPath.toFile();
          if (!XmlFile.exists())
              throw new NoValidXMLException();
