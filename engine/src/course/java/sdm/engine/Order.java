@@ -76,8 +76,6 @@ public class Order implements Coordinatable, Serializable {
         m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
         m_amountOfItems += productToAdd.getAmountByPayingMethod();
-        //Sys.OnItemHadBeenSold(productToAdd.getSerialNumber(),addedAmount);
-        // todo make sure this works - updating amount sold SYstem need to take care of that!!!!
     }
 
     @Override

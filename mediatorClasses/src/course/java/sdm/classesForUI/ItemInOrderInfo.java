@@ -17,4 +17,13 @@ public class ItemInOrderInfo {
         this.amountBought = amountBought;
         PricePerUint = priceOfTotalItems;
     }
+
+    public ItemInOrderInfo(long serialNumber, double amountBought) {
+        this.serialNumber = serialNumber;
+        this.amountBought = amountBought;
+        this.PayBy = null;
+        this.Name = null;
+        this.FromStoreID=0;
+        this.PricePerUint = 0;
+    }
 }

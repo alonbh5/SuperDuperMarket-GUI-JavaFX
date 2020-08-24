@@ -195,6 +195,10 @@ public class SDMConsoleUI {
     } //3
 
     private void StaticOrder() {
+        if (MainSDMSystem.isLocked()) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+            return;
+        }
 
         try {
             Date inputDate;
@@ -228,7 +232,34 @@ public class SDMConsoleUI {
     } //4-1
 
     private void DynamicOrder() { //bonus
+        if (MainSDMSystem.isLocked())
+        {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+            return;
+        }
 
+        try {
+            Date inputDate;
+            Point curLocation;
+
+            inputDate = getValidDate(); //4.2
+            curLocation = getValidPoint(); //4.3
+            Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(); //4.4
+            if (approveDynamicOrder(MainSDMSystem.addDynamicOrderToSystem(ItemsChosen,curLocation,inputDate)))//4.5
+            {
+                MainSDMSystem.approveDynamicOrder();
+                System.out.println("Order Added To System!");
+            }
+            else
+                System.out.println("Order Was Canceled!");
+
+        } catch (ItemIsNotSoldAtAllException e) {
+            System.out.println("Item "+e.ItemName +" is not in System");
+        } catch (PointOutOfGridException e) {
+            System.out.println("Point is not in Grid");
+        } catch (NoValidXMLException e) {
+            System.out.println("Please Upload a Valid XML before Trying this Options!");
+        }
     } //4-2 bonus
 
     private void showAllOrders() {
@@ -494,7 +525,6 @@ public class SDMConsoleUI {
 
     private Collection<ItemInOrderInfo> getValidItemsForOrder(StoreInfo storeChosen) {
 
-
         long ItemID;
         double amountWanted = 0;
         Map<Long,ItemInOrderInfo> Basket = new HashMap<>();
@@ -512,7 +542,7 @@ public class SDMConsoleUI {
 
         while (flag) {
             System.out.println("Please Enter Item ID you Want to add to Basket, Enter q to Quit");
-            String str = scanner.next();
+            String str = scanner.nextLine();
             if (str.equals("q"))
                 flag = false;
             else {
@@ -555,6 +585,58 @@ public class SDMConsoleUI {
                             Basket.put(wantedItem.serialNumber,new ItemInOrderInfo(wantedItem.serialNumber,
                                     wantedItem.Name,wantedItem.PayBy,storeChosen.StoreID,
                                     amountWanted,MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, wantedItem.serialNumber)));
+                            System.out.println("Added "+ wantedItem.Name+" To Basket!");
+                        }
+
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong Input- Try Again!");
+                }
+            }
+        }
+        return Basket.values();
+    }
+
+    private Collection<ItemInOrderInfo> getValidItemsForOrder() throws NoValidXMLException {
+
+        long ItemID;
+        double amountWanted = 0;
+        Map<Long,ItemInOrderInfo> Basket = new HashMap<>();
+        boolean flag = true;
+
+        printLineOfEqual();
+        printAllItemsSimple();
+        printLineOfEqual();
+
+        while (flag) {
+            System.out.println("Please Enter Item ID you Want to add to Basket, Enter q to Quit");
+            String str = scanner.nextLine();
+            if (str.equals("q"))
+                flag = false;
+            else {
+                try{
+                    ItemID = Long.parseLong(str);
+                    if (!MainSDMSystem.isItemInSystem(ItemID))
+                        System.out.println("Item #"+ItemID + " is not sold in system!");
+                    else{
+                        ItemInfo wantedItem = MainSDMSystem.getItemInfo(ItemID);
+                        if (wantedItem.PayBy.toLowerCase().equals("amount"))
+                        {
+                            System.out.println("Please Enter How Many "+wantedItem.Name+"'s you want");
+                            amountWanted = (double)getValidIDNumber();
+                        }
+                        else
+                        {
+                            System.out.println("Please Enter How Many Kg of " +wantedItem.Name+" You Want (dec. is possible)");
+                            amountWanted = getPosPrice();
+                        }
+                        if (Basket.containsKey(wantedItem.serialNumber)) {
+                            System.out.println("Already in Basket - Adding "+ amountWanted);
+                            Basket.get(wantedItem.serialNumber).amountBought += amountWanted;
+                        }
+                        else
+                        {
+                            Basket.put(wantedItem.serialNumber,new ItemInOrderInfo(wantedItem.serialNumber, amountWanted));
                             System.out.println("Added "+ wantedItem.Name+" To Basket!");
                         }
 
@@ -623,6 +705,13 @@ public class SDMConsoleUI {
             else
                 System.out.println(" Item is Not Being Sold In Store");
         }
+    }
+
+    private void printAllItemsSimple() throws NoValidXMLException {
+        List<ItemInfo> allItem = MainSDMSystem.getListOfAllItems();
+
+        for (ItemInfo curItem : allItem)
+            System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
     }
 
     private void printAllItemsFromStore (StoreInfo storeToShow)  {
@@ -701,12 +790,30 @@ public class SDMConsoleUI {
         System.out.println(String.format("Shipping will Cost you %.2f",PPK));
         printLineOfStars();
 
-        System.out.println("Type Y to Complete Order, or Anything Else To Cancel ");
+        System.out.println("Type Yes to Complete Order, or Anything Else To Cancel ");
         String ans =  scanner.next();
-        if (ans.equals("Y"))
+        if (ans.toLowerCase().equals("yes"))
             return true;
         return false;
+    }
+
+    private boolean approveDynamicOrder(OrderInfo DynamicOrder) {
+
+        printLineOfStars();
+        for (ItemInOrderInfo curItem : DynamicOrder.ItemsInOrder)
+            System.out.println("Item #"+curItem.serialNumber+" ("+curItem.Name+") Pay by "+curItem.PayBy+"," +
+                    "From Store #"+curItem.FromStoreID+ "Price per Unit is "+curItem.PricePerUint+" Amount is "+curItem.amountBought+"," +
+                    " Total Cost "+(curItem.amountBought*curItem.PricePerUint)+".");
 
 
+        System.out.println(String.format("Shipping will Cost you %.2f",DynamicOrder.m_ShippingPrice));
+        System.out.println(String.format("Total is %.2f",DynamicOrder.m_TotalPrice));
+        printLineOfStars();
+
+        System.out.println("Type Yes to Complete Order, or Anything Else To Cancel ");
+        String ans =  scanner.next();
+        if (ans.toLowerCase().equals("yes"))
+            return true;
+        return false;
     }
 }

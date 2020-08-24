@@ -86,9 +86,11 @@ public class Store implements HasName, Coordinatable,Serializable {
         return m_items.containsKey(ItemID);
     }
 
+    ProductInStore getItemInStore (long ItemID) {return m_items.get(ItemID);}
+
     void addOrderToStoreHistory (Order NewOrder)
     {
-        if (NewOrder.isStoreInOrder(this)) //todo add here update for amount bought from store (not only +1)
+        if (NewOrder.isStoreInOrder(this))
             m_OrderHistory.put(NewOrder.getOrderSerialNumber(), NewOrder);
         else
             throw (new IllegalArgumentException("Order #"+NewOrder.getOrderSerialNumber()+" does not buy from store #"+this.getStoreID()));

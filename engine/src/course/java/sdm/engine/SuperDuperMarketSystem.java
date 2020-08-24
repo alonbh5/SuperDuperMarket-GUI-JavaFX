@@ -20,6 +20,7 @@ public class SuperDuperMarketSystem {
     //todo access modifier this is the only public!
     //todo make serializable interface?
     //todo delete * in import
+    //todo InvalidKeyException
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
@@ -31,6 +32,7 @@ public class SuperDuperMarketSystem {
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>(); //Todo - Merge this shit
+    private Order m_tempDynamicOrder = null;
     private boolean locked = true;
 
 
@@ -162,25 +164,7 @@ public class SuperDuperMarketSystem {
         List<OrderInfo> res = new ArrayList<>();
 
         for (Order CurOrder : m_OrderHistory.values()) {
-
-            Set<Store> stores = CurOrder.getStoreSet();
-            List<String> storesList = new ArrayList<>();
-
-            Set<ProductInOrder> Items = CurOrder.getBasket();
-            List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
-
-            for (Store curStore : stores)
-                storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
-
-            for (ProductInOrder curProd : Items)
-                itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
-                        curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
-                        ,curProd.getAmountByPayingMethod(),curProd.getPriceOfTotalItems()));
-
-            OrderInfo newOrder = new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                    storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
-
-            res.add(newOrder);
+            res.add(createOrderInfo(CurOrder));
         }
 
         return res;
@@ -283,22 +267,70 @@ public class SuperDuperMarketSystem {
         return null;
     }
 
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
+    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,Point curLoc, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException {
+        //NOTE - You need to use approveDynamicOrder to insert to system after
+        Store minSellingStore;
+        ProductInSystem itemInSys;
+        Order newOrder = createEmptyOrder(curLoc,OrderDate);
 
-        if (!isCoordinateInRange(curLoc))
-            throw (new PointOutOfGridException(curLoc));
-        if (m_SystemGrid.containsKey(curLoc))
-            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
+        for (ItemInOrderInfo curItem : itemsChosen) {
+            if (!isItemInSystem(curItem.serialNumber))
+                throw new ItemIsNotSoldAtAllException(curItem.serialNumber,"Item is not in system!");
+            if (curItem.amountBought <= 0)
+                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
+
+            itemInSys = getItemByID(curItem.serialNumber); //get the item in sys
+            minSellingStore = getMinSellingStoreForItem (itemInSys.getSerialNumber()); //get min selling store
+            ProductInOrder newItem = new ProductInOrder(minSellingStore.getItemInStore(curItem.serialNumber)); //create prod in order
+            newItem.setAmountBought(curItem.amountBought); //set how much you want
+            newOrder.addProductToOrder(newItem); //added it to order
+        }
+
+        m_tempDynamicOrder = newOrder;
+        return createOrderInfo(newOrder);
+    }
+
+    private OrderInfo createOrderInfo(Order CurOrder) {
+        Set<Store> stores = CurOrder.getStoreSet();
+        List<String> storesList = new ArrayList<>();
+
+        Set<ProductInOrder> Items = CurOrder.getBasket();
+        List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
+
+        for (Store curStore : stores)
+            storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
+
+        for (ProductInOrder curProd : Items)
+            itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
+                    curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
+                    ,curProd.getAmountByPayingMethod(),curProd.getPriceOfTotalItems()));
+
+        return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
+                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
+    }
+
+    public void approveDynamicOrder()
+    {
+        m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
+        UpdateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
+        UpdateSoldCounterInStore(m_tempDynamicOrder); // updated the counter of item in the store (how many times has been sold)
+        for (Store curStore : m_tempDynamicOrder.getStoreSet())
+             curStore.addOrderToStoreHistory(m_tempDynamicOrder);
+    }
+
+    private Store getMinSellingStoreForItem(Long serialNumber) {
+        return m_ItemsInSystem.get(serialNumber).getMinSellingStore();
+    }
+
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
         if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
             throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
         if (itemsChosen.isEmpty())
             throw (new RuntimeException("Empty List"));
 
+        Order newOrder = createEmptyOrder(curLoc,OrderDate);
         Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
-        while (m_OrderHistory.containsKey(OrdersSerialGenerator))
-            OrdersSerialGenerator++;
 
-        Order newOrder = new Order (curLoc,OrdersSerialGenerator++,OrderDate);
 
         for (ItemInOrderInfo curItem : itemsChosen) {
             if (!curStore.isItemInStore(curItem.serialNumber))
@@ -319,6 +351,19 @@ public class SuperDuperMarketSystem {
         m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
         UpdateShippingProfitAfterOrder(newOrder); //update shipping profit
         UpdateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
+        curStore.addOrderToStoreHistory(newOrder);
+    }
+
+    private Order createEmptyOrder (Point curLoc, Date OrderDate) throws PointOutOfGridException {
+        if (!isCoordinateInRange(curLoc))
+            throw (new PointOutOfGridException(curLoc));
+        if (m_SystemGrid.containsKey(curLoc))
+            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
+
+        while (m_OrderHistory.containsKey(OrdersSerialGenerator))
+            OrdersSerialGenerator++;
+
+        return new Order (curLoc,OrdersSerialGenerator++,OrderDate);
     }
 
     private void UpdateShippingProfitAfterOrder(Order newOrder) {
@@ -353,7 +398,22 @@ public class SuperDuperMarketSystem {
             throw new ItemIsNotSoldAtAllException(itemByID.getSerialNumber(), itemByID.getItem().getName());
 
         storeByID.DeleteItem(itemID);
-        m_ItemsInSystem.get(itemID).removeSellingStore();
+        ProductInSystem productInSystem = m_ItemsInSystem.get(itemID);
+        productInSystem.removeSellingStore();
+
+        if (storeByID.equals(productInSystem.getMinSellingStore().getStoreID())) { //update min selling store
+            productInSystem.setMinSellingStore(null);
+            for (Store curStore : m_StoresInSystem.values()) {
+                if (curStore.isItemInStore(itemID)) {
+                    if (productInSystem.getMinSellingStore() == null)
+                        productInSystem.setMinSellingStore(curStore);
+                    else
+                        if (curStore.getPriceForItem(itemID) < productInSystem.getMinSellingStore().getPriceForItem(itemID))
+                            productInSystem.setMinSellingStore(curStore);
+                }
+            }
+        }
+
     }
 
     public void ChangePrice(long itemID, long storeID, double newPrice) throws NegativePriceException, StoreDoesNotSellItemException {
@@ -365,6 +425,8 @@ public class SuperDuperMarketSystem {
             throw new NegativePriceException(newPrice);
 
         storeByID.changePrice(itemID,newPrice);
+        if (newPrice < m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID)) //update min selling store
+            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID));
     }
 
     public void addItemToStore(long storeID, ItemInStoreInfo itemInStoreInfo) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
@@ -384,6 +446,10 @@ public class SuperDuperMarketSystem {
 
         ProductInStore newProduct = new ProductInStore(itemByID.getItem(),Price,storeByID);
         addItemToStore(storeID,newProduct);
+
+        if (Price < m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID)) //update min selling store
+            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID));
+
     }
 
     private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
@@ -394,6 +460,7 @@ public class SuperDuperMarketSystem {
             throw new DuplicatePointOnGridException(StoreLocation);
 
         Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
+        ProductInSystem sysItem=null;
 
         for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
             Long ItemID = (long)curItem.getItemId();
@@ -409,7 +476,12 @@ public class SuperDuperMarketSystem {
             Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
             ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
             newStore.addItemToStore(newItemForStore);
-            m_ItemsInSystem.get(ItemID).addSellingStore();
+            sysItem = m_ItemsInSystem.get(ItemID);
+            sysItem.addSellingStore();
+            if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.serialNumber))
+                    sysItem.setMinSellingStore(newStore);
+
+
         }
 
         if (newStore.getItemList().isEmpty())

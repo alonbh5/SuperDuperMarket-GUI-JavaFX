@@ -9,11 +9,11 @@ public class ProductInOrder implements Serializable {
         private double amountBought;
         private double PriceOfTotalItems;
 
-    public ProductInOrder(ProductInStore productInStore) {
+     ProductInOrder(ProductInStore productInStore) {
         this.productInStore = productInStore;
     }
 
-    public void setAmountBought(double amountBought) {
+     void setAmountBought(double amountBought) {
         this.amountBought = amountBought;
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
     }
