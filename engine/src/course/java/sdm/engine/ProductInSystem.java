@@ -1,13 +1,13 @@
 package course.java.sdm.engine;
 
-public class ProductInSystem {
+class ProductInSystem {
 
     private Item item;
     private int NumberOfSellingStores = 0; //addItemToStore at Store takes care to update system
     private int AmountOfItemWasSold = 0; //addProductToOrder at Order takes care to update system
     private Store MinSellingStore=null;
 
-    public ProductInSystem(Item item) {
+    ProductInSystem(Item item) {
         this.item = item;
     }
 
@@ -23,7 +23,7 @@ public class ProductInSystem {
         return NumberOfSellingStores;
     }
 
-    Long getSerialNumber () {return item.serialNumber;}
+    Long getSerialNumber () {return item.getSerialNumber();}
 
     Item.payByMethod getPayBy() {
         return item.getPayBy();
@@ -33,15 +33,15 @@ public class ProductInSystem {
 
     void addTimesSold(int amountToAdd) {AmountOfItemWasSold+=amountToAdd;}
 
-    public void removeSellingStore() {
+    void removeSellingStore() {
         NumberOfSellingStores--;
     }
 
-    public Store getMinSellingStore() {
+    Store getMinSellingStore() {
         return MinSellingStore;
     }
 
-    public void setMinSellingStore(Store minSellingStore) {
+    void setMinSellingStore(Store minSellingStore) {
         MinSellingStore = minSellingStore;
     }
 }

@@ -3,15 +3,15 @@ package course.java.sdm.engine;
 import java.io.Serializable;
 import java.util.Objects;
 
-public  class Item implements HasName, Serializable {
+class Item implements HasName, Serializable {
 
-    public enum payByMethod {
+    enum payByMethod {
         AMOUNT, WEIGHT
     }
 
-    protected final long serialNumber;
-    protected String Name;
-    protected final payByMethod PayBy;
+    private final long serialNumber;
+    private String Name;
+    private final payByMethod PayBy;
 
     Item(Long i_serialNumber,String i_Name, payByMethod e_howItsPaid) {
         this.serialNumber = i_serialNumber;
@@ -44,11 +44,11 @@ public  class Item implements HasName, Serializable {
         return Objects.hash(serialNumber);
     }
 
-    protected long getSerialNumber() {
+    long getSerialNumber() {
         return serialNumber;
     }
 
-    protected payByMethod getPayBy() {
+    payByMethod getPayBy() {
         return PayBy;
     }
 

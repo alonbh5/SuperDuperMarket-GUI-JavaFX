@@ -8,22 +8,15 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public class Store implements HasName, Coordinatable,Serializable {
+class Store implements HasName, Coordinatable,Serializable {
 
-    private final Point m_locationCoordinate;  //todo this need final?
+    private final Point m_locationCoordinate;
     private final long m_StoreID;
     private double m_profitFromShipping = 0;
     private final Map<Long,ProductInStore> m_items = new HashMap<>();
     private final Map<Long,Order> m_OrderHistory = new HashMap<>();
     private String m_Name;
     private int PPK;
-
-    //private Map<Long,Double> m_itemsPrices = new HashMap<>();
-    //private Map<Long,Integer> m_ItemsSold = new HashMap<>(); //todo this needs to work
-    //private List<> m_OrderHistory = new LinkedList<>();
-
-    //TODO how to implement price for item
-
 
     Store(Long i_serialNumber,Point i_locationCoordinate,String m_Name, int i_PPK) {
         this.m_StoreID = i_serialNumber;
@@ -40,7 +33,7 @@ public class Store implements HasName, Coordinatable,Serializable {
         return m_StoreID;
     }
 
-     double getProfitFromShipping() {
+    double getProfitFromShipping() {
         return m_profitFromShipping;
     }
 
@@ -49,7 +42,7 @@ public class Store implements HasName, Coordinatable,Serializable {
             return m_items.get(itemID);
     }
 
-     void addItemToStore (ProductInStore ProductToAdd) throws NegativePriceException {
+    void addItemToStore (ProductInStore ProductToAdd) throws NegativePriceException {
         Long itemKey = ProductToAdd.getItem().getSerialNumber();
 
         if (m_items.containsKey(itemKey))
@@ -60,7 +53,6 @@ public class Store implements HasName, Coordinatable,Serializable {
             throw (new IllegalArgumentException("the Product belongs to store #"+ProductToAdd.getStore().getStoreID()+"and does not match store #"+this.getStoreID()));
 
         m_items.put(itemKey,ProductToAdd);
-        //todo make sure when called system update sellingStore list
     }
 
     double getPriceForItem (Long ItemID)
@@ -73,7 +65,7 @@ public class Store implements HasName, Coordinatable,Serializable {
 
     double getPriceForItem (ProductInStore ItemToCheck)
     {
-        return getPriceForItem(ItemToCheck.getItem().serialNumber);
+        return getPriceForItem(ItemToCheck.getItem().getSerialNumber());
     }
 
     boolean isItemInStore (Item ItemToCheck)
@@ -126,10 +118,10 @@ public class Store implements HasName, Coordinatable,Serializable {
 
     List<ItemInStoreInfo> getItemList ()
     {
-        List<ItemInStoreInfo> res = new ArrayList<ItemInStoreInfo>();
+        List<ItemInStoreInfo> res = new ArrayList<>();
             for (ProductInStore curItem : m_items.values()) {
                 ItemInStoreInfo newItem = new ItemInStoreInfo(curItem.getSerialNumber(),curItem.getItem().getName(),
-                        curItem.getItem().PayBy.toString(),curItem.getPricePerUnit(),curItem.getAmountSold());
+                        curItem.getItem().getPayBy().toString(),curItem.getPricePerUnit(),curItem.getAmountSold());
                 res.add(newItem);
             }
             return res;
@@ -137,7 +129,7 @@ public class Store implements HasName, Coordinatable,Serializable {
 
     List<OrdersInStoreInfo> getOrderHistoryList()
     {
-        List<OrdersInStoreInfo> res = new ArrayList<OrdersInStoreInfo>();
+        List<OrdersInStoreInfo> res = new ArrayList<>();
 
         for (Order curOrder : m_OrderHistory.values())
         {
@@ -170,7 +162,7 @@ public class Store implements HasName, Coordinatable,Serializable {
         m_items.remove(itemID);
     }
 
-    public void changePrice(long itemID, double newPrice) {
+    void changePrice(long itemID, double newPrice) {
         if (!m_items.containsKey(itemID))
             throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
         m_items.get(itemID).setPrice(newPrice);

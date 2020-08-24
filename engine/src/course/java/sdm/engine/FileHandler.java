@@ -10,7 +10,7 @@ import java.io.*;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
+
 
 
 class FileHandler {
@@ -24,9 +24,7 @@ class FileHandler {
          File XmlFile = XmlPath.toFile();
          if (!XmlFile.exists())
              throw new NoValidXMLException();
-         SuperDuperMarketDescriptor superDuperMarketDescriptor = deserializeFrom(XmlFile);
-
-         return superDuperMarketDescriptor;
+         return deserializeFrom(XmlFile);
      }
 
     static SuperDuperMarketDescriptor deserializeFrom(InputStream inputStream) throws JAXBException {

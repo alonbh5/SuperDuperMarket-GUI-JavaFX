@@ -17,8 +17,6 @@ import java.util.List;
 public class SDMConsoleUI {
 
     //todo check stupid input
-    //todo check all exceptions is checked
-    //todo scanner is only nextline
 
     private SuperDuperMarketSystem MainSDMSystem;
     private Scanner scanner = new Scanner(System.in);
@@ -45,8 +43,8 @@ public class SDMConsoleUI {
         NewOrderMenu.AddMenuItem("Static Order",this::StaticOrder);
         NewOrderMenu.AddMenuItem("Dynamic Order",this::DynamicOrder);
 
-        LoadAndSaveOrderMenu.AddMenuItem("Save Orders XML",this::SaveOrderToFile);
-        LoadAndSaveOrderMenu.AddMenuItem("Load Orders XML",this::LoadOrderToFile);
+        LoadAndSaveOrderMenu.AddMenuItem("Save Orders",this::SaveOrderToFile);
+        LoadAndSaveOrderMenu.AddMenuItem("Load Orders",this::LoadOrderToFile);
         
         MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
@@ -119,7 +117,7 @@ public class SDMConsoleUI {
             StringBuilder str = new StringBuilder();
             List<StoreInfo> StoresList = MainSDMSystem.getListOfAllStoresInSystem();
 
-            printLineOfStars(); //todo if null
+            printLineOfStars();
             if (StoresList.isEmpty())
                 System.out.println("No Stores In System Yet!");
             else
@@ -146,10 +144,10 @@ public class SDMConsoleUI {
                         str.append("Order History is:\n");
                         for (OrdersInStoreInfo curOrder : CurStore.OrderHistory)
                             str.append("Order#" + curOrder.OrderSerialNumber +
-                                    "Number of Items: " + curOrder.amountOfItems +
-                                    "Cost of only Items: " + curOrder.ItemsPrice +
-                                    "Cost of Shipping: " + curOrder.ShippingPrice +
-                                    "Cost of Total Order: " + curOrder.TotalPrice + "\n");
+                                    " Number of Items: " + curOrder.amountOfItems +
+                                    " Cost of only Items: " + df.format(curOrder.ItemsPrice) +
+                                    " Cost of Shipping: " + df.format(curOrder.ShippingPrice) +
+                                    " Cost of Total Order: " + df.format(curOrder.TotalPrice) + "\n");
                     }
 
                     System.out.println(str);
@@ -157,9 +155,11 @@ public class SDMConsoleUI {
                 }
 
             printLineOfStars();
-        } catch (NoValidXMLException e) //todo more exception??
+        } catch (NoValidXMLException e)
         {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } //2
 
@@ -180,16 +180,18 @@ public class SDMConsoleUI {
                     str.append(i++ + ". ");
                     str.append(CurItem.Name +", Serial #" + CurItem.serialNumber +", Paying Method is: By " + CurItem.PayBy.toLowerCase()+".\n");
                     str.append("Being Sold in " + CurItem.NumOfSellingStores + " Stores. \n");
-                    str.append("Average Price is : " + df.format(CurItem.AvgPrice)); //todo all avg needs to be 2 digit
+                    str.append("Average Price is : " + df.format(CurItem.AvgPrice));
                     str.append("\nWas sold  : " + CurItem.SoldCount + " times.");
                     System.out.println(str);
                     str = new StringBuilder();
                 }
 
             printLineOfStars();
-        } catch (NoValidXMLException e) //todo more exception??
+        } catch (NoValidXMLException e)
         {
             System.out.println("Please Enter a Valid XML before Trying this Options!");
+        }catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } //3
 
@@ -226,6 +228,8 @@ public class SDMConsoleUI {
             System.out.println("There was a problem - the store does not sell : "+e.StoreID);
         } catch (PointOutOfGridException e) {
             System.out.println("Current location is not on grid [0-50] "+e.PointReceived);
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } //4-1
 
@@ -257,6 +261,8 @@ public class SDMConsoleUI {
             System.out.println("Point is not in Grid");
         } catch (NoValidXMLException e) {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } //4-2 bonus
 
@@ -280,9 +286,9 @@ public class SDMConsoleUI {
                         str.append(" From "+ CurOrder.Stores.get(0));
                     else {
                         int j = 1;
-                        str.append("Stores in Order are :");
+                        str.append("\nStores in Order are :\n");
                         for (String curStore : CurOrder.Stores)
-                            str.append(j++ + curStore + ".\n");
+                            str.append(j++ +") "+ curStore + ".\n");
                     }
 
                     str.append("\nThe Number of Items in Order: " + CurOrder.m_amountOfItems +
@@ -296,9 +302,11 @@ public class SDMConsoleUI {
 
             printLineOfStars();
         }
-        catch (NoValidXMLException e) //todo more exception??
+        catch (NoValidXMLException e)
         {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     }   //5
 
@@ -320,6 +328,8 @@ public class SDMConsoleUI {
             System.out.println("Sorry! This is the only Store that sell this Item - Deletion is not possible.");
         } catch (NegativePriceException e) {
             System.out.println("Error - Negative Price Received by System!");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } // 6-1 bonus
 
@@ -339,6 +349,8 @@ public class SDMConsoleUI {
             System.out.println("This Item is not being sold at this store!.");
         } catch (StoreDoesNotSellItemException e) {
             System.out.println("Sorry! This is the only Store that sell this Item - Deletion is not possible.");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
 
     } //6-2 bonus
@@ -363,6 +375,8 @@ public class SDMConsoleUI {
             System.out.println("This Item is Already in Store - if You Want Go back and Choose the 'Change Price' Option");
         } catch (StoreItemNotInSystemException e) {
             System.out.println("Error - the item you picked is not in System");
+        } catch (Exception e) {
+            System.out.println("Unknown Error!");
         }
     } //6-3 bonus
 
@@ -447,7 +461,8 @@ public class SDMConsoleUI {
         int x=-1,y=-1;
 
         while (flag) {
-            System.out.println("Please Enter Current Location On Grid (between 0-50 for X and Y)");
+            System.out.println("Please Enter Current Location On Grid (between "+SuperDuperMarketSystem.MIN_COORDINATE+"-"
+                    +SuperDuperMarketSystem.MAX_COORDINATE +"for both X and Y)");
             System.out.print("For X: ");
             String xStr = scanner.nextLine();
             System.out.print("For Y: ");
@@ -456,7 +471,6 @@ public class SDMConsoleUI {
             x = Integer.parseInt(xStr);
             y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
                 System.out.println("Wrong Input - try again");
-                scanner.nextLine();
             }
             res = new Point(x,y);
             if (!SuperDuperMarketSystem.isCoordinateInRange(res))
@@ -492,7 +506,6 @@ public class SDMConsoleUI {
             } catch (ParseException e) {
                 System.out.println("Date Entered is not in the Form dd/MM-hh:mm");
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
-                scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
                 } //4.2
@@ -560,18 +573,18 @@ public class SDMConsoleUI {
                             boolean end = false;
                             while (!end) {
                                 try {
-                                    amountWanted = scanner.nextDouble();
+                                    str=scanner.nextLine();
+                                    amountWanted = Double.parseDouble(str);
                                     if (amountWanted <= 0)
                                         System.out.println("Please Enter a Positive Number");
                                     else
                                         end = true;
                                 }catch (InputMismatchException e) {
                                     System.out.println("Not a Number! - try again");
-                                    scanner.nextLine();
                                 }
                             }
                         }
-                        scanner.nextLine();
+
 
                         if (Basket.containsKey(wantedItem.serialNumber)) {
                             System.out.println("Already in Basket - Adding "+ amountWanted);
@@ -743,7 +756,6 @@ public class SDMConsoleUI {
                 return storeInfo;
             } catch (InvalidKeyException e) {
                 System.out.println("Error - Please choose Store ID by the list above!");
-                scanner.nextLine();
             }
         }
         return null;
@@ -790,7 +802,7 @@ public class SDMConsoleUI {
         printLineOfStars();
 
         System.out.println("Type Yes to Complete Order, or Anything Else To Cancel ");
-        String ans =  scanner.next();
+        String ans =  scanner.nextLine();
         if (ans.toLowerCase().equals("yes"))
             return true;
         return false;
@@ -810,7 +822,7 @@ public class SDMConsoleUI {
         printLineOfStars();
 
         System.out.println("Type Yes to Complete Order, or Anything Else To Cancel ");
-        String ans =  scanner.next();
+        String ans =  scanner.nextLine();
         if (ans.toLowerCase().equals("yes"))
             return true;
         return false;

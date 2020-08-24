@@ -3,40 +3,40 @@ package course.java.sdm.engine;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ProductInStore implements Serializable {
+class ProductInStore implements Serializable {
 
     private final Item item;
     private double pricePerUnit;
     private final Store store;
     private double amountSoldInStore=0;
 
-    public ProductInStore(Item item, double pricePerUnit,Store store) {
+    ProductInStore(Item item, double pricePerUnit,Store store) {
         this.item = item;
         this.store =store;
         this.pricePerUnit = pricePerUnit;
     }
 
-    long getSerialNumber () {return item.serialNumber;}
+    long getSerialNumber () {return item.getSerialNumber();}
 
-    public double getPricePerUnit() {
+    double getPricePerUnit() {
         return pricePerUnit;
     }
 
 
 
-    public Item getItem() {
+    Item getItem() {
         return item;
     }
 
-    public Store getStore() {
+    Store getStore() {
         return store;
     }
 
-    public double getAmountSold() {
+    double getAmountSold() {
         return amountSoldInStore;
     }
 
-    public void addAmount (int amountToAdd)
+    void addAmount (int amountToAdd)
     {
         amountSoldInStore+=amountToAdd;
     }
@@ -53,7 +53,7 @@ public class ProductInStore implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductInStore that = (ProductInStore) o;
-        return that.getItem().serialNumber == this.item.serialNumber;
+        return that.getItem().getSerialNumber() == this.item.getSerialNumber();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ProductInStore implements Serializable {
         return Objects.hash(item, pricePerUnit, store, amountSoldInStore);
     }
 
-    public void setPrice(double newPrice) {
+    void setPrice(double newPrice) {
         this.pricePerUnit = newPrice;
     }
 }

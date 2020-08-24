@@ -1,12 +1,12 @@
 package course.java.sdm.engine;
 
-public class Person implements HasName {
+class Person implements HasName {
 
-    private final Long m_IDNumber; //TODO check that in system there is only 1 id with map
+    private final Long m_IDNumber;
     private String m_Name;
 
 
-    public Person(long i_IDNumber,String i_Name) {
+    Person(long i_IDNumber,String i_Name) {
         this.m_IDNumber = i_IDNumber;
         m_Name= i_Name;
     }
@@ -21,7 +21,7 @@ public class Person implements HasName {
         m_Name=Input;
     }
 
-    public long getIDNumber ()
+    long getIDNumber ()
     {
         return m_IDNumber;
     }

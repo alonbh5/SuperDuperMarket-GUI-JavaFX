@@ -3,7 +3,7 @@ package course.java.sdm.engine;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ProductInOrder implements Serializable {
+class ProductInOrder implements Serializable {
 
         private final ProductInStore productInStore;
         private double amountBought;
@@ -18,20 +18,20 @@ public class ProductInOrder implements Serializable {
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
     }
 
-    public void addAmountBought(double amountBought) {
+    void addAmountBought(double amountBought) {
         this.amountBought += amountBought;
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
     }
 
 
 
-    public ProductInStore getProductInStore() { return productInStore;  }
+    ProductInStore getProductInStore() { return productInStore;  }
 
-    public double getAmount() {
+    double getAmount() {
         return amountBought;
     }
 
-    public int getAmountByPayingMethod ()
+    int getAmountByPayingMethod ()
     {
         int Amount = 1;
         if (getPayBy().equals(Item.payByMethod.AMOUNT))
@@ -39,17 +39,17 @@ public class ProductInOrder implements Serializable {
         return Amount;
     }
 
-    public double getPriceOfTotalItems() {
+    double getPriceOfTotalItems() {
         return PriceOfTotalItems;
     }
 
-    public Long getSerialNumber () {return productInStore.getItem().serialNumber;}
+    Long getSerialNumber () {return productInStore.getItem().getSerialNumber();}
 
-    protected Item.payByMethod getPayBy() {
+    Item.payByMethod getPayBy() {
         return productInStore.getItem().getPayBy();
     }
 
-    // todo hash equals toString
+
 
 
     @Override

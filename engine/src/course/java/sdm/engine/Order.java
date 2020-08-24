@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 
-public class Order implements Coordinatable, Serializable {
+class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
     private Date m_Date;
@@ -67,18 +67,18 @@ public class Order implements Coordinatable, Serializable {
 
     void addProductToOrder (ProductInOrder productToAdd)
     {
+        if (!isStoreInOrder(productToAdd.getProductInStore().getStore()))
+            m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate());
         m_Basket.add(productToAdd); //add order
         m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list
         m_ItemsPrice += productToAdd.getPriceOfTotalItems();
-        if (!isStoreInOrder(productToAdd.getProductInStore().getStore()))
-             m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
         m_amountOfItems += productToAdd.getAmountByPayingMethod();
     }
 
     @Override
     public String toString() { //q5
-        return "Order#" + m_OrderSerialNumber + "at " + m_Date + //todo need to add here store but stoers with bonus!!!
+        return "Order#" + m_OrderSerialNumber + "at " + m_Date +
                 "\n Number of Items: " + m_amountOfItems +
                 "\n Cost of only Items: " + m_ItemsPrice +
                 "\n Cost of Shipping: " + m_ShippingPrice +
@@ -111,39 +111,39 @@ public class Order implements Coordinatable, Serializable {
         return Objects.hash(m_OrderSerialNumber, m_Date, m_userLocation, m_TotalPrice, m_ShippingPrice, m_ItemsPrice, m_amountOfItems, m_Basket, m_StoresInOrder);
     }
 
-    public long getM_OrderSerialNumber() {
+    long getM_OrderSerialNumber() {
         return m_OrderSerialNumber;
     }
 
-    public Date getM_Date() {
+    Date getM_Date() {
         return m_Date;
     }
 
-    public Point getM_userLocation() {
+    Point getM_userLocation() {
         return m_userLocation;
     }
 
-    public double getM_TotalPrice() {
+    double getM_TotalPrice() {
         return m_TotalPrice;
     }
 
-    public double getM_ShippingPrice() {
+    double getM_ShippingPrice() {
         return m_ShippingPrice;
     }
 
-    public double getM_ItemsPrice() {
+    double getM_ItemsPrice() {
         return m_ItemsPrice;
     }
 
-    public int getM_amountOfItems() {
+    int getM_amountOfItems() {
         return m_amountOfItems;
     }
 
-    public Set<ProductInOrder> getM_Basket() {
+    Set<ProductInOrder> getM_Basket() {
         return m_Basket;
     }
 
-    public Set<Store> getM_StoresInOrder() {
+    Set<Store> getM_StoresInOrder() {
         return m_StoresInOrder;
     }
 }

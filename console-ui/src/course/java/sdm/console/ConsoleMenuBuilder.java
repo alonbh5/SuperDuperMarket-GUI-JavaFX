@@ -79,7 +79,7 @@ public class ConsoleMenuBuilder {
             if (r_MenuItems.get(choice).IsMenu()) {
                 quit = true;
             } else {
-                //System.out.println("Press Enter to continue..."); // todo fix enter will continue
+                //System.out.println("Press Enter to continue...");
                 System.out.println("____________________________________________________________________________________________________________________________________");
                 /*try {
                     //System.in.read();

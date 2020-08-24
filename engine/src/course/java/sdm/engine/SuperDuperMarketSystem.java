@@ -1,37 +1,29 @@
 package course.java.sdm.engine;
-
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
 import sun.dc.path.PathException;
-
 import javax.management.openmbean.*;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
-import java.io.File;
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
-//todo check all throws
+
 public class SuperDuperMarketSystem {
-    //todo access modifier this is the only public!
-    //todo make serializable interface?
-    //todo delete * in import
-    //todo InvalidKeyException
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
     private static long ItemSerialGenerator = 10000;
     private static long StoreSerialGenerator = 300000;
-    private static long OrdersSerialGenerator = 5000000; //todo thing about what to do - XML chooses the Serial somethinms
+    private static long OrdersSerialGenerator = 5000000;
 
-    private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>(); //todo array or map
+    private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>();
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
-    private Map<Long,Store> m_StoresInSystem = new HashMap<>(); //Todo - Merge this shit
+    private Map<Long,Store> m_StoresInSystem = new HashMap<>();
     private Order m_tempDynamicOrder = null;
     private boolean locked = true;
 
@@ -100,7 +92,7 @@ public class SuperDuperMarketSystem {
         return (((Coordinate.x <= MAX_COORDINATE) && (Coordinate.x >= MIN_COORDINATE) && ((Coordinate.y <= MAX_COORDINATE) && (Coordinate.y >= MIN_COORDINATE))));
     }
 
-    public double getAvgPriceForItem (Long ItemID)
+    private double getAvgPriceForItem (Long ItemID)
     {
         return Arrays.stream(m_StoresInSystem.values().stream()
                 .filter(t -> t.isItemInStore(ItemID))
@@ -148,7 +140,7 @@ public class SuperDuperMarketSystem {
         {
             Item theItemObj = curItem.getItem();
             ItemInfo newItem = new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
-                    ,theItemObj.PayBy.toString(),getAvgPriceForItem(curItem.getSerialNumber()),
+                    ,theItemObj.getPayBy().toString(),getAvgPriceForItem(curItem.getSerialNumber()),
                             curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
             res.add(newItem);
         }
@@ -172,9 +164,9 @@ public class SuperDuperMarketSystem {
 
     public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
     ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
-            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException//todo throw exception from method...
+            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException
     {
-        SuperDuperMarketDescriptor superDuperMarketDescriptor = null;
+        SuperDuperMarketDescriptor superDuperMarketDescriptor;
         try {
             superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
         } catch (JAXBException e) {
@@ -259,10 +251,10 @@ public class SuperDuperMarketSystem {
         {
             ProductInSystem curItem = m_ItemsInSystem.get(itemID);
             Item theItemObj = curItem.getItem();
-            ItemInfo res = new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
-                    ,theItemObj.PayBy.toString(),getAvgPriceForItem(curItem.getSerialNumber()),
+            return new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
+                    ,theItemObj.getPayBy().toString(),getAvgPriceForItem(curItem.getSerialNumber()),
                     curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
-            return res;
+
         }
         return null;
     }
@@ -320,7 +312,7 @@ public class SuperDuperMarketSystem {
     public void approveDynamicOrder()
     {
         for (ProductInOrder curItem :m_tempDynamicOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(1);
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
 
         m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
         UpdateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
@@ -352,12 +344,11 @@ public class SuperDuperMarketSystem {
             ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
             ProductInOrder newItem = new ProductInOrder(curProd);
             newItem.setAmountBought(curItem.amountBought);
-            //todo check here also and combine if you got 2 shampoo (from the same store only!) - remember this is static order
             newOrder.addProductToOrder(newItem);
         }
 
         for (ProductInOrder curItem :newOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(1);
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
 
         m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
         UpdateShippingProfitAfterOrder(newOrder); //update shipping profit
@@ -379,17 +370,20 @@ public class SuperDuperMarketSystem {
 
     private void UpdateShippingProfitAfterOrder(Order newOrder) {
         Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
-
+        Store storeInSysAndNotInFile;
         for (Store curStore : AllStoresFromOrder) {
-            curStore.newShippingFromStore(CalculatePPK(curStore,newOrder.getCoordinate()));
+            storeInSysAndNotInFile = getStoreByID(curStore.getStoreID());
+            storeInSysAndNotInFile.newShippingFromStore(CalculatePPK(storeInSysAndNotInFile,newOrder.getCoordinate()));
         }
     }
 
     private void UpdateSoldCounterInStore(Order newOrder) {
         Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
-
+        ProductInStore ProdInSysAndNotInFile;
+        long itemID;
         for (ProductInOrder curItem : AllItemsFromOrder) {
-            curItem.getProductInStore().addAmount(curItem.getAmountByPayingMethod());
+            ProdInSysAndNotInFile = getStoreByID(curItem.getProductInStore().getStore().getStoreID()).getProductInStoreByID(curItem.getSerialNumber());
+            ProdInSysAndNotInFile.addAmount(curItem.getAmountByPayingMethod());
         }
     }
 
@@ -412,7 +406,7 @@ public class SuperDuperMarketSystem {
         ProductInSystem productInSystem = m_ItemsInSystem.get(itemID);
         productInSystem.removeSellingStore();
 
-        if (storeByID.equals(productInSystem.getMinSellingStore().getStoreID())) { //update min selling store
+        if (storeID==(productInSystem.getMinSellingStore().getStoreID())) { //update min selling store
             productInSystem.setMinSellingStore(null);
             for (Store curStore : m_StoresInSystem.values()) {
                 if (curStore.isItemInStore(itemID)) {
@@ -471,7 +465,7 @@ public class SuperDuperMarketSystem {
             throw new DuplicatePointOnGridException(StoreLocation);
 
         Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
-        ProductInSystem sysItem=null;
+        ProductInSystem sysItem;
 
         for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
             Long ItemID = (long)curItem.getItemId();
@@ -489,7 +483,7 @@ public class SuperDuperMarketSystem {
             newStore.addItemToStore(newItemForStore);
             sysItem = m_ItemsInSystem.get(ItemID);
             sysItem.addSellingStore();
-            if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.serialNumber))
+            if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.getSerialNumber()))
                     sysItem.setMinSellingStore(newStore);
 
 
@@ -523,8 +517,6 @@ public class SuperDuperMarketSystem {
             throw new NoValidXMLException();
 
         Path myPath = Paths.get(strPath);
-        if (myPath == null)
-            throw new PathException("Path Was Not Found");
 
         if (!strPath.contains(".dat"))
              throw new PathException("File Should be .dat File");
@@ -553,6 +545,12 @@ public class SuperDuperMarketSystem {
                     m_OrderHistory.put(curOrder.getOrderSerialNumber(),curOrder);
                     UpdateShippingProfitAfterOrder(curOrder); //update shipping profit
                     UpdateSoldCounterInStore(curOrder); // updated the counter of item in the store (how many times has been sold)
+                    for (ProductInOrder curItem :curOrder.getBasket())
+                        m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+                    for (Store curStore : curOrder.getStoreSet()) {
+                        Store StoreInThisSys = getStoreByID(curStore.getStoreID());
+                        StoreInThisSys.addOrderToStoreHistory(curOrder);
+                    }
                 }
                 else
                     throw new NegativePriceException(curOrder.getTotalPrice());
@@ -585,6 +583,6 @@ public class SuperDuperMarketSystem {
     }
 
     public double CalculateDistance(long storeID, Point curLocation) {
-        return   (double)getStoreByID(storeID).getCoordinate().distance(curLocation);
+        return   getStoreByID(storeID).getCoordinate().distance(curLocation);
     }
 }
