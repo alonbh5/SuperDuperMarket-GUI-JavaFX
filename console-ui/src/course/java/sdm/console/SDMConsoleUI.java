@@ -114,8 +114,10 @@ public class SDMConsoleUI {
     private void showAllStore () {
         try {
             int i = 1;
+            SimpleDateFormat dateFormat = new SimpleDateFormat();
             StringBuilder str = new StringBuilder();
             List<StoreInfo> StoresList = MainSDMSystem.getListOfAllStoresInSystem();
+            dateFormat.applyPattern("dd/MM-hh:mm");
 
             printLineOfStars();
             if (StoresList.isEmpty())
@@ -143,7 +145,8 @@ public class SDMConsoleUI {
                     else {
                         str.append("Order History is:\n");
                         for (OrdersInStoreInfo curOrder : CurStore.OrderHistory)
-                            str.append("Order#" + curOrder.OrderSerialNumber +
+                            str.append("Order #" + curOrder.OrderSerialNumber +
+                                    " At "+dateFormat.format(curOrder.Date) +
                                     " Number of Items: " + curOrder.amountOfItems +
                                     " Cost of only Items: " + df.format(curOrder.ItemsPrice) +
                                     " Cost of Shipping: " + df.format(curOrder.ShippingPrice) +
@@ -462,7 +465,7 @@ public class SDMConsoleUI {
 
         while (flag) {
             System.out.println("Please Enter Current Location On Grid (between "+SuperDuperMarketSystem.MIN_COORDINATE+"-"
-                    +SuperDuperMarketSystem.MAX_COORDINATE +"for both X and Y)");
+                    +SuperDuperMarketSystem.MAX_COORDINATE +" for both X and Y)");
             System.out.print("For X: ");
             String xStr = scanner.nextLine();
             System.out.print("For Y: ");
@@ -474,7 +477,8 @@ public class SDMConsoleUI {
             }
             res = new Point(x,y);
             if (!SuperDuperMarketSystem.isCoordinateInRange(res))
-                System.out.println("Please Enter Points between 0-50");
+                System.out.println("ERROR - Please Enter Current Location On Grid (between "+SuperDuperMarketSystem.MIN_COORDINATE+"-"
+                        +SuperDuperMarketSystem.MAX_COORDINATE +" for both X and Y)");
             else
                 if (MainSDMSystem.isLocationTaken(res))
                     System.out.println("There is a Store at this Location - try Again");
