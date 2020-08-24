@@ -1,12 +1,9 @@
 package course.java.sdm.engine;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
 
-@XmlRootElement
+
 public class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
@@ -32,7 +29,7 @@ public class Order implements Coordinatable, Serializable {
      Date getDate() {
         return m_Date;
     }
-     @XmlAttribute
+
      double getTotalPrice() {
         return m_TotalPrice;
     }
@@ -73,7 +70,8 @@ public class Order implements Coordinatable, Serializable {
         m_Basket.add(productToAdd); //add order
         m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list
         m_ItemsPrice += productToAdd.getPriceOfTotalItems();
-        m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
+        if (!isStoreInOrder(productToAdd.getProductInStore().getStore()))
+             m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate()); //todo check exc
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;
         m_amountOfItems += productToAdd.getAmountByPayingMethod();
     }

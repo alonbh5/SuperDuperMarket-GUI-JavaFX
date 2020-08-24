@@ -4,7 +4,6 @@ import course.java.sdm.engine.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.classesForUI.*;
 import sun.dc.path.PathException;
-
 import javax.management.openmbean.InvalidKeyException;
 import java.awt.*;
 import java.io.IOException;
@@ -206,14 +205,13 @@ public class SDMConsoleUI {
 
             printSimpleOfAllStores();
             System.out.println("Please Type Store ID from the list above:");
-
             StoreInfo StoreChosen = checkValidStore();//4.1
             inputDate = getValidDate(); //4.2
             curLocation = getValidPoint(); //4.3
             Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
             double ppk = MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation);
-
-            if (approveOrder(ItemsChosen,ppk))//4.5
+            double distance = MainSDMSystem.CalculateDistance(StoreChosen.StoreID,curLocation);
+            if (approveOrder(ItemsChosen,ppk,distance))//4.5
             {
                 MainSDMSystem.addStaticOrderToSystem(ItemsChosen,StoreChosen,curLocation,inputDate); //leahed many item to one!
                 System.out.println("Order Added To System!");
@@ -427,17 +425,18 @@ public class SDMConsoleUI {
     private double getPosPrice() {
         boolean flag= true;
         double res = 0;
+        String str;
         while (flag)
         {
             try {
-                res = scanner.nextDouble();
+                str = scanner.nextLine();
+                res = Double.parseDouble(str);
                 if (res <= 0)
                     System.out.println("Please Enter a Positive Number");
                 else
                     flag =false;
             }catch (Exception e) {
                 System.out.println("Please enter a number!");
-                scanner.nextLine();
             }}
         return res;
     }
@@ -472,19 +471,16 @@ public class SDMConsoleUI {
     }
 
     private Date getValidDate() {
-        scanner.nextLine();
         Date res= Date.from(Instant.now());
         boolean flag=true;
         SimpleDateFormat dateFormat = new SimpleDateFormat();
 
         dateFormat.applyPattern("dd/MM-hh:mm");
 
-
         while (flag) {
 
             System.out.println("Please Type Order Date in the form of dd/mm-hh:mm (E.g 02/11-13:56):");
             String inputDateString = scanner.nextLine();
-
             try {
                 dateFormat.parse(inputDateString);
                 if(isDateOk(inputDateString)) {
@@ -499,7 +495,7 @@ public class SDMConsoleUI {
                 scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
-                scanner.nextLine();} //4.2
+                } //4.2
         }
 
         return res;
@@ -508,17 +504,18 @@ public class SDMConsoleUI {
     private long getValidIDNumber () {
         boolean flag= true;
         long res = 0;
+        String str = null;
         while (flag)
         {
             try {
-                res = scanner.nextLong();
+                str = scanner.nextLine();
+                res = Long.parseLong(str);
                 if (res <= 0)
                     System.out.println("Please Enter a Positive Number");
                 else
                     flag =false;
             }catch (Exception e) {
                 System.out.println("Please enter a number!");
-                scanner.nextLine();
             }}
         return res;
     }
@@ -582,9 +579,10 @@ public class SDMConsoleUI {
                         }
                         else
                         {
+                            double itemPrice = MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, wantedItem.serialNumber);
                             Basket.put(wantedItem.serialNumber,new ItemInOrderInfo(wantedItem.serialNumber,
                                     wantedItem.Name,wantedItem.PayBy,storeChosen.StoreID,
-                                    amountWanted,MainSDMSystem.getItemPriceInStore(storeChosen.StoreID, wantedItem.serialNumber)));
+                                    amountWanted,itemPrice,itemPrice*amountWanted));
                             System.out.println("Added "+ wantedItem.Name+" To Basket!");
                         }
 
@@ -711,7 +709,7 @@ public class SDMConsoleUI {
         List<ItemInfo> allItem = MainSDMSystem.getListOfAllItems();
 
         for (ItemInfo curItem : allItem)
-            System.out.print(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
+            System.out.println(String.format("%d - %s sold by %s", curItem.serialNumber, curItem.Name, curItem.PayBy));
     }
 
     private void printAllItemsFromStore (StoreInfo storeToShow)  {
@@ -776,17 +774,18 @@ public class SDMConsoleUI {
         return true;
     }
 
-    private boolean approveOrder(Collection<ItemInOrderInfo> itemsChosen,double PPK) {
+    private boolean approveOrder(Collection<ItemInOrderInfo> itemsChosen,double PPK,double distance) {
         if (itemsChosen.isEmpty())
             return false;
 
         printLineOfStars();
         for (ItemInOrderInfo curItem : itemsChosen)
             System.out.println("Item #"+curItem.serialNumber+" ("+curItem.Name+") Pay by "+curItem.PayBy+"," +
-                    " Price per Unit is "+curItem.PricePerUint+" Amount is "+curItem.amountBought+"," +
-                    " Total Cost "+(curItem.amountBought*curItem.PricePerUint)+".");
+                    " Price per Unit is "+curItem.PricePerUint+" X "+curItem.amountBought+"," +
+                    " Total Cost = "+(curItem.amountBought*curItem.PricePerUint)+".");
 
 
+        System.out.println(String.format("Distance From Store %.2f",distance));
         System.out.println(String.format("Shipping will Cost you %.2f",PPK));
         printLineOfStars();
 
@@ -802,8 +801,8 @@ public class SDMConsoleUI {
         printLineOfStars();
         for (ItemInOrderInfo curItem : DynamicOrder.ItemsInOrder)
             System.out.println("Item #"+curItem.serialNumber+" ("+curItem.Name+") Pay by "+curItem.PayBy+"," +
-                    "From Store #"+curItem.FromStoreID+ "Price per Unit is "+curItem.PricePerUint+" Amount is "+curItem.amountBought+"," +
-                    " Total Cost "+(curItem.amountBought*curItem.PricePerUint)+".");
+                    "From Store #"+curItem.FromStoreID+ " Price per Unit is "+curItem.PricePerUint+" Amount is "+curItem.amountBought+"," +
+                    " Total Cost "+curItem.TotalPrice+".");
 
 
         System.out.println(String.format("Shipping will Cost you %.2f",DynamicOrder.m_ShippingPrice));

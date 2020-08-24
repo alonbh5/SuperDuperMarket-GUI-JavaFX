@@ -303,14 +303,25 @@ public class SuperDuperMarketSystem {
         for (ProductInOrder curProd : Items)
             itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
                     curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
-                    ,curProd.getAmountByPayingMethod(),curProd.getPriceOfTotalItems()));
+                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems()));
+
+        int ppk =0;
+        double distance = 0;
+        if (stores.size() == 1)
+            for (Store curStore : stores) {
+                ppk = curStore.getPPK();
+                distance = CalculatePPK(curStore,CurOrder.getCoordinate());
+            }
 
         return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems());
+                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk);
     }
 
     public void approveDynamicOrder()
     {
+        for (ProductInOrder curItem :m_tempDynamicOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(1);
+
         m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
         UpdateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
         UpdateSoldCounterInStore(m_tempDynamicOrder); // updated the counter of item in the store (how many times has been sold)
@@ -571,5 +582,9 @@ public class SuperDuperMarketSystem {
             newFile.close();
             out.close();
         }
+    }
+
+    public double CalculateDistance(long storeID, Point curLocation) {
+        return   (double)getStoreByID(storeID).getCoordinate().distance(curLocation);
     }
 }
