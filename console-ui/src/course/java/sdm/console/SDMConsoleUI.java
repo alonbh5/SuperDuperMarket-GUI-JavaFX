@@ -16,8 +16,6 @@ import java.util.List;
 
 public class SDMConsoleUI {
 
-    //todo check stupid input
-
     private SuperDuperMarketSystem MainSDMSystem;
     private Scanner scanner = new Scanner(System.in);
     private ConsoleMenuBuilder MainMenu = new ConsoleMenuBuilder("Super Duper Market");
@@ -77,6 +75,7 @@ public class SDMConsoleUI {
                         System.out.println(e.getMessage());
                     } catch (NoValidXMLException e) {
                         System.out.println("Error! - XML location was not found - please check path");
+                        System.out.println("for exp. C:\\Users\\MyName\\Desktop\\for java\\files\\ex1-big.xml");
                     } catch (DuplicateItemInStoreException e) {
                         System.out.println("Error! - XML contains 2 Items with the same id at one store: " + e.id);
                     } catch (StoreDoesNotSellItemException e) {
@@ -405,8 +404,10 @@ public class SDMConsoleUI {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
         } catch (PathException e) {
             System.out.println(e.getMessage());
+            System.out.println("Path for exp. C:\\Users\\MyUser\\Desktop\\for java\\files\\");
         } catch (Exception e) {
             System.out.println("Unknown Error!");
+            System.out.println("Path for exp. C:\\Users\\MyUser\\Desktop\\for java\\files\\");
         }
 
     } //7-1 bonus
@@ -425,6 +426,7 @@ public class SDMConsoleUI {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
         } catch (IOException e) {
             System.out.println("Error! - File Was Not Found!");
+            System.out.println("Path for exp. C:\\Users\\MyUser\\Desktop\\for java\\files\\Orders.dat");
         } catch (ClassNotFoundException e) {
             System.out.println("Sorry! The File Seems To Be Corrupted!");
         } catch (NegativePriceException e) {
