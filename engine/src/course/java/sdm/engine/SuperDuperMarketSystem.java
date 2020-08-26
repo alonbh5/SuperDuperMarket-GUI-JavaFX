@@ -201,7 +201,7 @@ public class SuperDuperMarketSystem {
         return m_ItemsInSystem.get(serialNumber).getMinSellingStore();
     }
 
-    public int getPPK(StoreInfo storeID) {
+    public int getPPK(Long storeID) {
         return m_StoresInSystem.get(storeID).getPPK();
     }
 
