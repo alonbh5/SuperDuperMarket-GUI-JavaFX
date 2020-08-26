@@ -216,9 +216,10 @@ public class SDMConsoleUI {
             inputDate = getValidDate(); //4.2
             curLocation = getValidPoint(); //4.3
             Collection<ItemInOrderInfo> ItemsChosen = getValidItemsForOrder(StoreChosen); //4.4
-            double ppk = MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation);
+            double shipping = MainSDMSystem.CalculatePPK(StoreChosen.StoreID,curLocation);
+            int ppk =MainSDMSystem.getPPK(StoreChosen);
             double distance = MainSDMSystem.CalculateDistance(StoreChosen.StoreID,curLocation);
-            if (approveOrder(ItemsChosen,ppk,distance))//4.5
+            if (approveOrder(ItemsChosen,shipping,ppk,distance))//4.5
             {
                 MainSDMSystem.addStaticOrderToSystem(ItemsChosen,StoreChosen,curLocation,inputDate); //leahed many item to one!
                 System.out.println("Order Added To System!");
@@ -795,7 +796,7 @@ public class SDMConsoleUI {
         return true;
     }
 
-    private boolean approveOrder(Collection<ItemInOrderInfo> itemsChosen,double PPK,double distance) {
+    private boolean approveOrder(Collection<ItemInOrderInfo> itemsChosen,double shipping,int PPK,double distance) {
         if (itemsChosen.isEmpty())
             return false;
 
@@ -806,8 +807,8 @@ public class SDMConsoleUI {
                     " Total Cost = "+(curItem.amountBought*curItem.PricePerUint)+".");
 
 
-        System.out.println(String.format("Distance From Store %.2f",distance));
-        System.out.println(String.format("Shipping will Cost you %.2f",PPK));
+        System.out.println(String.format("Distance From Store %.2f and ppk is "+PPK,distance));
+        System.out.println(String.format("Shipping will Cost you %.2f",shipping));
         printLineOfStars();
 
         System.out.println("Type Yes to Complete Order, or Anything Else To Cancel ");

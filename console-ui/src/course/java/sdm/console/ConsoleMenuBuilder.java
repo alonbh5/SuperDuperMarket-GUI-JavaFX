@@ -14,6 +14,7 @@ public class ConsoleMenuBuilder {
     private String m_Title;
     private int m_Index = 0;
     private int m_Level;
+    boolean m_quit = false;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -55,39 +56,30 @@ public class ConsoleMenuBuilder {
             public void run() {
                 Show();
             }});
-        //io_SubMenu.r_MenuItems.get(0).setClick(this::Show);
-        io_SubMenu.r_MenuItems.get(0).setClick(this::exitMenu);
+
+        io_SubMenu.r_MenuItems.get(0).setClick(io_SubMenu::exitMenu);
 
         AddMenuItem(io_SubMenu.m_Title,io_SubMenu::Show);
         r_MenuItems.get(r_MenuItems.size() - 1).setMenu(true);
     }
 
-    private  void exitMenu() {
+    private void exitMenu() {
+        this.m_quit = true;
     }
 
     public void Show() {
-        boolean quit = false;
+
         int choice=-1;
-        printMenu();
 
-        while (!quit) {
+
+        while (!m_quit) {
+            printMenu();
             choice=getInput();
-
             r_MenuItems.get(choice).OnClicked();
-
-           // if (r_MenuItems.get(choice).IsMenu()) {
-            //    quit = true;
-            //} else {
-                //System.out.println("Press Enter to continue...");
-                System.out.println("____________________________________________________________________________________________________________________________________");
-                /*try {
-                    //System.in.read();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-                printMenu();
-            //}
+            System.out.println("____________________________________________________________________________________________________________________________________");
         }
+
+        m_quit=false;
     }
 
     private void printMenu() {

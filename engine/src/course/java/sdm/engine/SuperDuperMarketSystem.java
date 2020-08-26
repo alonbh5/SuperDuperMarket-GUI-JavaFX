@@ -201,6 +201,10 @@ public class SuperDuperMarketSystem {
         return m_ItemsInSystem.get(serialNumber).getMinSellingStore();
     }
 
+    public int getPPK(StoreInfo storeID) {
+        return m_StoresInSystem.get(storeID).getPPK();
+    }
+
     //adding and deleting info
 
     public void addItemToStore(long storeID, ItemInStoreInfo itemInStoreInfo) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
@@ -601,10 +605,6 @@ public class SuperDuperMarketSystem {
 
         locked = false;
     }
-
-
-
-
 
 
 
