@@ -55,15 +55,14 @@ public class ConsoleMenuBuilder {
             public void run() {
                 Show();
             }});
-        io_SubMenu.r_MenuItems.get(0).setClick(this::Show);
-        ;
+        //io_SubMenu.r_MenuItems.get(0).setClick(this::Show);
+        io_SubMenu.r_MenuItems.get(0).setClick(this::exitMenu);
 
         AddMenuItem(io_SubMenu.m_Title,io_SubMenu::Show);
         r_MenuItems.get(r_MenuItems.size() - 1).setMenu(true);
     }
 
-    private static void exitSystem() {
-        System.exit(-1);
+    private  void exitMenu() {
     }
 
     public void Show() {
@@ -76,9 +75,9 @@ public class ConsoleMenuBuilder {
 
             r_MenuItems.get(choice).OnClicked();
 
-            if (r_MenuItems.get(choice).IsMenu()) {
-                quit = true;
-            } else {
+           // if (r_MenuItems.get(choice).IsMenu()) {
+            //    quit = true;
+            //} else {
                 //System.out.println("Press Enter to continue...");
                 System.out.println("____________________________________________________________________________________________________________________________________");
                 /*try {
@@ -87,7 +86,7 @@ public class ConsoleMenuBuilder {
                     e.printStackTrace();
                 }*/
                 printMenu();
-            }
+            //}
         }
     }
 

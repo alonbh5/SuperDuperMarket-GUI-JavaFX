@@ -28,29 +28,20 @@ public class SuperDuperMarketSystem {
     private boolean locked = true;
 
 
-    static double CalculatePPK(Store FromStore, Point curLocation)
-    {
+    static double CalculatePPK(Store FromStore, Point curLocation)   {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
     }
 
-    public double CalculatePPK (Long FromStoreID, Point curLocation)
-    {
+    public double CalculatePPK (Long FromStoreID, Point curLocation)  {
         return CalculatePPK(getStoreByID(FromStoreID),curLocation);
     }
 
-    private Store getStoreByID (Long StoreID) throws InvalidKeyException
-    {
-        if (isStoreInSystem(StoreID))
-            return m_StoresInSystem.get(StoreID);
-        throw  ( new InvalidKeyException("Store #"+StoreID+" is not in System"));
+    public double CalculateDistance(long storeID, Point curLocation) {
+        return   getStoreByID(storeID).getCoordinate().distance(curLocation);
     }
 
-    private ProductInSystem getItemByID (Long ItemID) throws InvalidKeyException
-    {
-        if (isItemInSystem(ItemID))
-            return m_ItemsInSystem.get(ItemID);
-        throw  ( new InvalidKeyException("Item #"+ItemID+" is not in System"));
-    }
+    //boolean isX
+
 
     public boolean isItemInSystem (long i_serialNumber)
     {
@@ -72,6 +63,33 @@ public class SuperDuperMarketSystem {
         return m_SystemGrid.containsKey(pointInGrid);
     }
 
+    public static boolean isCoordinateInRange(Point Coordinate)  {
+        return (((Coordinate.x <= MAX_COORDINATE) && (Coordinate.x >= MIN_COORDINATE) && ((Coordinate.y <= MAX_COORDINATE) && (Coordinate.y >= MIN_COORDINATE))));
+    }
+
+    public boolean isItemSoldInStore(Long storeID,Long itemID) {
+        Store store = getStoreByID(storeID);
+        return store.isItemInStore(itemID);
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    //getters
+
+    private Store getStoreByID (Long StoreID) throws InvalidKeyException  {
+        if (isStoreInSystem(StoreID))
+            return m_StoresInSystem.get(StoreID);
+        throw  ( new InvalidKeyException("Store #"+StoreID+" is not in System"));
+    }
+
+    private ProductInSystem getItemByID (Long ItemID) throws InvalidKeyException  {
+        if (isItemInSystem(ItemID))
+            return m_ItemsInSystem.get(ItemID);
+        throw  ( new InvalidKeyException("Item #"+ItemID+" is not in System"));
+    }
+
     public int getAmountOfItemsInSystem ()
     {
         return m_ItemsInSystem.size();
@@ -87,28 +105,14 @@ public class SuperDuperMarketSystem {
         return m_SystemGrid.size();
     }
 
-    public static boolean isCoordinateInRange(Point Coordinate)
-    {
-        return (((Coordinate.x <= MAX_COORDINATE) && (Coordinate.x >= MIN_COORDINATE) && ((Coordinate.y <= MAX_COORDINATE) && (Coordinate.y >= MIN_COORDINATE))));
-    }
-
-    private double getAvgPriceForItem (Long ItemID)
-    {
+    private double getAvgPriceForItem (Long ItemID)   {
         return Arrays.stream(m_StoresInSystem.values().stream()
                 .filter(t -> t.isItemInStore(ItemID))
                 .mapToDouble(t -> t.getPriceForItem(ItemID)).toArray())
                 .average().getAsDouble();
     }
 
-    private void addItemToStore (Long StoreID,ProductInStore productToAdd) throws NegativePriceException {
-
-            Store storeToAddTo = m_StoresInSystem.get(StoreID);
-            storeToAddTo.addItemToStore(productToAdd);
-            m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
-    }
-
-    public List<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException
-    {
+    public List<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 
@@ -128,8 +132,7 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<ItemInfo> getListOfAllItems () throws NoValidXMLException
-    {
+    public List<ItemInfo> getListOfAllItems () throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 
@@ -148,8 +151,7 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<OrderInfo> getListOfAllOrderInSystem() throws NoValidXMLException
-    {
+    public List<OrderInfo> getListOfAllOrderInSystem() throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 
@@ -162,20 +164,406 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
+    public double getItemPriceInStore(long storeID, long ItemID) {
+            Store store = getStoreByID(storeID);
+           return store.getPriceForItem(ItemID);
+    }
+
+    public StoreInfo getStoreInfoByID(Long storeID) throws InvalidKeyException   {
+        if (isStoreInSystem(storeID))
+            {
+                Store curStore = m_StoresInSystem.get(storeID);
+                List<ItemInStoreInfo> items = curStore.getItemList();
+                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList();
+
+                return new StoreInfo(curStore.getCoordinate(),curStore.getStoreID(),
+                        curStore.getName(),curStore.getPPK(),items,orders, curStore.getProfitFromShipping());
+
+            }
+        throw  (new InvalidKeyException("Store #"+storeID+" is not in System"));
+
+    }
+
+    public ItemInfo getItemInfo(long itemID) {
+        if (isItemInSystem(itemID))
+        {
+            ProductInSystem curItem = m_ItemsInSystem.get(itemID);
+            Item theItemObj = curItem.getItem();
+            return new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
+                    ,theItemObj.getPayBy().toString(),getAvgPriceForItem(curItem.getSerialNumber()),
+                    curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
+
+        }
+        return null;
+    }
+
+    private Store getMinSellingStoreForItem(Long serialNumber) {
+        return m_ItemsInSystem.get(serialNumber).getMinSellingStore();
+    }
+
+    //adding and deleting info
+
+    public void addItemToStore(long storeID, ItemInStoreInfo itemInStoreInfo) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
+        Store storeByID = getStoreByID(storeID);
+        long itemID = itemInStoreInfo.serialNumber;
+        double Price = itemInStoreInfo.PriceInStore;
+        ProductInSystem itemByID = getItemByID(itemID);
+
+        if (!isItemInSystem(itemID))
+            throw new StoreItemNotInSystemException(itemID,storeID);
+
+        if (storeByID.isItemInStore(itemID))
+            throw new DuplicateItemInStoreException(storeID);
+
+        if (Price<=0)
+            throw new NegativePriceException(Price);
+
+        ProductInStore newProduct = new ProductInStore(itemByID.getItem(),Price,storeByID);
+        addItemToStore(storeID,newProduct);
+
+        if (Price < m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID)) //update min selling store
+            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID));
+
+    }
+
+    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,Point curLoc, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException {
+        //NOTE - You need to use approveDynamicOrder to insert to system after
+        Store minSellingStore;
+        ProductInSystem itemInSys;
+        Order newOrder = createEmptyOrder(curLoc,OrderDate);
+
+        for (ItemInOrderInfo curItem : itemsChosen) {
+            if (!isItemInSystem(curItem.serialNumber))
+                throw new ItemIsNotSoldAtAllException(curItem.serialNumber,"Item is not in system!");
+            if (curItem.amountBought <= 0)
+                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
+
+            itemInSys = getItemByID(curItem.serialNumber); //get the item in sys
+            minSellingStore = getMinSellingStoreForItem (itemInSys.getSerialNumber()); //get min selling store
+            ProductInOrder newItem = new ProductInOrder(minSellingStore.getItemInStore(curItem.serialNumber)); //create prod in order
+            newItem.setAmountBought(curItem.amountBought); //set how much you want
+            newOrder.addProductToOrder(newItem); //added it to order
+        }
+
+        m_tempDynamicOrder = newOrder;
+        return createOrderInfo(newOrder);
+    }
+
+    private void addItemToStore (Long StoreID,ProductInStore productToAdd) throws NegativePriceException {
+
+        Store storeToAddTo = m_StoresInSystem.get(StoreID);
+        storeToAddTo.addItemToStore(productToAdd);
+        m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
+    }
+
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
+        if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
+            throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
+        if (itemsChosen.isEmpty())
+            throw (new RuntimeException("Empty List"));
+
+        Order newOrder = createEmptyOrder(curLoc,OrderDate);
+        Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
+
+
+        for (ItemInOrderInfo curItem : itemsChosen) {
+            if (!curStore.isItemInStore(curItem.serialNumber))
+                throw (new StoreDoesNotSellItemException(curItem.serialNumber));
+            if (curItem.amountBought <= 0)
+                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
+
+            ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
+            ProductInOrder newItem = new ProductInOrder(curProd);
+            newItem.setAmountBought(curItem.amountBought);
+            newOrder.addProductToOrder(newItem);
+        }
+
+        for (ProductInOrder curItem :newOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+
+        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
+        updateShippingProfitAfterOrder(newOrder); //update shipping profit
+        updateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
+        curStore.addOrderToStoreHistory(newOrder);
+    }
+
+    private OrderInfo createOrderInfo(Order CurOrder) {
+        Set<Store> stores = CurOrder.getStoreSet();
+        List<String> storesList = new ArrayList<>();
+
+        Set<ProductInOrder> Items = CurOrder.getBasket();
+        List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
+
+        for (Store curStore : stores)
+            storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
+
+        for (ProductInOrder curProd : Items)
+            itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
+                    curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
+                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems()));
+
+        int ppk =0;
+        double distance = 0;
+        if (stores.size() == 1)
+            for (Store curStore : stores) {
+                ppk = curStore.getPPK();
+                distance = CalculatePPK(curStore,CurOrder.getCoordinate());
+            }
+
+        return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
+                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk);
+    }
+
+    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
+        Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
+        if (!isCoordinateInRange(StoreLocation))
+            throw new PointOutOfGridException(StoreLocation);
+        if (isLocationTaken(StoreLocation))
+            throw new DuplicatePointOnGridException(StoreLocation);
+
+        Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
+        ProductInSystem sysItem;
+
+        for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
+            Long ItemID = (long)curItem.getItemId();
+            double itemPrice = curItem.getPrice();
+
+            if (itemPrice<=0)
+                throw new NegativePriceException(itemPrice);
+            if (!isItemInSystem(ItemID))
+                throw new StoreItemNotInSystemException(ItemID,newStore.getStoreID());
+            if (newStore.isItemInStore(ItemID))
+                throw new DuplicateItemInStoreException(ItemID);
+
+            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
+            ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
+            newStore.addItemToStore(newItemForStore);
+            sysItem = m_ItemsInSystem.get(ItemID);
+            sysItem.addSellingStore();
+            if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.getSerialNumber()))
+                sysItem.setMinSellingStore(newStore);
+
+
+        }
+
+        if (newStore.getItemList().isEmpty())
+            throw new StoreDoesNotSellItemException(newStore.getStoreID());
+
+        m_StoresInSystem.put(newStore.getStoreID(),newStore);
+        m_SystemGrid.put(newStore.getCoordinate(),newStore);
+    }
+
+    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
+        Item.payByMethod ePayBy;
+
+        if (item.getPurchaseCategory().equals("Weight"))
+            ePayBy = Item.payByMethod.WEIGHT;
+        else
+        if (item.getPurchaseCategory().equals("Quantity"))
+            ePayBy = Item.payByMethod.AMOUNT;
+        else
+            throw new WrongPayingMethodException(item.getPurchaseCategory());
+
+        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
+        ProductInSystem newItem = new ProductInSystem(newBaseItem);
+        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+    }
+
+    private Order createEmptyOrder (Point curLoc, Date OrderDate) throws PointOutOfGridException {
+        if (!isCoordinateInRange(curLoc))
+            throw (new PointOutOfGridException(curLoc));
+        if (m_SystemGrid.containsKey(curLoc))
+            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
+
+        while (m_OrderHistory.containsKey(OrdersSerialGenerator))
+            OrdersSerialGenerator++;
+
+        return new Order (curLoc,OrdersSerialGenerator++,OrderDate);
+    }
+
+    public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus
+
+        Store storeByID = getStoreByID(storeID);
+        ProductInSystem itemByID = getItemByID(itemID);
+
+        if (!storeByID.isItemInStore(itemID))
+            throw new StoreDoesNotSellItemException(storeID);
+
+        if (itemByID.getNumberOfSellingStores() == 1)
+            throw new ItemIsNotSoldAtAllException(itemByID.getSerialNumber(), itemByID.getItem().getName());
+
+        storeByID.DeleteItem(itemID);
+        ProductInSystem productInSystem = m_ItemsInSystem.get(itemID);
+        productInSystem.removeSellingStore();
+
+        if (storeID == (productInSystem.getMinSellingStore().getStoreID()))  //update min selling store
+            fineAndSetMinStore(productInSystem);
+
+    }
+
+    public void ChangePrice(long itemID, long storeID, double newPrice) throws NegativePriceException, StoreDoesNotSellItemException {
+        Store storeByID = getStoreByID(storeID);
+
+        if (!storeByID.isItemInStore(itemID))
+            throw new StoreDoesNotSellItemException(storeID);
+        if (newPrice<=0)
+            throw new NegativePriceException(newPrice);
+
+        double currentLowestPrice = m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID);
+        storeByID.changePrice(itemID,newPrice);
+
+
+        if (newPrice < currentLowestPrice) //case new price is lower then the current one
+            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID)); //this is the best place to buy
+        else
+        if (newPrice > currentLowestPrice && storeID == m_ItemsInSystem.get(itemID).getMinSellingStore().getStoreID()) //case we put more to the new price and it was the lowest before
+            fineAndSetMinStore(getItemByID(itemID));
+
+    }
+
+    public void approveDynamicOrder()    {
+        for (ProductInOrder curItem :m_tempDynamicOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+
+        m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
+        updateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
+        updateSoldCounterInStore(m_tempDynamicOrder); // updated the counter of item in the store (how many times has been sold)
+        for (Store curStore : m_tempDynamicOrder.getStoreSet())
+            curStore.addOrderToStoreHistory(m_tempDynamicOrder);
+    }
+
+    //files
+
+    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException, PathException {
+        if (locked)
+            throw new NoValidXMLException();
+
+        Path myPath = Paths.get(strPath);
+
+        if (!strPath.contains(".dat"))
+            throw new PathException("File Should be .dat File");
+        ObjectInputStream in = null;
+        FileInputStream OrderFile = null;
+        File theFile = myPath.toFile();
+        if (!theFile.exists())
+            throw new FileNotFoundException();
+        try {
+            Collection<Order> NewOrders;
+            OrderFile = new FileInputStream(theFile);
+            in = new ObjectInputStream(OrderFile);
+            NewOrders = (Collection<Order>) in.readObject();
+            checkOrdersAndInsertToSystem(NewOrders);
+        }finally {
+            OrderFile.close();
+            in.close();
+        }
+
+    }
+
+    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException, PathException {
+        if (locked)
+            throw new NoValidXMLException();
+
+        Path myPath = Paths.get(strPath);
+        ObjectOutputStream out=null;
+        FileOutputStream newFile= null;
+
+        if (!myPath.isAbsolute())
+            throw new PathException("Please Enter Absolute Path");
+
+        File myFile = new File(strPath+"\\Orders.dat");
+        try {
+            newFile = new FileOutputStream(myFile);
+            out = new ObjectOutputStream(newFile);
+            out.writeObject(new ArrayList(m_OrderHistory.values()));
+
+        }finally {
+            newFile.close();
+            out.close();
+        }
+    }
+
     public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
-    ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
-            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException
-    {
+            ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
+            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException    {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
         try {
             superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
         } catch (JAXBException e) {
             throw new NoValidXMLException();
         }
-        CopyInfoFromXMLClasses(superDuperMarketDescriptor);
+        copyInfoFromXMLClasses(superDuperMarketDescriptor);
     }
 
-    private void CopyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
+
+
+
+
+
+
+
+
+
+    private void updateShippingProfitAfterOrder(Order newOrder) {
+        Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
+        Store storeInSysAndNotInFile;
+        for (Store curStore : AllStoresFromOrder) {
+            storeInSysAndNotInFile = getStoreByID(curStore.getStoreID());
+            storeInSysAndNotInFile.newShippingFromStore(CalculatePPK(storeInSysAndNotInFile,newOrder.getCoordinate()));
+        }
+    }
+
+    private void updateSoldCounterInStore(Order newOrder) {
+        Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
+        ProductInStore ProdInSysAndNotInFile;
+        long itemID;
+        for (ProductInOrder curItem : AllItemsFromOrder) {
+            ProdInSysAndNotInFile = getStoreByID(curItem.getProductInStore().getStore().getStoreID()).getProductInStoreByID(curItem.getSerialNumber());
+            ProdInSysAndNotInFile.addAmount(curItem.getAmountByPayingMethod());
+        }
+    }
+
+    private void fineAndSetMinStore (ProductInSystem productInSystem) {
+        long itemID = productInSystem.getSerialNumber();
+        productInSystem.setMinSellingStore(null);
+        for (Store curStore : m_StoresInSystem.values()) {
+            if (curStore.isItemInStore(itemID)) {
+                if (productInSystem.getMinSellingStore() == null)
+                    productInSystem.setMinSellingStore(curStore);
+                else if (curStore.getPriceForItem(itemID) < productInSystem.getMinSellingStore().getPriceForItem(itemID))
+                    productInSystem.setMinSellingStore(curStore);
+            }
+        }
+    }
+
+    private void checkMissingItem() throws ItemIsNotSoldAtAllException {
+        for (ProductInSystem curItem : m_ItemsInSystem.values())
+            if (curItem.getNumberOfSellingStores() == 0)
+                throw new ItemIsNotSoldAtAllException(curItem.getSerialNumber(),curItem.getItem().getName());
+    }
+
+    private void checkOrdersAndInsertToSystem(Collection<Order> newOrders) throws NegativePriceException {
+        for (Order curOrder : newOrders){
+            if(!isOrderInSystem(curOrder.getOrderSerialNumber())) { //if order is not in system already
+                if (curOrder.getShippingPrice() > 0 && curOrder.getItemsPrice() > 0 && curOrder.getTotalPrice() > 0) { //and all prices are ok
+                    m_OrderHistory.put(curOrder.getOrderSerialNumber(),curOrder);
+                    updateShippingProfitAfterOrder(curOrder); //update shipping profit
+                    updateSoldCounterInStore(curOrder); // updated the counter of item in the store (how many times has been sold)
+                    for (ProductInOrder curItem :curOrder.getBasket())
+                        m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+                    for (Store curStore : curOrder.getStoreSet()) {
+                        Store StoreInThisSys = getStoreByID(curStore.getStoreID());
+                        StoreInThisSys.addOrderToStoreHistory(curOrder);
+                    }
+                }
+                else
+                    throw new NegativePriceException(curOrder.getTotalPrice());
+            }
+        }
+
+    }
+
+    private void copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
 
         Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
         Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
@@ -214,375 +602,10 @@ public class SuperDuperMarketSystem {
         locked = false;
     }
 
-    private void checkMissingItem() throws ItemIsNotSoldAtAllException {
-        for (ProductInSystem curItem : m_ItemsInSystem.values())
-            if (curItem.getNumberOfSellingStores() == 0)
-                throw new ItemIsNotSoldAtAllException(curItem.getSerialNumber(),curItem.getItem().getName());
-    }
 
-    public boolean isItemSoldInStore(Long storeID,Long itemID) {
-        Store store = getStoreByID(storeID);
-        return store.isItemInStore(itemID);
-    }
 
-    public double getItemPriceInStore(long storeID, long ItemID) {
-            Store store = getStoreByID(storeID);
-           return store.getPriceForItem(ItemID);
-    }
 
-    public StoreInfo GetStoreInfoByID (Long storeID) throws InvalidKeyException
-    {
-        if (isStoreInSystem(storeID))
-            {
-                Store curStore = m_StoresInSystem.get(storeID);
-                List<ItemInStoreInfo> items = curStore.getItemList();
-                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList();
 
-                return new StoreInfo(curStore.getCoordinate(),curStore.getStoreID(),
-                        curStore.getName(),curStore.getPPK(),items,orders, curStore.getProfitFromShipping());
 
-            }
-        throw  (new InvalidKeyException("Store #"+storeID+" is not in System"));
 
-    }
-
-    public ItemInfo getItemInfo(long itemID) {
-        if (isItemInSystem(itemID))
-        {
-            ProductInSystem curItem = m_ItemsInSystem.get(itemID);
-            Item theItemObj = curItem.getItem();
-            return new ItemInfo(theItemObj.getSerialNumber(),theItemObj.getName()
-                    ,theItemObj.getPayBy().toString(),getAvgPriceForItem(curItem.getSerialNumber()),
-                    curItem.getNumberOfSellingStores(),curItem.getAmountOfItemWasSold());
-
-        }
-        return null;
-    }
-
-    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,Point curLoc, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException {
-        //NOTE - You need to use approveDynamicOrder to insert to system after
-        Store minSellingStore;
-        ProductInSystem itemInSys;
-        Order newOrder = createEmptyOrder(curLoc,OrderDate);
-
-        for (ItemInOrderInfo curItem : itemsChosen) {
-            if (!isItemInSystem(curItem.serialNumber))
-                throw new ItemIsNotSoldAtAllException(curItem.serialNumber,"Item is not in system!");
-            if (curItem.amountBought <= 0)
-                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
-
-            itemInSys = getItemByID(curItem.serialNumber); //get the item in sys
-            minSellingStore = getMinSellingStoreForItem (itemInSys.getSerialNumber()); //get min selling store
-            ProductInOrder newItem = new ProductInOrder(minSellingStore.getItemInStore(curItem.serialNumber)); //create prod in order
-            newItem.setAmountBought(curItem.amountBought); //set how much you want
-            newOrder.addProductToOrder(newItem); //added it to order
-        }
-
-        m_tempDynamicOrder = newOrder;
-        return createOrderInfo(newOrder);
-    }
-
-    private OrderInfo createOrderInfo(Order CurOrder) {
-        Set<Store> stores = CurOrder.getStoreSet();
-        List<String> storesList = new ArrayList<>();
-
-        Set<ProductInOrder> Items = CurOrder.getBasket();
-        List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
-
-        for (Store curStore : stores)
-            storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
-
-        for (ProductInOrder curProd : Items)
-            itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
-                    curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
-                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems()));
-
-        int ppk =0;
-        double distance = 0;
-        if (stores.size() == 1)
-            for (Store curStore : stores) {
-                ppk = curStore.getPPK();
-                distance = CalculatePPK(curStore,CurOrder.getCoordinate());
-            }
-
-        return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk);
-    }
-
-    public void approveDynamicOrder()
-    {
-        for (ProductInOrder curItem :m_tempDynamicOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
-
-        m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
-        UpdateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
-        UpdateSoldCounterInStore(m_tempDynamicOrder); // updated the counter of item in the store (how many times has been sold)
-        for (Store curStore : m_tempDynamicOrder.getStoreSet())
-             curStore.addOrderToStoreHistory(m_tempDynamicOrder);
-    }
-
-    private Store getMinSellingStoreForItem(Long serialNumber) {
-        return m_ItemsInSystem.get(serialNumber).getMinSellingStore();
-    }
-
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
-        if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
-            throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
-        if (itemsChosen.isEmpty())
-            throw (new RuntimeException("Empty List"));
-
-        Order newOrder = createEmptyOrder(curLoc,OrderDate);
-        Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
-
-
-        for (ItemInOrderInfo curItem : itemsChosen) {
-            if (!curStore.isItemInStore(curItem.serialNumber))
-                throw (new StoreDoesNotSellItemException(curItem.serialNumber));
-            if (curItem.amountBought <= 0)
-                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
-
-            ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
-            ProductInOrder newItem = new ProductInOrder(curProd);
-            newItem.setAmountBought(curItem.amountBought);
-            newOrder.addProductToOrder(newItem);
-        }
-
-        for (ProductInOrder curItem :newOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
-
-        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
-        UpdateShippingProfitAfterOrder(newOrder); //update shipping profit
-        UpdateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
-        curStore.addOrderToStoreHistory(newOrder);
-    }
-
-    private Order createEmptyOrder (Point curLoc, Date OrderDate) throws PointOutOfGridException {
-        if (!isCoordinateInRange(curLoc))
-            throw (new PointOutOfGridException(curLoc));
-        if (m_SystemGrid.containsKey(curLoc))
-            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
-
-        while (m_OrderHistory.containsKey(OrdersSerialGenerator))
-            OrdersSerialGenerator++;
-
-        return new Order (curLoc,OrdersSerialGenerator++,OrderDate);
-    }
-
-    private void UpdateShippingProfitAfterOrder(Order newOrder) {
-        Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
-        Store storeInSysAndNotInFile;
-        for (Store curStore : AllStoresFromOrder) {
-            storeInSysAndNotInFile = getStoreByID(curStore.getStoreID());
-            storeInSysAndNotInFile.newShippingFromStore(CalculatePPK(storeInSysAndNotInFile,newOrder.getCoordinate()));
-        }
-    }
-
-    private void UpdateSoldCounterInStore(Order newOrder) {
-        Set<ProductInOrder> AllItemsFromOrder = newOrder.getBasket();
-        ProductInStore ProdInSysAndNotInFile;
-        long itemID;
-        for (ProductInOrder curItem : AllItemsFromOrder) {
-            ProdInSysAndNotInFile = getStoreByID(curItem.getProductInStore().getStore().getStoreID()).getProductInStoreByID(curItem.getSerialNumber());
-            ProdInSysAndNotInFile.addAmount(curItem.getAmountByPayingMethod());
-        }
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus
-
-        Store storeByID = getStoreByID(storeID);
-        ProductInSystem itemByID = getItemByID(itemID);
-
-        if (!storeByID.isItemInStore(itemID))
-            throw new StoreDoesNotSellItemException(storeID);
-
-        if (itemByID.getNumberOfSellingStores() == 1)
-            throw new ItemIsNotSoldAtAllException(itemByID.getSerialNumber(), itemByID.getItem().getName());
-
-        storeByID.DeleteItem(itemID);
-        ProductInSystem productInSystem = m_ItemsInSystem.get(itemID);
-        productInSystem.removeSellingStore();
-
-        if (storeID==(productInSystem.getMinSellingStore().getStoreID())) { //update min selling store
-            productInSystem.setMinSellingStore(null);
-            for (Store curStore : m_StoresInSystem.values()) {
-                if (curStore.isItemInStore(itemID)) {
-                    if (productInSystem.getMinSellingStore() == null)
-                        productInSystem.setMinSellingStore(curStore);
-                    else
-                        if (curStore.getPriceForItem(itemID) < productInSystem.getMinSellingStore().getPriceForItem(itemID))
-                            productInSystem.setMinSellingStore(curStore);
-                }
-            }
-        }
-
-    }
-
-    public void ChangePrice(long itemID, long storeID, double newPrice) throws NegativePriceException, StoreDoesNotSellItemException {
-        Store storeByID = getStoreByID(storeID);
-
-        if (!storeByID.isItemInStore(itemID))
-            throw new StoreDoesNotSellItemException(storeID);
-        if (newPrice<=0)
-            throw new NegativePriceException(newPrice);
-
-        storeByID.changePrice(itemID,newPrice);
-        if (newPrice < m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID)) //update min selling store
-            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID));
-    }
-
-    public void addItemToStore(long storeID, ItemInStoreInfo itemInStoreInfo) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
-        Store storeByID = getStoreByID(storeID);
-        long itemID = itemInStoreInfo.serialNumber;
-        double Price = itemInStoreInfo.PriceInStore;
-        ProductInSystem itemByID = getItemByID(itemID);
-
-        if (!isItemInSystem(itemID))
-            throw new StoreItemNotInSystemException(itemID,storeID);
-
-        if (storeByID.isItemInStore(itemID))
-            throw new DuplicateItemInStoreException(storeID);
-
-        if (Price<=0)
-            throw new NegativePriceException(Price);
-
-        ProductInStore newProduct = new ProductInStore(itemByID.getItem(),Price,storeByID);
-        addItemToStore(storeID,newProduct);
-
-        if (Price < m_ItemsInSystem.get(itemID).getMinSellingStore().getPriceForItem(itemID)) //update min selling store
-            m_ItemsInSystem.get(itemID).setMinSellingStore(m_StoresInSystem.get(storeID));
-
-    }
-
-    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
-        Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
-        if (!isCoordinateInRange(StoreLocation))
-            throw new PointOutOfGridException(StoreLocation);
-        if (isLocationTaken(StoreLocation))
-            throw new DuplicatePointOnGridException(StoreLocation);
-
-        Store newStore = new Store ((long)store.getId(),StoreLocation,store.getName(),store.getDeliveryPpk());
-        ProductInSystem sysItem;
-
-        for (SDMSell curItem : store.getSDMPrices().getSDMSell()){
-            Long ItemID = (long)curItem.getItemId();
-            double itemPrice = curItem.getPrice();
-
-            if (itemPrice<=0)
-                throw new NegativePriceException(itemPrice);
-            if (!isItemInSystem(ItemID))
-                throw new StoreItemNotInSystemException(ItemID,newStore.getStoreID());
-            if (newStore.isItemInStore(ItemID))
-                throw new DuplicateItemInStoreException(ItemID);
-
-            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
-            ProductInStore newItemForStore = new ProductInStore(BaseItem,itemPrice,newStore);
-            newStore.addItemToStore(newItemForStore);
-            sysItem = m_ItemsInSystem.get(ItemID);
-            sysItem.addSellingStore();
-            if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.getSerialNumber()))
-                    sysItem.setMinSellingStore(newStore);
-
-
-        }
-
-        if (newStore.getItemList().isEmpty())
-            throw new StoreDoesNotSellItemException(newStore.getStoreID());
-
-        m_StoresInSystem.put(newStore.getStoreID(),newStore);
-        m_SystemGrid.put(newStore.getCoordinate(),newStore);
-    }
-
-    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
-        Item.payByMethod ePayBy;
-
-        if (item.getPurchaseCategory().equals("Weight"))
-            ePayBy = Item.payByMethod.WEIGHT;
-        else
-        if (item.getPurchaseCategory().equals("Quantity"))
-            ePayBy = Item.payByMethod.AMOUNT;
-        else
-            throw new WrongPayingMethodException(item.getPurchaseCategory());
-
-        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
-        ProductInSystem newItem = new ProductInSystem(newBaseItem);
-        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
-    }
-
-    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException, PathException {
-        if (locked)
-            throw new NoValidXMLException();
-
-        Path myPath = Paths.get(strPath);
-
-        if (!strPath.contains(".dat"))
-             throw new PathException("File Should be .dat File");
-        ObjectInputStream in = null;
-        FileInputStream OrderFile = null;
-        File theFile = myPath.toFile();
-        if (!theFile.exists())
-            throw new FileNotFoundException();
-        try {
-            Collection<Order> NewOrders;
-            OrderFile = new FileInputStream(theFile);
-            in = new ObjectInputStream(OrderFile);
-            NewOrders = (Collection<Order>) in.readObject();
-            CheckOrdersAndInsertToSystem(NewOrders);
-        }finally {
-        OrderFile.close();
-        in.close();
-    }
-
-}
-
-    private void CheckOrdersAndInsertToSystem(Collection<Order> newOrders) throws NegativePriceException {
-        for (Order curOrder : newOrders){
-            if(!isOrderInSystem(curOrder.getOrderSerialNumber())) { //if order is not in system already
-                if (curOrder.getShippingPrice() > 0 && curOrder.getItemsPrice() > 0 && curOrder.getTotalPrice() > 0) { //and all prices are ok
-                    m_OrderHistory.put(curOrder.getOrderSerialNumber(),curOrder);
-                    UpdateShippingProfitAfterOrder(curOrder); //update shipping profit
-                    UpdateSoldCounterInStore(curOrder); // updated the counter of item in the store (how many times has been sold)
-                    for (ProductInOrder curItem :curOrder.getBasket())
-                        m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
-                    for (Store curStore : curOrder.getStoreSet()) {
-                        Store StoreInThisSys = getStoreByID(curStore.getStoreID());
-                        StoreInThisSys.addOrderToStoreHistory(curOrder);
-                    }
-                }
-                else
-                    throw new NegativePriceException(curOrder.getTotalPrice());
-            }
-        }
-
-    }
-
-    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException, PathException {
-        if (locked)
-            throw new NoValidXMLException();
-
-        Path myPath = Paths.get(strPath);
-        ObjectOutputStream out=null;
-        FileOutputStream newFile= null;
-
-        if (!myPath.isAbsolute())
-            throw new PathException("Please Enter Absolute Path");
-
-        File myFile = new File(strPath+"\\Orders.dat");
-        try {
-            newFile = new FileOutputStream(myFile);
-            out = new ObjectOutputStream(newFile);
-            out.writeObject(new ArrayList(m_OrderHistory.values()));
-
-        }finally {
-            newFile.close();
-            out.close();
-        }
-    }
-
-    public double CalculateDistance(long storeID, Point curLocation) {
-        return   getStoreByID(storeID).getCoordinate().distance(curLocation);
-    }
 }

@@ -64,8 +64,11 @@ public class SDMConsoleUI {
             str = scanner.nextLine();
             if (str.toLowerCase().equals("back"))
                 return;
+            if (str.toLowerCase().equals("alon"))
+                System.out.println("Alon Ben Harosh :)");
+            else
             if(checkValidXmlNameEnding(str)) {
-                 {
+                {
                     try {
                         MainSDMSystem.UploadInfoFromXML(str);
                         System.out.println("XML Loaded Successfully!");
@@ -758,7 +761,7 @@ public class SDMConsoleUI {
         while (flag) {
             long input = getValidIDNumber();
             try {
-                StoreInfo storeInfo = MainSDMSystem.GetStoreInfoByID(input);
+                StoreInfo storeInfo = MainSDMSystem.getStoreInfoByID(input);
                 return storeInfo;
             } catch (InvalidKeyException e) {
                 System.out.println("Error - Please choose Store ID by the list above!");
