@@ -8,7 +8,7 @@ class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
     private Date m_Date;
-    private final Point m_userLocation;
+    private final Point m_userLocation; //todo change it to customer
     private double m_TotalPrice=0;
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;

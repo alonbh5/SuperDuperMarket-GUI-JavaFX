@@ -438,7 +438,8 @@ public class SuperDuperMarketSystem {
 
     //files
 
-    public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException, PathException {
+    /*public void LoadOrderFromFile(String strPath) throws NoValidXMLException, IOException, FileNotFoundException, ClassNotFoundException, NegativePriceException, PathException {
+        //was for bonus part 1
         if (locked)
             throw new NoValidXMLException();
 
@@ -462,9 +463,11 @@ public class SuperDuperMarketSystem {
             in.close();
         }
 
-    }
+    }*/
 
-    public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException, PathException {
+    /*public void SaveOrdersToBin(String strPath) throws IOException, NoValidXMLException, PathException {
+        //was for bonus part 1
+
         if (locked)
             throw new NoValidXMLException();
 
@@ -485,7 +488,7 @@ public class SuperDuperMarketSystem {
             newFile.close();
             out.close();
         }
-    }
+    }*/
 
     public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
             ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
