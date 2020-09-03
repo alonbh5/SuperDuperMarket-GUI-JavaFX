@@ -11,6 +11,7 @@ public class OrderInfo {
     public final Date m_Date;
     public final List<String> Stores;
     public final List<ItemInOrderInfo> ItemsInOrder;
+    public final CustomerInfo customer;
     public final double m_TotalPrice;
     public final double m_ShippingPrice;
     public final double m_ItemsPrice;
@@ -18,7 +19,7 @@ public class OrderInfo {
     public final double Distance;
     public final int StaticPPK;
 
-    public OrderInfo(long m_OrderSerialNumber, Date m_Date, List<String> stores, List<ItemInOrderInfo> itemsInOrder, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice, int m_amountOfItems,double distance,int PPK) {
+    public OrderInfo(long m_OrderSerialNumber, Date m_Date, List<String> stores, List<ItemInOrderInfo> itemsInOrder, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice, int m_amountOfItems,double distance,int PPK, CustomerInfo customer) {
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
         Stores = stores;
@@ -27,7 +28,8 @@ public class OrderInfo {
         this.m_ShippingPrice = m_ShippingPrice;
         this.m_ItemsPrice = m_ItemsPrice;
         this.m_amountOfItems = m_amountOfItems;
-        Distance = distance;
-        StaticPPK=PPK;
+        this.Distance = distance;
+        this.StaticPPK=PPK;
+        this.customer =   customer;
     }
 }

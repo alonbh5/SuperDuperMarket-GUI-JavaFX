@@ -2,8 +2,8 @@ package course.java.sdm.engine;
 
 class Person implements HasName {
 
-    protected final Long m_IDNumber;
-    protected String m_Name;
+    private  final Long m_IDNumber;
+    private String m_Name;
 
 
     protected Person(long i_IDNumber,String i_Name) {

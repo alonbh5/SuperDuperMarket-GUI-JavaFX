@@ -8,7 +8,7 @@ class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
     private Date m_Date;
-    private final Point m_userLocation; //todo change it to customer
+    private final Customer m_Costumer; //todo change it to customer
     private double m_TotalPrice=0;
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;
@@ -16,8 +16,8 @@ class Order implements Coordinatable, Serializable {
     private final Set<ProductInOrder> m_Basket = new HashSet<>();
     private final Set<Store> m_StoresInOrder = new HashSet<>();
 
-     Order(Point m_userLocation, long m_OrderSerialNumber, Date m_Date) {
-        this.m_userLocation = m_userLocation;
+     Order(Customer Costumer, long m_OrderSerialNumber, Date m_Date) {
+        this.m_Costumer = Costumer;
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
     }
@@ -60,6 +60,8 @@ class Order implements Coordinatable, Serializable {
         return m_Basket;
     }
 
+    Customer getCostumer () {return m_Costumer;};
+
     boolean isItemInBasket (ProductInOrder check)
     {
         return m_Basket.contains(check);
@@ -87,7 +89,7 @@ class Order implements Coordinatable, Serializable {
 
     @Override
     public Point getCoordinate() {
-        return m_userLocation;
+        return m_Costumer.getCoordinate();
     }
 
     @Override
@@ -101,14 +103,14 @@ class Order implements Coordinatable, Serializable {
                 Double.compare(order.m_ItemsPrice, m_ItemsPrice) == 0 &&
                 m_amountOfItems == order.m_amountOfItems &&
                 m_Date.equals(order.m_Date) &&
-                m_userLocation.equals(order.m_userLocation) &&
+                m_Costumer.equals(order.m_Costumer) &&
                 m_Basket.equals(order.m_Basket) &&
                 m_StoresInOrder.equals(order.m_StoresInOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(m_OrderSerialNumber, m_Date, m_userLocation, m_TotalPrice, m_ShippingPrice, m_ItemsPrice, m_amountOfItems, m_Basket, m_StoresInOrder);
+        return Objects.hash(m_OrderSerialNumber, m_Date, m_Costumer, m_TotalPrice, m_ShippingPrice, m_ItemsPrice, m_amountOfItems, m_Basket, m_StoresInOrder);
     }
 
     long getM_OrderSerialNumber() {
@@ -117,10 +119,6 @@ class Order implements Coordinatable, Serializable {
 
     Date getM_Date() {
         return m_Date;
-    }
-
-    Point getM_userLocation() {
-        return m_userLocation;
     }
 
     double getM_TotalPrice() {
@@ -145,5 +143,9 @@ class Order implements Coordinatable, Serializable {
 
     Set<Store> getM_StoresInOrder() {
         return m_StoresInOrder;
+    }
+
+    public long getCustomerID() {
+         return m_Costumer.getId();
     }
 }

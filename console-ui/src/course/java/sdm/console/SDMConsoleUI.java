@@ -206,7 +206,7 @@ public class SDMConsoleUI {
             return;
         }
 
-        try {
+        /*try {
             Date inputDate;
             Point curLocation;
 
@@ -236,7 +236,7 @@ public class SDMConsoleUI {
             System.out.println("Current location is not on grid [0-50] "+e.PointReceived);
         } catch (Exception e) {
             System.out.println("Unknown Error!");
-        }
+        }/**/
     } //4-1
 
     private void DynamicOrder() { //bonus
@@ -246,7 +246,7 @@ public class SDMConsoleUI {
             return;
         }
 
-        try {
+       /* try {
             Date inputDate;
             Point curLocation;
 
@@ -269,7 +269,7 @@ public class SDMConsoleUI {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
         } catch (Exception e) {
             System.out.println("Unknown Error!");
-        }
+        }*/
     } //4-2 bonus
 
     private void showAllOrders() {

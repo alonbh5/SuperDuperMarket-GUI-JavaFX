@@ -21,6 +21,7 @@ public class SuperDuperMarketSystem {
     private static long OrdersSerialGenerator = 5000000;
 
     private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>();
+    private Map<Long,Customer> m_CustomersInSystem = new HashMap<>();
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>();
@@ -51,6 +52,11 @@ public class SuperDuperMarketSystem {
     public boolean isStoreInSystem (long i_serialNumber)
     {
         return m_StoresInSystem.containsKey(i_serialNumber);
+    }
+
+    public boolean isCustomerInSystem (long i_serialNumber)
+    {
+        return m_CustomersInSystem.containsKey(i_serialNumber);
     }
 
     public boolean isOrderInSystem (long i_serialNumber)
@@ -230,11 +236,16 @@ public class SuperDuperMarketSystem {
 
     }
 
-    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,Point curLoc, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException {
+    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,CustomerInfo curUser, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException, CustomerNotInSystemException {
         //NOTE - You need to use approveDynamicOrder to insert to system after
+        if (!isCustomerInSystem(curUser.ID))
+            throw (new CustomerNotInSystemException(curUser.ID));
+
+        Customer curCustomer = m_CustomersInSystem.get(curUser.ID);
+
         Store minSellingStore;
         ProductInSystem itemInSys;
-        Order newOrder = createEmptyOrder(curLoc,OrderDate);
+        Order newOrder = createEmptyOrder(curCustomer,OrderDate);
 
         for (ItemInOrderInfo curItem : itemsChosen) {
             if (!isItemInSystem(curItem.serialNumber))
@@ -260,13 +271,18 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
     }
 
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, Point curLoc, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException {
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException {
         if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
             throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
         if (itemsChosen.isEmpty())
             throw (new RuntimeException("Empty List"));
+        if (!isCustomerInSystem(curUser.ID))
+            throw (new CustomerNotInSystemException(curUser.ID));
 
-        Order newOrder = createEmptyOrder(curLoc,OrderDate);
+        Customer curCustomer = m_CustomersInSystem.get(curUser.ID);
+
+
+        Order newOrder = createEmptyOrder(curCustomer,OrderDate);
         Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
 
 
@@ -314,8 +330,14 @@ public class SuperDuperMarketSystem {
                 distance = CalculatePPK(curStore,CurOrder.getCoordinate());
             }
 
+        CustomerInfo UserInOrder = createCustomerInfo(CurOrder.getCostumer());
+
         return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk);
+                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk,UserInOrder);
+    }
+
+    private CustomerInfo createCustomerInfo (Customer user) {
+        return new CustomerInfo(user.getName(),user.getId(),user.getCoordinate(),user.getAvgPriceOfShipping(),user.getAvgPriceOfOrdersWithoutShipping(),user.getAmountOFOrders());
     }
 
     private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
@@ -373,16 +395,16 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
     }
 
-    private Order createEmptyOrder (Point curLoc, Date OrderDate) throws PointOutOfGridException {
-        if (!isCoordinateInRange(curLoc))
-            throw (new PointOutOfGridException(curLoc));
-        if (m_SystemGrid.containsKey(curLoc))
-            throw (new KeyAlreadyExistsException("There is a store at "+ curLoc.toString()));
+    private Order createEmptyOrder (Customer customer, Date OrderDate) throws PointOutOfGridException {
+        if (!isCoordinateInRange(customer.getCoordinate()))
+            throw (new PointOutOfGridException(customer.getCoordinate()));
+        if (m_SystemGrid.containsKey(customer.getCoordinate()))
+            throw (new KeyAlreadyExistsException("There is a store at "+ customer.getCoordinate().toString()));
 
         while (m_OrderHistory.containsKey(OrdersSerialGenerator))
             OrdersSerialGenerator++;
 
-        return new Order (curLoc,OrdersSerialGenerator++,OrderDate);
+        return new Order (customer,OrdersSerialGenerator++,OrderDate);
     }
 
     public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus
