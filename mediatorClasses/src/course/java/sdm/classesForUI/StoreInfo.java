@@ -9,7 +9,7 @@ public class StoreInfo {
     public final long StoreID;
     public final double profitFromShipping;
     public final List<ItemInStoreInfo> Items;
-    public final List<OrdersInStoreInfo> OrderHistory ;
+    public final List<OrdersInStoreInfo> OrderHistory ; //todo add here discount.....
     public final String Name;
     public final int PPK;
 
