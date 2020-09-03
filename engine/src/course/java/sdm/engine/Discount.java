@@ -39,4 +39,16 @@ public class Discount {
     public Collection<ProductYouGet> getOffersBasket() {
         return OffersBasket;
     }
+
+    boolean isItemYouBuyInDiscount (long itemYouBuyID) {
+        return itemYouBuyID == whatYouBuy.getItem().getSerialNumber();
+    }
+
+    boolean isItemYouGetInDiscount (long itemYouGetID) {
+        for (ProductYouGet cur : getOffersBasket())
+            if (cur.getItem().getSerialNumber() == itemYouGetID)
+                return true;
+
+     return false;
+    }
 }

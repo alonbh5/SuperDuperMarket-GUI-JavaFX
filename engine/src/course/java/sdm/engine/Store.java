@@ -15,6 +15,7 @@ class Store implements HasName, Coordinatable,Serializable {
     private double m_profitFromShipping = 0;
     private final Map<Long,ProductInStore> m_items = new HashMap<>();
     private final Map<Long,Order> m_OrderHistory = new HashMap<>();
+    private final Set<Discount> m_Discounts = new HashSet<>();
     private String m_Name;
     private int PPK;
 
@@ -32,6 +33,8 @@ class Store implements HasName, Coordinatable,Serializable {
     long getStoreID() {
         return m_StoreID;
     }
+
+    Collection getDiscounts () {return m_Discounts;};
 
     double getProfitFromShipping() {
         return m_profitFromShipping;
@@ -54,6 +57,8 @@ class Store implements HasName, Coordinatable,Serializable {
 
         m_items.put(itemKey,ProductToAdd);
     }
+
+    void addDiscount (Discount discount) {m_Discounts.add(discount);}
 
     double getPriceForItem (Long ItemID)
     {
@@ -160,6 +165,17 @@ class Store implements HasName, Coordinatable,Serializable {
             throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
 
         m_items.remove(itemID);
+    }
+
+    void DeleteDiscount (String DiscountName) { //todo chack that thats what aviad wanted..
+        Discount disToDel = null;
+
+        for (Discount cur : m_Discounts)
+            if (cur.getDiscountName().equals(DiscountName))
+                disToDel = cur;
+
+        if (disToDel != null)
+            m_Discounts.remove(disToDel);
     }
 
     void changePrice(long itemID, double newPrice) {

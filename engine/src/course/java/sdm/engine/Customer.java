@@ -9,7 +9,7 @@ import java.util.Objects;
 class Customer extends Person implements Coordinatable {
 
     private Point m_currentLocation;
-    private Map<Long,Order> m_OrderHistory = new HashMap<>();
+    private final Map<Long,Order> m_OrderHistory = new HashMap<>();
 
 
     Customer(int i_IDNumber, String i_Name, Point i_currentLocation) {

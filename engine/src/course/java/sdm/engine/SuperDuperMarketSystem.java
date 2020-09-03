@@ -2,12 +2,9 @@ package course.java.sdm.engine;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
-import sun.dc.path.PathException;
 import javax.management.openmbean.*;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
-import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 
@@ -99,17 +96,17 @@ public class SuperDuperMarketSystem {
     public int getAmountOfItemsInSystem ()
     {
         return m_ItemsInSystem.size();
-    }
+    } //todo propties?
 
     public int getAmountOfOrdersInSystem ()
     {
         return m_OrderHistory.size();
-    }
+    } //todo propties?
 
     public int getAmountOfStoresInSystem ()
     {
         return m_SystemGrid.size();
-    }
+    } //todo propties?
 
     private double getAvgPriceForItem (Long ItemID)   {
         return Arrays.stream(m_StoresInSystem.values().stream()
@@ -340,7 +337,7 @@ public class SuperDuperMarketSystem {
         return new CustomerInfo(user.getName(),user.getId(),user.getCoordinate(),user.getAvgPriceOfShipping(),user.getAvgPriceOfOrdersWithoutShipping(),user.getAmountOFOrders());
     }
 
-    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException {
+    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException, IllegalOfferException, NegativeQuantityException, NoOffersInDiscountException {
         Point StoreLocation = new Point(store.getLocation().getX(),store.getLocation().getY());
         if (!isCoordinateInRange(StoreLocation))
             throw new PointOutOfGridException(StoreLocation);
@@ -369,11 +366,44 @@ public class SuperDuperMarketSystem {
             if (sysItem.getMinSellingStore()==null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.getSerialNumber()))
                 sysItem.setMinSellingStore(newStore);
 
-
         }
-
+//todo check spaces and case sensetuve  "    sdas "  = "sdas"
         if (newStore.getItemList().isEmpty())
             throw new StoreDoesNotSellItemException(newStore.getStoreID());
+
+        for (SDMDiscount curDis : store.getSDMDiscounts().getSDMDiscount()) {
+            if (!newStore.isItemInStore((long)curDis.getIfYouBuy().getItemId()))
+                throw new StoreDoesNotSellItemException("Item of Discount is not sold at store",curDis.getIfYouBuy().getItemId());
+            if (curDis.getIfYouBuy().getQuantity() < 0)
+                throw new NegativeQuantityException(curDis.getIfYouBuy().getQuantity());
+            if (curDis.getThenYouGet().getSDMOffer().isEmpty())
+                throw new NoOffersInDiscountException(curDis.getName());
+
+            Discount.OfferType newOp = Discount.OfferType.IRRELEVANT;
+            if (curDis.getThenYouGet().getOperator().equals("ONE-OF"))
+                newOp = Discount.OfferType.ONE_OF;
+            if (curDis.getThenYouGet().getOperator().equals("ALL-OR-NOTHING"))
+                newOp = Discount.OfferType.ALL_OR_NOTHING;
+            if (newOp.equals(Discount.OfferType.IRRELEVANT) && curDis.getThenYouGet().getSDMOffer().size() != 1)
+                throw new IllegalOfferException(curDis.getName());
+
+            Item curItem = m_ItemsInSystem.get(curDis.getIfYouBuy().getItemId()).getItem();
+            ProductYouBuy whatYouBuy = new ProductYouBuy(curItem,curDis.getIfYouBuy().getQuantity());
+            Discount newDis = new Discount(newOp,curDis.getName(),whatYouBuy);
+
+            for (SDMOffer offer :curDis.getThenYouGet().getSDMOffer()) {
+                if (offer.getForAdditional() < 0 )
+                    throw new NegativePriceException(offer.getForAdditional());
+                if (!newStore.isItemInStore((long)offer.getItemId()))
+                    throw new StoreDoesNotSellItemException("Item of Discount is not sold at store",curDis.getIfYouBuy().getItemId());
+                if (offer.getQuantity() < 0 )
+                    throw new NegativeQuantityException(offer.getQuantity());
+                Item itemForCtor = m_ItemsInSystem.get(offer.getItemId()).getItem();
+
+                newDis.AddProductYouGet(new ProductYouGet(itemForCtor,offer.getQuantity(),offer.getForAdditional()));
+            }
+            newStore.addDiscount(newDis);
+        }
 
         m_StoresInSystem.put(newStore.getStoreID(),newStore);
         m_SystemGrid.put(newStore.getCoordinate(),newStore);
@@ -393,6 +423,19 @@ public class SuperDuperMarketSystem {
         Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
         ProductInSystem newItem = new ProductInSystem(newBaseItem);
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
+    }
+
+    private void crateNewCustomerInSystem(SDMCustomer customer) throws PointOutOfGridException, DuplicatePointOnGridException {
+
+        Point location = new Point(customer.getLocation().getX(),customer.getLocation().getY());
+
+        if (!isCoordinateInRange(location))
+            throw new PointOutOfGridException(location);
+        if (isLocationTaken(location))
+            throw new DuplicatePointOnGridException(location);
+        Customer newUser = new Customer(customer.getId(),customer.getName(),location);
+        m_CustomersInSystem.put(newUser.getIdNumber(),newUser);
+        m_SystemGrid.put(newUser.getCoordinate(),newUser);
     }
 
     private Order createEmptyOrder (Customer customer, Date OrderDate) throws PointOutOfGridException {
@@ -512,9 +555,9 @@ public class SuperDuperMarketSystem {
         }
     }*/
 
-    public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException,DuplicateItemIDException,DuplicateItemInStoreException
-            ,DuplicateStoreInSystemException,ItemIsNotSoldAtAllException,NegativePriceException,PointOutOfGridException,
-            StoreDoesNotSellItemException,StoreItemNotInSystemException,WrongPayingMethodException,NoValidXMLException    {
+    public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException, DuplicateItemIDException, DuplicateItemInStoreException
+            , DuplicateStoreInSystemException, ItemIsNotSoldAtAllException, NegativePriceException, PointOutOfGridException,
+            StoreDoesNotSellItemException, StoreItemNotInSystemException, WrongPayingMethodException, NoValidXMLException, NoOffersInDiscountException, IllegalOfferException, NegativeQuantityException, DuplicateCustomerInSystemException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
         try {
             superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
@@ -592,17 +635,19 @@ public class SuperDuperMarketSystem {
 
     }
 
-    private void copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
+    private void copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateCustomerInSystemException,NegativeQuantityException,IllegalOfferException,NoOffersInDiscountException,DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
 
         Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
         Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
         Map<Long,Store> tempStoresInSystem = m_StoresInSystem;
         Map<Long,Order> tempOrderInSystem = m_OrderHistory;
+        Map<Long,Customer> tempCustomerInSystem = m_CustomersInSystem;
 
         m_ItemsInSystem = new HashMap<>();
         m_SystemGrid = new HashMap<>();
         m_StoresInSystem = new HashMap<>();
         m_OrderHistory = new HashMap<>();
+        m_CustomersInSystem = new HashMap<>();
 
         try {
 
@@ -617,20 +662,27 @@ public class SuperDuperMarketSystem {
                     crateNewStoreInSystem(Store);
                 else throw new DuplicateStoreInSystemException(Store.getId());
             }
+
+            for (SDMCustomer customer : superDuperMarketDescriptor.getSDMCustomers().getSDMCustomer()) {
+                if (!isCustomerInSystem(customer.getId()))
+                    crateNewCustomerInSystem(customer);
+                else throw new DuplicateCustomerInSystemException(customer.getId());
+            }
+
             checkMissingItem();
 
-        } catch (Exception e) //if from any reason xml was bas - restore data
+        } catch (Exception e) //if from any reason xml was bad - restore data
         {
             m_ItemsInSystem= tempItemsInSystem;
             m_SystemGrid = tempSystemGrid;
             m_StoresInSystem=tempStoresInSystem;
             m_OrderHistory = tempOrderInSystem;
+            m_CustomersInSystem = tempCustomerInSystem;
             throw e;
         }
 
         locked = false;
     }
-
 
 
 }
