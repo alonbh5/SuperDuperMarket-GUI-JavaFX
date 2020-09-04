@@ -33,7 +33,12 @@
                   <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button id="XMLButton" fx:id="XMLButton" mnemonicParsing="false" onAction="#openFileButtonAction" prefHeight="39.0" prefWidth="127.0" text="Upload XML" GridPane.rowIndex="1" />
+                  <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" GridPane.rowIndex="1">
+                     <children>
+                        <Button id="XMLButton" fx:id="XMLButton" mnemonicParsing="false" onAction="#openFileButtonAction" prefHeight="39.0" prefWidth="127.0" text="Choose XML" />
+                        <Button fx:id="LoadButton" disable="true" mnemonicParsing="false" onAction="#UploadXMLAction" prefHeight="39.0" prefWidth="129.0" text="Load System" />
+                     </children>
+                  </HBox>
                   <Label text="Super Duper Market" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
@@ -98,7 +103,7 @@
                      </padding>
                   </HBox>
                   <Separator prefWidth="200.0" />
-                  <ProgressBar prefHeight="18.0" prefWidth="1063.0" progress="0.0" />
+                  <ProgressBar fx:id="ProgressBar" prefHeight="18.0" prefWidth="1063.0" progress="0.0" />
                </children>
             </VBox>
          </bottom>

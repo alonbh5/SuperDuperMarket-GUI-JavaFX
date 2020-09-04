@@ -13,6 +13,7 @@ import java.io.File;
 public class MainMenuController {
 
     @FXML    private Button XMLButton;
+    @FXML    private Button LoadButton;
     @FXML    private Button showStoresButton;
     @FXML    private Button showItemsButton;
     @FXML    private Button showOrdersButton;
@@ -21,6 +22,7 @@ public class MainMenuController {
     @FXML    private Button ItemUpdateButton;
     @FXML    private Button MapButton;
     @FXML    private Label MassageLabel;
+    @FXML    private ProgressBar ProgressBar;
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
@@ -28,12 +30,16 @@ public class MainMenuController {
     private Stage primaryStage;
     private SuperDuperMarketSystem MainSDMSystem;
 
-    @FXML
-    private void initialize() {
+    public MainMenuController () {
         selectedFileProperty = new SimpleStringProperty();
         isFileSelected = new SimpleBooleanProperty(false);
-        //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
         MainSDMSystem = new SuperDuperMarketSystem();
+    }
+
+    @FXML
+    private void initialize() {
+        //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
+        LoadButton.disableProperty().bind(isFileSelected.not());
     }
 
 
@@ -50,10 +56,10 @@ public class MainMenuController {
         String absolutePath = selectedFile.getAbsolutePath();
         selectedFileProperty.set(absolutePath);
         isFileSelected.set(true);
-        UploadXML();
     }
 
-    private void UploadXML () {
+    @FXML
+    private void UploadXMLAction () {
        /* businessLogic.collectMetadata(
                 totalWords::set,
                 totalLines::set,
@@ -67,7 +73,7 @@ public class MainMenuController {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
-            MassageLabel.setText("Xml loaded successful! System Unlocked!");
+            MassageLabel.setText("Xml loaded successfully! System Unlocked!");
         } catch (DuplicatePointOnGridException e) { //todo merge this
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Error-Label");

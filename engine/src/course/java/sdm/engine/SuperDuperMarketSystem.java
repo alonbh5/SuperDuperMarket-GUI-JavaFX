@@ -561,6 +561,7 @@ public class SuperDuperMarketSystem {
             , DuplicateStoreInSystemException, ItemIsNotSoldAtAllException, NegativePriceException, PointOutOfGridException,
             StoreDoesNotSellItemException, StoreItemNotInSystemException, WrongPayingMethodException, NoValidXMLException, NoOffersInDiscountException, IllegalOfferException, NegativeQuantityException, DuplicateCustomerInSystemException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
+
         try {
             superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
         } catch (JAXBException e) {
