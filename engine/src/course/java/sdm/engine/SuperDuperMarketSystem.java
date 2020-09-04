@@ -2,6 +2,9 @@ package course.java.sdm.engine;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
 import course.java.sdm.generatedClasses.*;
+import course.java.sdm.gui.MainMenu.MainMenuController;
+import javafx.concurrent.Task;
+
 import javax.management.openmbean.*;
 import javax.xml.bind.JAXBException;
 import java.awt.*;
@@ -18,6 +21,9 @@ public class SuperDuperMarketSystem {
     private static long StoreSerialGenerator = 300000;
     private static long OrdersSerialGenerator = 4000000;
 
+    private Task<Boolean> currentRunningTask;
+    private final MainMenuController controller;
+
     private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>();
     private Map<Long,Customer> m_CustomersInSystem = new HashMap<>();
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
@@ -26,6 +32,9 @@ public class SuperDuperMarketSystem {
     private Order m_tempDynamicOrder = null;
     private boolean locked = true;
 
+    public SuperDuperMarketSystem(MainMenuController controller) {
+        this.controller = controller;
+    }
 
     static double CalculatePPK(Store FromStore, Point curLocation)   {
         return (double)FromStore.getPPK() * FromStore.getCoordinate().distance(curLocation);
@@ -338,7 +347,7 @@ public class SuperDuperMarketSystem {
         return new CustomerInfo(user.getName(),user.getId(),user.getCoordinate(),user.getAvgPriceOfShipping(),user.getAvgPriceOfOrdersWithoutShipping(),user.getAmountOFOrders());
     }
 
-    private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException, IllegalOfferException, NegativeQuantityException, NoOffersInDiscountException {
+    /*private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException, IllegalOfferException, NegativeQuantityException, NoOffersInDiscountException {
         Point StoreLocation = new Point(store.getLocation().getX(), store.getLocation().getY());
         if (!isCoordinateInRange(StoreLocation))
             throw new PointOutOfGridException(StoreLocation);
@@ -409,9 +418,9 @@ public class SuperDuperMarketSystem {
 
         m_StoresInSystem.put(newStore.getStoreID(), newStore);
         m_SystemGrid.put(newStore.getCoordinate(), newStore);
-    }
+    }/*
 
-    private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
+    /*private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
         Item.payByMethod ePayBy;
 
         if (item.getPurchaseCategory().equals("Weight"))
@@ -425,9 +434,9 @@ public class SuperDuperMarketSystem {
         Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
         ProductInSystem newItem = new ProductInSystem(newBaseItem);
         m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
-    }
+    }*/
 
-    private void crateNewCustomerInSystem(SDMCustomer customer) throws PointOutOfGridException, DuplicatePointOnGridException {
+    /*private void crateNewCustomerInSystem(SDMCustomer customer) throws PointOutOfGridException, DuplicatePointOnGridException {
 
         Point location = new Point(customer.getLocation().getX(),customer.getLocation().getY());
 
@@ -438,7 +447,7 @@ public class SuperDuperMarketSystem {
         Customer newUser = new Customer(customer.getId(),customer.getName(),location);
         m_CustomersInSystem.put(newUser.getIdNumber(),newUser);
         m_SystemGrid.put(newUser.getCoordinate(),newUser);
-    }
+    }*/
 
     private Order createEmptyOrder (Customer customer, Date OrderDate) throws PointOutOfGridException {
         if (!isCoordinateInRange(customer.getCoordinate()))
@@ -564,10 +573,15 @@ public class SuperDuperMarketSystem {
 
         try {
             superDuperMarketDescriptor = FileHandler.UploadFile(XMLPath);
+
         } catch (JAXBException e) {
             throw new NoValidXMLException();
         }
-        copyInfoFromXMLClasses(superDuperMarketDescriptor);
+        currentRunningTask = new LoadXmlTask(superDuperMarketDescriptor,this);
+        //controller.bindTaskToUIComponents(currentRunningTask,onFinish); todo this onFinsih
+        controller.bindTaskToUIComponents(currentRunningTask);
+        new Thread(currentRunningTask).start();
+        //copyInfoFromXMLClasses(superDuperMarketDescriptor); // in task!
     }
 
 
@@ -638,7 +652,7 @@ public class SuperDuperMarketSystem {
 
     }
 
-    private void copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateCustomerInSystemException,NegativeQuantityException,IllegalOfferException,NoOffersInDiscountException,DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
+    /*void copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws DuplicateCustomerInSystemException,NegativeQuantityException,IllegalOfferException,NoOffersInDiscountException,DuplicateStoreInSystemException, DuplicateItemIDException, DuplicateItemInStoreException, NegativePriceException, StoreItemNotInSystemException, DuplicatePointOnGridException, StoreDoesNotSellItemException, PointOutOfGridException, ItemIsNotSoldAtAllException, WrongPayingMethodException {
 
         Map<Long,ProductInSystem> tempItemsInSystem = m_ItemsInSystem;
         Map<Point,Coordinatable> tempSystemGrid = m_SystemGrid;
@@ -651,6 +665,8 @@ public class SuperDuperMarketSystem {
         m_StoresInSystem = new HashMap<>();
         m_OrderHistory = new HashMap<>();
         m_CustomersInSystem = new HashMap<>();
+
+
 
         try {
 
@@ -684,6 +700,16 @@ public class SuperDuperMarketSystem {
             throw e;
         }
 
+        locked = false;
+    }*/
+
+    void setInfoFromTask (Map<Long,ProductInSystem> ItemsInSystem, Map<Point,Coordinatable> SystemGrid ,Map<Long,Store> StoresInSystem ,
+    Map<Long,Order> OrderHistory, Map<Long,Customer> CustomersInSystem) {
+        this.m_SystemGrid = SystemGrid;
+        this.m_CustomersInSystem = CustomersInSystem;
+        this.m_StoresInSystem = StoresInSystem;
+        this.m_OrderHistory=OrderHistory;
+        this.m_ItemsInSystem=ItemsInSystem;
         locked = false;
     }
 

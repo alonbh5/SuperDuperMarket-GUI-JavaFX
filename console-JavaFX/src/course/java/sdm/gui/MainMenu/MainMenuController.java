@@ -1,7 +1,9 @@
 package course.java.sdm.gui.MainMenu;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.*;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,6 +11,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Optional;
 
 public class MainMenuController {
 
@@ -35,7 +38,7 @@ public class MainMenuController {
     public MainMenuController () {
         selectedFileProperty = new SimpleStringProperty();
         isFileSelected = new SimpleBooleanProperty(false);
-        MainSDMSystem = new SuperDuperMarketSystem();
+        MainSDMSystem = new SuperDuperMarketSystem(this);
         isXmlLoaded = new SimpleBooleanProperty(false);
     }
 
@@ -87,75 +90,34 @@ public class MainMenuController {
         try {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
             isXmlLoaded.set(true);
+            //LoadButton.setDisable(true); todo can i do it?
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
-            MassageLabel.setText("Xml loaded successfully! System Unlocked!");
-        } catch (DuplicatePointOnGridException e) { //todo merge this
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains 2 points at the same location " + e.PointInput.toString() + " !");
-        } catch (DuplicateItemIDException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains 2 Items with the same id : " + e.id);
-        } catch (DuplicateItemInStoreException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains 2 Items with the same id at one store: " + e.id);
-        } catch (DuplicateStoreInSystemException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains 2 points at the same location (" + e.Storeid + ").");
-        } catch (ItemIsNotSoldAtAllException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! -Item #" + e.ItemID + "(" + e.ItemName + ") has no store that sell it");
-        } catch (NegativePriceException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains a Negative Price " + e.PriceReceived + " for Item!");
-        } catch (PointOutOfGridException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Location is not in at Range - " +e.PointReceived.toString());
-        } catch (StoreDoesNotSellItemException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error - XML contains Store (" + e.StoreID + ") that does not sell any item");
-        } catch (StoreItemNotInSystemException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Store #" + e.StoreIdInput + " is trying to sell an item that's not in system (Item #" + e.ItemIdInput + ")");
-        } catch (WrongPayingMethodException e) {
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Wrong input Paying method - " + e.PayingInput);
-        } catch (NoValidXMLException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML location was not found - please check path");
-        } catch (NoOffersInDiscountException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Discount does not offer what you get");
-        } catch (IllegalOfferException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Offer " + e.OfferName + " Is Illegal");
-        } catch (NegativeQuantityException e) {
-            MassageLabel.getStyleClass().clear();
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - Offer Quantity is Negative "+ e.Quantity);
-        } catch (DuplicateCustomerInSystemException e) {
-            MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Error! - XML contains 2 Customers with the same id : "+ e.id);
         } catch (Exception e) {
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Error-Label");
-            MassageLabel.setText("Unknown Error!");
+            ProgressBar.progressProperty().unbind();
         }
+        //todo unbound MassageText....
+        //MassageLabel.textProperty().unbind();
+
     }
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    public void bindTaskToUIComponents(Task<Boolean> aTask) { //todo this on finsih
+        // task message
+        MassageLabel.textProperty().bind(aTask.messageProperty());
+
+        // task progress bar
+        ProgressBar.progressProperty().bind(aTask.progressProperty());
+
+
+       /* // task cleanup upon finish
+        aTask.valueProperty().addListener((observable, oldValue, newValue) -> {
+            onTaskFinished(Optional.ofNullable(onFinish));
+        });*/
     }
 }

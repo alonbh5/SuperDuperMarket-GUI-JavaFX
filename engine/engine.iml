@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="mediatorClasses" />
+    <orderEntry type="module" module-name="console-JavaFX" />
   </component>
 </module>
