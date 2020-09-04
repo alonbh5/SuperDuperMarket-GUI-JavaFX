@@ -13,9 +13,10 @@ public class SuperDuperMarketSystem {
 
     public static final int MAX_COORDINATE = 50;
     public static final int MIN_COORDINATE = 1;
-    private static long ItemSerialGenerator = 10000;
+    private static long UsersSerialGenerator = 1000;
+    private static long ItemSerialGenerator = 20000;
     private static long StoreSerialGenerator = 300000;
-    private static long OrdersSerialGenerator = 5000000;
+    private static long OrdersSerialGenerator = 4000000;
 
     private Map<Long,ProductInSystem> m_ItemsInSystem = new HashMap<>();
     private Map<Long,Customer> m_CustomersInSystem = new HashMap<>();
