@@ -1,4 +1,4 @@
-package course.java.sdm.console;
+/*package course.java.sdm.console;
 
 import course.java.sdm.engine.*;
 import course.java.sdm.exceptions.*;
@@ -43,7 +43,7 @@ public class SDMConsoleUI {
 
         LoadAndSaveOrderMenu.AddMenuItem("Save Orders",this::SaveOrderToFile);
         LoadAndSaveOrderMenu.AddMenuItem("Load Orders",this::LoadOrderToFile);
-        
+
         MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
         MainMenu.AddMenuItem("View All Items",this::showAllItems);
@@ -206,7 +206,7 @@ public class SDMConsoleUI {
             return;
         }
 
-        /*try {
+        try {
             Date inputDate;
             Point curLocation;
 
@@ -236,7 +236,7 @@ public class SDMConsoleUI {
             System.out.println("Current location is not on grid [0-50] "+e.PointReceived);
         } catch (Exception e) {
             System.out.println("Unknown Error!");
-        }/**/
+        }
     } //4-1
 
     private void DynamicOrder() { //bonus
@@ -246,7 +246,7 @@ public class SDMConsoleUI {
             return;
         }
 
-       /* try {
+        try {
             Date inputDate;
             Point curLocation;
 
@@ -269,7 +269,7 @@ public class SDMConsoleUI {
             System.out.println("Please Upload a Valid XML before Trying this Options!");
         } catch (Exception e) {
             System.out.println("Unknown Error!");
-        }*/
+        }
     } //4-2 bonus
 
     private void showAllOrders() {
@@ -399,7 +399,7 @@ public class SDMConsoleUI {
 
         System.out.println("Please Enter Full Path You Wish To Save Order (XML file will be created there)");
         String strPath = scanner.nextLine();
-        /*try {
+        try {
             MainSDMSystem.SaveOrdersToBin(strPath);
             System.out.println("Orders Were Save Successfully to Path: "+strPath + "\\Orders.dat!");
         } catch (IOException e) {
@@ -412,9 +412,9 @@ public class SDMConsoleUI {
         } catch (Exception e) {
             System.out.println("Unknown Error!");
             System.out.println("Path for exp. C:\\Users\\MyUser\\Desktop\\for java\\files\\");
-        }*/
+        }
 
-    } //7-1 bonus - not in part 2
+    } //7-1 bonus
 
     private void LoadOrderToFile() {
         if (MainSDMSystem.isLocked()) {
@@ -423,7 +423,7 @@ public class SDMConsoleUI {
         }
         System.out.println("Please Enter Full Path of Order File. NOTE - Orders Will Be Added To System And Will Not Overwrite Them");
         String strPath = scanner.nextLine();
-       /* try {
+        try {
             MainSDMSystem.LoadOrderFromFile(strPath);
             System.out.println("Orders Added To System!!");
         } catch (NoValidXMLException e) {
@@ -439,9 +439,9 @@ public class SDMConsoleUI {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             System.out.println("Unknown Error!");
-        }*/
+        }
 
-    } //7-2 bonus - not in part 2
+    } //7-2 bonus
 
     //------------------------------------------------------------------------------
 
@@ -477,8 +477,8 @@ public class SDMConsoleUI {
             System.out.print("For Y: ");
             String yStr = scanner.nextLine();
             try {
-            x = Integer.parseInt(xStr);
-            y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
+                x = Integer.parseInt(xStr);
+                y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
                 System.out.println("Wrong Input - try again");
             }
             res = new Point(x,y);
@@ -486,10 +486,10 @@ public class SDMConsoleUI {
                 System.out.println("ERROR - Please Enter Current Location On Grid (between "+SuperDuperMarketSystem.MIN_COORDINATE+"-"
                         +SuperDuperMarketSystem.MAX_COORDINATE +" for both X and Y)");
             else
-                if (MainSDMSystem.isLocationTaken(res))
-                    System.out.println("There is a Store at this Location - try Again");
-                else
-                    flag = false;
+            if (MainSDMSystem.isLocationTaken(res))
+                System.out.println("There is a Store at this Location - try Again");
+            else
+                flag = false;
         }
         return res;
     }
@@ -518,7 +518,7 @@ public class SDMConsoleUI {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
             } catch (Exception e) {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
-                } //4.2
+            } //4.2
         }
 
         return res;
@@ -837,4 +837,4 @@ public class SDMConsoleUI {
             return true;
         return false;
     }
-}
+}*/
