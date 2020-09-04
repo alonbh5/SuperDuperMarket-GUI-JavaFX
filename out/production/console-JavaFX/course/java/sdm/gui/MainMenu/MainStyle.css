@@ -1,0 +1,14 @@
+
+
+/*#MainMenuPane {-fx-background-color: Gray
+}
+
+#FullScreenPane {-fx-background-color: Gray}*/
+
+.Error-Label{-fx-text-fill: red; -fx-opacity: 1;-fx-background-color: transparent
+}
+.Massage-Label {-fx-text-fill: Black; -fx-opacity: 1; -fx-background-color: transparent
+}
+
+.Hidden-Label{-fx-opacity: 0;
+}
