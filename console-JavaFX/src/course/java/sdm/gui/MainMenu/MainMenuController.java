@@ -26,6 +26,8 @@ public class MainMenuController {
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
+    private SimpleBooleanProperty isXmlLoaded;
+
 
     private Stage primaryStage;
     private SuperDuperMarketSystem MainSDMSystem;
@@ -34,12 +36,24 @@ public class MainMenuController {
         selectedFileProperty = new SimpleStringProperty();
         isFileSelected = new SimpleBooleanProperty(false);
         MainSDMSystem = new SuperDuperMarketSystem();
+        isXmlLoaded = new SimpleBooleanProperty(false);
     }
 
     @FXML
     private void initialize() {
         //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
         LoadButton.disableProperty().bind(isFileSelected.not());
+        bindAllButtonsToXmlLoaded();
+    }
+
+    private void bindAllButtonsToXmlLoaded() {
+        showStoresButton.disableProperty().bind(isXmlLoaded.not());
+        showItemsButton.disableProperty().bind(isXmlLoaded.not());
+        showOrdersButton.disableProperty().bind(isXmlLoaded.not());
+        showCustomersButton.disableProperty().bind(isXmlLoaded.not());
+        NewOrderButton.disableProperty().bind(isXmlLoaded.not());
+        ItemUpdateButton.disableProperty().bind(isXmlLoaded.not());
+        MapButton.disableProperty().bind(isXmlLoaded.not());
     }
 
 
@@ -56,6 +70,7 @@ public class MainMenuController {
         String absolutePath = selectedFile.getAbsolutePath();
         selectedFileProperty.set(absolutePath);
         isFileSelected.set(true);
+        MassageLabel.setText("Please Load System");
     }
 
     @FXML
@@ -71,6 +86,7 @@ public class MainMenuController {
 
         try {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
+            isXmlLoaded.set(true);
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
             MassageLabel.setText("Xml loaded successfully! System Unlocked!");

@@ -92,7 +92,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label id="MassageLabel" fx:id="MassageLabel" opacity="0.15" styleClass="Hidden-Label" text="Massage">
+                        <Label id="MassageLabel" fx:id="MassageLabel" styleClass="Hidden-Label">
                            <font>
                               <Font size="14.0" />
                            </font>
