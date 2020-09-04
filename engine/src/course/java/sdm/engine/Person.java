@@ -2,14 +2,16 @@ package course.java.sdm.engine;
 
 class Person implements HasName {
 
-    private final Long m_IDNumber;
+    private  final Long m_IDNumber;
     private String m_Name;
 
 
-    Person(long i_IDNumber,String i_Name) {
+    protected Person(long i_IDNumber,String i_Name) {
         this.m_IDNumber = i_IDNumber;
         m_Name= i_Name;
     }
+
+    protected Long getId () {return m_IDNumber;}
 
     @Override
     public String getName() {
@@ -25,4 +27,5 @@ class Person implements HasName {
     {
         return m_IDNumber;
     }
+
 }

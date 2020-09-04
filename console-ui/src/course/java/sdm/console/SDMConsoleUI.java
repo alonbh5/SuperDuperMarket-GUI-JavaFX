@@ -1,4 +1,4 @@
-package course.java.sdm.console;
+/*package course.java.sdm.console;
 
 import course.java.sdm.engine.*;
 import course.java.sdm.exceptions.*;
@@ -43,7 +43,7 @@ public class SDMConsoleUI {
 
         LoadAndSaveOrderMenu.AddMenuItem("Save Orders",this::SaveOrderToFile);
         LoadAndSaveOrderMenu.AddMenuItem("Load Orders",this::LoadOrderToFile);
-        
+
         MainMenu.AddMenuItem("Upload System XML",this::UploadXML);
         MainMenu.AddMenuItem("View All Stores",this::showAllStore);
         MainMenu.AddMenuItem("View All Items",this::showAllItems);
@@ -477,8 +477,8 @@ public class SDMConsoleUI {
             System.out.print("For Y: ");
             String yStr = scanner.nextLine();
             try {
-            x = Integer.parseInt(xStr);
-            y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
+                x = Integer.parseInt(xStr);
+                y = Integer.parseInt(yStr);} catch (NumberFormatException e) {
                 System.out.println("Wrong Input - try again");
             }
             res = new Point(x,y);
@@ -486,10 +486,10 @@ public class SDMConsoleUI {
                 System.out.println("ERROR - Please Enter Current Location On Grid (between "+SuperDuperMarketSystem.MIN_COORDINATE+"-"
                         +SuperDuperMarketSystem.MAX_COORDINATE +" for both X and Y)");
             else
-                if (MainSDMSystem.isLocationTaken(res))
-                    System.out.println("There is a Store at this Location - try Again");
-                else
-                    flag = false;
+            if (MainSDMSystem.isLocationTaken(res))
+                System.out.println("There is a Store at this Location - try Again");
+            else
+                flag = false;
         }
         return res;
     }
@@ -518,7 +518,7 @@ public class SDMConsoleUI {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
             } catch (Exception e) {
                 System.out.println("Remember Time limits , dd (00-31) MM(01-12) hh(00-23) mm(00-59)");
-                } //4.2
+            } //4.2
         }
 
         return res;
@@ -837,4 +837,4 @@ public class SDMConsoleUI {
             return true;
         return false;
     }
-}
+}*/

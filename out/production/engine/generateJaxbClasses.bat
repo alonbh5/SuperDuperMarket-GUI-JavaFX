@@ -1,0 +1,1 @@
+xjc -p course.java.sdm.generatedClasses files1/SDM-V1.xsd
