@@ -202,13 +202,45 @@ public class MainMenuController {
     }
 
     @FXML
-    void OnOrderHistoryAction(ActionEvent event) {
+    void OnOrderHistoryAction(ActionEvent event) throws Exception {
+        // load header component and controller from fxml
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
+
+        Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
+
+        if (orders.isEmpty()){
+            //todo
+        }
+        else {
+
+            for (OrderInfo cur : orders) {
+
+            }
+
+            MainPane.setCenter(infoComponent);
+        }
 
     }
 
     @FXML
-    void OnStoresAction(ActionEvent event) {
+    void OnStoresAction(ActionEvent event) throws Exception{
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
 
+        Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
+
+        for (StoreInfo cur : stores) {
+            InfoController.AddNewStore();
+        }
+
+        MainPane.setCenter(infoComponent);
     }
 
 

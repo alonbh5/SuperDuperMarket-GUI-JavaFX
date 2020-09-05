@@ -6,12 +6,12 @@ import java.util.List;
 
 public class StoreInfo {
     public final Point locationCoordinate;
-    public final long StoreID;
-    public final double profitFromShipping;
+    public final Long StoreID;
+    public final Double profitFromShipping;
     public final List<ItemInStoreInfo> Items;
     public final List<OrdersInStoreInfo> OrderHistory ; //todo add here discount.....
     public final String Name;
-    public final int PPK;
+    public final Integer PPK;
 
     public StoreInfo(Point locationCoordinate, long storeID, String name, int PPK,List<ItemInStoreInfo> itemsList,List<OrdersInStoreInfo> orders,double profit) {
         this.locationCoordinate = locationCoordinate;
