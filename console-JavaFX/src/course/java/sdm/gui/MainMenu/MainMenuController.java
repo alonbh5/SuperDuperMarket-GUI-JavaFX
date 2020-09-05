@@ -1,7 +1,8 @@
 package course.java.sdm.gui.MainMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
-import course.java.sdm.gui.CustomersMenu.CustomersMenuController;
+import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -13,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -149,20 +151,21 @@ public class MainMenuController {
         }
     }
 
+
     @FXML
     void OnCustomersAction(ActionEvent event) throws Exception{
 
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = CustomersMenuController.class.getResource("CustomerMenu.fxml"); //todo make it all in common static..
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
-        ScrollPane CustomerComponent = fxmlLoader.load(url.openStream());
-        CustomersMenuController CustomerController = fxmlLoader.getController();
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
 
-        List<CustomerInfo> customers = MainSDMSystem.getListOfAllCustomerInSystem();
+        Collection<CustomerInfo> customers = MainSDMSystem.getListOfAllCustomerInSystem();
 
         for (CustomerInfo cur : customers) {
-            CustomerController.AddNewCustomer(cur.ID.toString()
+            InfoController.AddNewCustomer(cur.ID.toString()
                     ,cur.name
                     ,cur.getLocationString()
                     ,cur.AmountOfOrders.toString()
@@ -170,9 +173,41 @@ public class MainMenuController {
                     ,cur.AvgPriceForOrderWithoutShipping.toString());
         }
 
-        MainPane.setCenter(CustomerComponent);
-        primaryStage.show();
+        MainPane.setCenter(infoComponent);
+        //primaryStage.show();
+    }
 
+    @FXML
+    void OnItemsAction(ActionEvent event) throws Exception {
+        // load header component and controller from fxml
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
+
+        Collection<ItemInfo> items = MainSDMSystem.getListOfAllItems();
+
+        for (ItemInfo cur : items) {
+            InfoController.AddNewItem(cur.serialNumber.toString()
+                    ,cur.Name
+                    ,cur.PayBy
+                    ,cur.NumOfSellingStores.toString()
+                    ,cur.AvgPrice.toString()
+                    ,cur.NumOfSellingStores.toString());
+        }
+
+        MainPane.setCenter(infoComponent);
+
+    }
+
+    @FXML
+    void OnOrderHistoryAction(ActionEvent event) {
+
+    }
+
+    @FXML
+    void OnStoresAction(ActionEvent event) {
 
     }
 

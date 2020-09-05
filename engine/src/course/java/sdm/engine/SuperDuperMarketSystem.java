@@ -183,7 +183,7 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<OrderInfo> getListOfAllOrderInSystem() throws NoValidXMLException    {
+    public Collection<OrderInfo> getListOfAllOrderInSystem() throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 

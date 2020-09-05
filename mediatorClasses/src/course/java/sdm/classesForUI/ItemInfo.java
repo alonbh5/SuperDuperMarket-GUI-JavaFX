@@ -2,12 +2,12 @@ package course.java.sdm.classesForUI;
 
 public class ItemInfo {
 
-    public final long serialNumber;
+    public final Long serialNumber;
     public final String Name;
     public final String PayBy;
-    public final double AvgPrice;
-    public final int NumOfSellingStores;
-    public final int SoldCount;
+    public final Double AvgPrice;
+    public final Integer NumOfSellingStores;
+    public final Integer SoldCount;
 
     public ItemInfo(long serialNumber, String name, String payBy, double avgPrice, int numOfSellingStores, int soldCount) {
         this.serialNumber = serialNumber;
