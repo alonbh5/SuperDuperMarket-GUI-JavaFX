@@ -278,7 +278,7 @@ public class SuperDuperMarketSystem {
         m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
     }
 
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException {
+    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException, OrderIsNotForThisCustomerException {
         if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
             throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
         if (itemsChosen.isEmpty())
@@ -312,6 +312,7 @@ public class SuperDuperMarketSystem {
         updateShippingProfitAfterOrder(newOrder); //update shipping profit
         updateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
         curStore.addOrderToStoreHistory(newOrder);
+        curCustomer.addOrderToHistory(newOrder);
     }
 
     private OrderInfo createOrderInfo(Order CurOrder) {
@@ -346,108 +347,6 @@ public class SuperDuperMarketSystem {
     private CustomerInfo createCustomerInfo (Customer user) {
         return new CustomerInfo(user.getName(),user.getId(),user.getCoordinate(),user.getAvgPriceOfShipping(),user.getAvgPriceOfOrdersWithoutShipping(),user.getAmountOFOrders());
     }
-
-    /*private void crateNewStoreInSystem(SDMStore store) throws PointOutOfGridException, DuplicatePointOnGridException, NegativePriceException, StoreItemNotInSystemException, DuplicateItemInStoreException, StoreDoesNotSellItemException, IllegalOfferException, NegativeQuantityException, NoOffersInDiscountException {
-        Point StoreLocation = new Point(store.getLocation().getX(), store.getLocation().getY());
-        if (!isCoordinateInRange(StoreLocation))
-            throw new PointOutOfGridException(StoreLocation);
-        if (isLocationTaken(StoreLocation))
-            throw new DuplicatePointOnGridException(StoreLocation);
-
-        Store newStore = new Store((long) store.getId(), StoreLocation, store.getName(), store.getDeliveryPpk());
-        ProductInSystem sysItem;
-
-        for (SDMSell curItem : store.getSDMPrices().getSDMSell()) {
-            Long ItemID = (long) curItem.getItemId();
-            double itemPrice = curItem.getPrice();
-
-            if (itemPrice <= 0)
-                throw new NegativePriceException(itemPrice);
-            if (!isItemInSystem(ItemID))
-                throw new StoreItemNotInSystemException(ItemID, newStore.getStoreID());
-            if (newStore.isItemInStore(ItemID))
-                throw new DuplicateItemInStoreException(ItemID);
-
-            Item BaseItem = m_ItemsInSystem.get(ItemID).getItem();
-            ProductInStore newItemForStore = new ProductInStore(BaseItem, itemPrice, newStore);
-            newStore.addItemToStore(newItemForStore);
-            sysItem = m_ItemsInSystem.get(ItemID);
-            sysItem.addSellingStore();
-            if (sysItem.getMinSellingStore() == null || itemPrice < sysItem.getMinSellingStore().getPriceForItem(BaseItem.getSerialNumber()))
-                sysItem.setMinSellingStore(newStore);
-
-        }
-//todo check spaces and case sensetuve  "    sdas "  = "sdas"
-        if (newStore.getItemList().isEmpty())
-            throw new StoreDoesNotSellItemException(newStore.getStoreID());
-
-        if (store.getSDMDiscounts() != null)
-            for (SDMDiscount curDis : store.getSDMDiscounts().getSDMDiscount()) {
-                if (!newStore.isItemInStore((long) curDis.getIfYouBuy().getItemId()))
-                    throw new StoreDoesNotSellItemException("Item of Discount is not sold at store", curDis.getIfYouBuy().getItemId());
-                if (curDis.getIfYouBuy().getQuantity() < 0)
-                    throw new NegativeQuantityException(curDis.getIfYouBuy().getQuantity());
-                if (curDis.getThenYouGet().getSDMOffer().isEmpty())
-                    throw new NoOffersInDiscountException(curDis.getName());
-
-                Discount.OfferType newOp = Discount.OfferType.IRRELEVANT;
-                if (curDis.getThenYouGet().getOperator().equals("ONE-OF"))
-                    newOp = Discount.OfferType.ONE_OF;
-                if (curDis.getThenYouGet().getOperator().equals("ALL-OR-NOTHING"))
-                    newOp = Discount.OfferType.ALL_OR_NOTHING;
-                if (newOp.equals(Discount.OfferType.IRRELEVANT) && curDis.getThenYouGet().getSDMOffer().size() != 1)
-                    throw new IllegalOfferException(curDis.getName());
-
-                Item curItem = m_ItemsInSystem.get((long) curDis.getIfYouBuy().getItemId()).getItem();
-                ProductYouBuy whatYouBuy = new ProductYouBuy(curItem, curDis.getIfYouBuy().getQuantity());
-                Discount newDis = new Discount(newOp, curDis.getName(), whatYouBuy);
-
-                for (SDMOffer offer : curDis.getThenYouGet().getSDMOffer()) {
-                    if (offer.getForAdditional() < 0)
-                        throw new NegativePriceException(offer.getForAdditional());
-                    if (!newStore.isItemInStore((long) offer.getItemId()))
-                        throw new StoreDoesNotSellItemException("Item of Discount is not sold at store", curDis.getIfYouBuy().getItemId());
-                    if (offer.getQuantity() < 0)
-                        throw new NegativeQuantityException(offer.getQuantity());
-                    Item itemForCtor = m_ItemsInSystem.get((long) offer.getItemId()).getItem();
-
-                    newDis.AddProductYouGet(new ProductYouGet(itemForCtor, offer.getQuantity(), offer.getForAdditional()));
-                }
-                newStore.addDiscount(newDis);
-            }
-
-        m_StoresInSystem.put(newStore.getStoreID(), newStore);
-        m_SystemGrid.put(newStore.getCoordinate(), newStore);
-    }/*
-
-    /*private void crateNewItemInSystem(SDMItem item) throws WrongPayingMethodException {
-        Item.payByMethod ePayBy;
-
-        if (item.getPurchaseCategory().equals("Weight"))
-            ePayBy = Item.payByMethod.WEIGHT;
-        else
-        if (item.getPurchaseCategory().equals("Quantity"))
-            ePayBy = Item.payByMethod.AMOUNT;
-        else
-            throw new WrongPayingMethodException(item.getPurchaseCategory());
-
-        Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
-        ProductInSystem newItem = new ProductInSystem(newBaseItem);
-        m_ItemsInSystem.put(newItem.getSerialNumber(),newItem);
-    }*/
-
-    /*private void crateNewCustomerInSystem(SDMCustomer customer) throws PointOutOfGridException, DuplicatePointOnGridException {
-
-        Point location = new Point(customer.getLocation().getX(),customer.getLocation().getY());
-
-        if (!isCoordinateInRange(location))
-            throw new PointOutOfGridException(location);
-        if (isLocationTaken(location))
-            throw new DuplicatePointOnGridException(location);
-        Customer newUser = new Customer(customer.getId(),customer.getName(),location);
-        m_CustomersInSystem.put(newUser.getIdNumber(),newUser);
-        m_SystemGrid.put(newUser.getCoordinate(),newUser);
-    }*/
 
     private Order createEmptyOrder (Customer customer, Date OrderDate) throws PointOutOfGridException {
         if (!isCoordinateInRange(customer.getCoordinate()))
@@ -579,7 +478,6 @@ public class SuperDuperMarketSystem {
         //controller.bindTaskToUIComponents(currentRunningTask,onFinish); todo this onFinsih
         controller.bindTaskToUIComponents(currentRunningTask);
         new Thread(currentRunningTask).start();
-        //copyInfoFromXMLClasses(superDuperMarketDescriptor); // in task!
     }
 
 
