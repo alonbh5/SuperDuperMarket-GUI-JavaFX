@@ -566,9 +566,7 @@ public class SuperDuperMarketSystem {
         }
     }*/
 
-    public void UploadInfoFromXML (String XMLPath) throws DuplicatePointOnGridException, DuplicateItemIDException, DuplicateItemInStoreException
-            , DuplicateStoreInSystemException, ItemIsNotSoldAtAllException, NegativePriceException, PointOutOfGridException,
-            StoreDoesNotSellItemException, StoreItemNotInSystemException, WrongPayingMethodException, NoValidXMLException, NoOffersInDiscountException, IllegalOfferException, NegativeQuantityException, DuplicateCustomerInSystemException {
+    public void UploadInfoFromXML (String XMLPath) throws  NoValidXMLException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
 
         try {

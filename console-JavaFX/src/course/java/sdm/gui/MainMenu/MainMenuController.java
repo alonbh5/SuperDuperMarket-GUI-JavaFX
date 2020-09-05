@@ -7,6 +7,8 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.effect.Effect;
+import javafx.scene.layout.Background;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -89,17 +91,13 @@ public class MainMenuController {
 
         try {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
-            isXmlLoaded.set(true);
             //LoadButton.setDisable(true); todo can i do it?
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
-        } catch (Exception e) {
+        } catch (Exception e) { //todo this is not working..
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Error-Label");
-            ProgressBar.progressProperty().unbind();
         }
-        //todo unbound MassageText....
-        //MassageLabel.textProperty().unbind();
 
     }
 
@@ -114,10 +112,22 @@ public class MainMenuController {
         // task progress bar
         ProgressBar.progressProperty().bind(aTask.progressProperty());
 
+        aTask.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+            if(newValue != null) {
+                MassageLabel.getStyleClass().clear();
+                MassageLabel.getStyleClass().add("Error-Label");
+                ProgressBar.progressProperty().unbind();
+           }
+        });
+
+        aTask.setOnSucceeded(e->isXmlLoaded.set(true));
+
+    }
 
        /* // task cleanup upon finish
         aTask.valueProperty().addListener((observable, oldValue, newValue) -> {
             onTaskFinished(Optional.ofNullable(onFinish));
         });*/
-    }
+
+
 }

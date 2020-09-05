@@ -18,22 +18,27 @@ public class LoadXmlTask extends Task<Boolean> {
     Map<Long,Order> OrderHistory = new HashMap<>();
     Map<Long,Customer> CustomersInSystem = new HashMap<>();
 
-    private final int SLEEP_TIME = 0;
+    private final int SLEEP_TIME = 1000;
 
      LoadXmlTask(SuperDuperMarketDescriptor superDuperMarketDescriptor, SuperDuperMarketSystem mainSys) {
         this.superDuperMarketDescriptor = superDuperMarketDescriptor;
         MainSys = mainSys;
+         exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+             if(newValue != null) {
+                 updateProgress(0,0);
+             }
+         });
     }
 
     @Override
     protected Boolean call() throws Exception {
         updateMessage("Preparing...");
-
         return copyInfoFromXMLClasses(superDuperMarketDescriptor);
     }
 
     private boolean copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws Exception { //todo what if there is no customers or somthing
 
+            Thread.sleep(SLEEP_TIME);
             updateMessage("Getting Items...");
             updateProgress(0,100);
 
@@ -45,8 +50,8 @@ public class LoadXmlTask extends Task<Boolean> {
                     throw new DuplicateItemIDException(Item.getId());
                 }
             }
-
-            updateProgress(0,100);
+            Thread.sleep(SLEEP_TIME);
+            updateProgress(30,100);
             updateMessage("Getting Stores..");
 
             for (SDMStore Store : superDuperMarketDescriptor.getSDMStores().getSDMStore()) {
@@ -58,7 +63,8 @@ public class LoadXmlTask extends Task<Boolean> {
                 }
             }
 
-            updateProgress(0,100);
+            Thread.sleep(SLEEP_TIME);
+            updateProgress(60,100);
             updateMessage("Getting Customers..");
 
             for (SDMCustomer customer : superDuperMarketDescriptor.getSDMCustomers().getSDMCustomer()) {
@@ -70,7 +76,8 @@ public class LoadXmlTask extends Task<Boolean> {
                 }
             }
 
-            updateProgress(0,100);
+            Thread.sleep(SLEEP_TIME);
+            updateProgress(90,100);
             updateMessage("Validating System Information");
 
             checkMissingItem();
