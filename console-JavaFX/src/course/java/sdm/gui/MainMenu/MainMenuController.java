@@ -1,20 +1,21 @@
 package course.java.sdm.gui.MainMenu;
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
-import course.java.sdm.exceptions.*;
-import javafx.beans.binding.Bindings;
+import course.java.sdm.gui.CustomersMenu.CustomersMenuController;
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.effect.Effect;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class MainMenuController {
@@ -145,6 +146,32 @@ public class MainMenuController {
                 MainPane.setId("MainMenuPane3");
                 break;
         }
+    }
+
+    @FXML
+    void OnCustomersAction(ActionEvent event) throws Exception{
+
+        // load header component and controller from fxml
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = CustomersMenuController.class.getResource("CustomerMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane CustomerComponent = fxmlLoader.load(url.openStream());
+        CustomersMenuController CustomerController = fxmlLoader.getController();
+
+        List<CustomerInfo> customers = MainSDMSystem.getListOfAllCustomerInSystem();
+
+        for (CustomerInfo cur : customers) {
+            CustomerController.AddNewCustomer(cur.ID.toString()
+                    ,cur.name,cur.Location.toString()
+                    ,cur.AmountOfOrders.toString()
+                    ,cur.AvgPriceForShipping.toString()
+                    ,cur.AvgPriceForOrderWithoutShipping.toString());
+        }
+
+        MainPane.setCenter(CustomerComponent);
+        primaryStage.show();
+
+
     }
 
 

@@ -68,7 +68,7 @@
                   </Button>
                   <Button fx:id="showItemsButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Show All Items" />
                   <Button fx:id="showOrdersButton" disable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" text="Show Order History" />
-                  <Button fx:id="showCustomersButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Show All Customers" />
+                  <Button fx:id="showCustomersButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnCustomersAction" text="Show All Customers" />
                   <Button fx:id="NewOrderButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="New Order" />
                   <Button fx:id="ItemUpdateButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Item Update" />
                   <Button fx:id="MapButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="System Map" />

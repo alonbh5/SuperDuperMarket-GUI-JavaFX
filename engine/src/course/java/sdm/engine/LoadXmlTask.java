@@ -18,7 +18,7 @@ public class LoadXmlTask extends Task<Boolean> {
     Map<Long,Order> OrderHistory = new HashMap<>();
     Map<Long,Customer> CustomersInSystem = new HashMap<>();
 
-    private final int SLEEP_TIME = 1000;
+    private final int SLEEP_TIME = 1; //todo change this before submit
 
      LoadXmlTask(SuperDuperMarketDescriptor superDuperMarketDescriptor, SuperDuperMarketSystem mainSys) {
         this.superDuperMarketDescriptor = superDuperMarketDescriptor;

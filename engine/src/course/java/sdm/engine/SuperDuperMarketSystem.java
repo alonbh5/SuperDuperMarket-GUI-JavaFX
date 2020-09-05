@@ -125,11 +125,10 @@ public class SuperDuperMarketSystem {
                 .average().getAsDouble();
     }
 
-    public List<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException    {
+    public Collection<StoreInfo> getListOfAllStoresInSystem () throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 
-        StringBuilder str = new StringBuilder();
         List<StoreInfo> res = new ArrayList<>();
 
         for (Store CurStore : m_StoresInSystem.values()){
@@ -145,7 +144,27 @@ public class SuperDuperMarketSystem {
         return res;
     }
 
-    public List<ItemInfo> getListOfAllItems () throws NoValidXMLException    {
+    public List<CustomerInfo> getListOfAllCustomerInSystem () throws NoValidXMLException    {
+        if (locked)
+            throw new NoValidXMLException();
+
+        List<CustomerInfo> res = new ArrayList<>();
+
+        for (Customer curCustomer : m_CustomersInSystem.values()){
+            CustomerInfo newCustomer = new CustomerInfo(curCustomer.getName(),
+                    curCustomer.getIdNumber()
+                    ,curCustomer.getCoordinate()
+                    ,curCustomer.getAvgPriceOfShipping()
+                    ,curCustomer.getAvgPriceOfOrdersWithoutShipping()
+                    ,curCustomer.getAmountOFOrders());
+            res.add(newCustomer);
+        }
+
+
+        return res;
+    }
+
+    public Collection<ItemInfo> getListOfAllItems () throws NoValidXMLException    {
         if (locked)
             throw new NoValidXMLException();
 
