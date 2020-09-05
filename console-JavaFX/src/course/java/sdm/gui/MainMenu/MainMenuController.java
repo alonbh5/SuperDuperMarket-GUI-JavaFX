@@ -3,12 +3,14 @@ import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 public class MainMenuController {
 
+    @FXML    private BorderPane MainPane;
     @FXML    private Button XMLButton;
     @FXML    private Button LoadButton;
     @FXML    private Button showStoresButton;
@@ -28,6 +31,7 @@ public class MainMenuController {
     @FXML    private Button MapButton;
     @FXML    private Label MassageLabel;
     @FXML    private ProgressBar ProgressBar;
+    @FXML    private ComboBox<String> SkinComboBox;
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
@@ -36,6 +40,7 @@ public class MainMenuController {
 
     private Stage primaryStage;
     private SuperDuperMarketSystem MainSDMSystem;
+
 
     public MainMenuController () {
         selectedFileProperty = new SimpleStringProperty();
@@ -49,6 +54,7 @@ public class MainMenuController {
         //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
         LoadButton.disableProperty().bind(isFileSelected.not());
         bindAllButtonsToXmlLoaded();
+        SkinComboBox.getItems().addAll("Skin 1","Skin 2","Skin 3");
     }
 
     private void bindAllButtonsToXmlLoaded() {
@@ -124,10 +130,22 @@ public class MainMenuController {
 
     }
 
-       /* // task cleanup upon finish
-        aTask.valueProperty().addListener((observable, oldValue, newValue) -> {
-            onTaskFinished(Optional.ofNullable(onFinish));
-        });*/
+    @FXML
+    void OnChangeSkin(ActionEvent event) {
+        String selection = SkinComboBox.getValue();
+
+        switch(selection) {
+            case "Skin 1":
+                MainPane.setId("MainMenuPane1");
+                break;
+            case "Skin 2":
+                MainPane.setId("MainMenuPane2");
+                break;
+            case "Skin 3":
+                MainPane.setId("MainMenuPane3");
+                break;
+        }
+    }
 
 
 }

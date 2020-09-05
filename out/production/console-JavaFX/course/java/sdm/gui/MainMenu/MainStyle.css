@@ -1,9 +1,15 @@
 
 
-/*#MainMenuPane {-fx-background-color: Gray
+#MainMenuPane1 {-fx-background-color: transparent
 }
 
-#FullScreenPane {-fx-background-color: Gray}*/
+#MainMenuPane2 {-fx-background-color: red
+}
+
+#MainMenuPane3 {-fx-background-color: #25ffd8
+}
+
+/*#FullScreenPane1 {-fx-background-color: Gray}*/
 
 .Error-Label{-fx-text-fill: red; -fx-opacity: 1;-fx-background-color: transparent
 }
