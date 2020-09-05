@@ -18,7 +18,7 @@ public class CustomersMenuController {
 
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = getClass().getResource("CustomerMenuTile.fxml");
+        URL url = CustomersMenuController.class.getResource("CustomerMenuTile.fxml");
         fxmlLoader.setLocation(url);
         HBox Tile = fxmlLoader.load(url.openStream());
         CustomersMenuTileController TileController = fxmlLoader.getController();

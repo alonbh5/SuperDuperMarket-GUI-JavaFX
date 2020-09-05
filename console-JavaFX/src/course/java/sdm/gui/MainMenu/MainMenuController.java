@@ -8,7 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -33,6 +33,7 @@ public class MainMenuController {
     @FXML    private Label MassageLabel;
     @FXML    private ProgressBar ProgressBar;
     @FXML    private ComboBox<String> SkinComboBox;
+   // @FXML    private Pane CenterPane;
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
@@ -162,7 +163,8 @@ public class MainMenuController {
 
         for (CustomerInfo cur : customers) {
             CustomerController.AddNewCustomer(cur.ID.toString()
-                    ,cur.name,cur.Location.toString()
+                    ,cur.name
+                    ,cur.getLocationString()
                     ,cur.AmountOfOrders.toString()
                     ,cur.AvgPriceForShipping.toString()
                     ,cur.AvgPriceForOrderWithoutShipping.toString());

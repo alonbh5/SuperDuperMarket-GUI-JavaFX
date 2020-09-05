@@ -18,4 +18,8 @@ public class CustomerInfo {
         AvgPriceForOrderWithoutShipping = avgPriceForOrderWithoutShipping;
         AmountOfOrders = amountOfOrders;
     }
+
+    public String getLocationString (){
+        return ("("+(int)Location.getX()+","+(int)Location.getY()+")");
+    }
 }
