@@ -191,7 +191,7 @@ public class LoadXmlTask extends Task<Boolean> {
 
                     Item itemForCtor = ItemsInSystem.get((long) offer.getItemId()).getItem();
 
-                    newDis.AddProductYouGet(new ProductYouGet(itemForCtor, offer.getQuantity(), offer.getForAdditional()));
+                    newDis.AddProductYouGet(new ProductYouGet(itemForCtor,new Double(offer.getQuantity()), new Double(offer.getForAdditional())));
                 }
                 newStore.addDiscount(newDis);
             }

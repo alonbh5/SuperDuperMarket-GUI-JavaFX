@@ -191,7 +191,7 @@ public class MainMenuController {
         for (ItemInfo cur : items) {
             InfoController.AddNewItem(cur.serialNumber.toString()
                     ,cur.Name
-                    ,cur.PayBy
+                    ,cur.PayBy //todo chack label Css class -> picture
                     ,cur.NumOfSellingStores.toString()
                     ,cur.AvgPrice.toString()
                     ,cur.NumOfSellingStores.toString());
