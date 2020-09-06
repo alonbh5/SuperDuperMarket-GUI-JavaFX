@@ -132,12 +132,7 @@ public class SuperDuperMarketSystem {
         List<StoreInfo> res = new ArrayList<>();
 
         for (Store CurStore : m_StoresInSystem.values()){
-            List<ItemInStoreInfo> items = CurStore.getItemList();
-            List<OrdersInStoreInfo> orders = CurStore.getOrderHistoryList();
-
-            StoreInfo newStore = new StoreInfo(CurStore.getCoordinate(),CurStore.getStoreID(),
-                    CurStore.getName(),CurStore.getPPK(),items,orders, CurStore.getProfitFromShipping());
-            res.add(newStore);
+            res.add(getStoreInfoByID(CurStore.getStoreID()));
         }
 
 
@@ -206,8 +201,8 @@ public class SuperDuperMarketSystem {
             {
                 Store curStore = m_StoresInSystem.get(storeID);
                 List<ItemInStoreInfo> items = curStore.getItemList();
-                List<OrdersInStoreInfo> orders = curStore.getOrdeItemInforHistoryList();
-                List<Discount> discounts = curStore.get
+                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList(); //todo this need to return new info
+                List<DiscountInfo> discounts = curStore.getDiscountsList();
 
                 return new StoreInfo(curStore.getCoordinate(),
                         curStore.getStoreID(),
