@@ -146,6 +146,32 @@ class Store implements HasName, Coordinatable,Serializable {
         return res;
     }
 
+    List<DiscountInfo> getDiscountsList () {
+
+        List<DiscountInfo> res = new ArrayList<>();
+        List<OfferItemInfo> offeredItems;
+        OfferItemInfo WhatYouBuy;
+        Item Temp;
+
+        for (Discount curDis : m_Discounts)
+        {
+            offeredItems = new ArrayList<>();
+            for (ProductYouGet curItem: curDis.getOffersBasket() )
+                offeredItems.add(new OfferItemInfo(curItem.getItem().getSerialNumber(),
+                        curItem.getItem().getName(),curItem.getItem().getPayBy().toString(),
+                        curItem.getAmountYouGet(),curItem.getPriceToAdd()));
+            Temp = curDis.getWhatYouBuy().getItem();
+            WhatYouBuy = new OfferItemInfo (Temp.getSerialNumber(),Temp.getName(),
+                    Temp.getPayBy().toString(),curDis.getWhatYouBuy().getAmountToBuy(),0.0);
+
+            DiscountInfo newDis = new DiscountInfo (curDis.getDiscountName(),curDis.getDiscountName(),WhatYouBuy
+            ,curDis.getWhatYouBuy().getAmountToBuy(),offeredItems);
+            res.add(newDis);
+        }
+
+        return res;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

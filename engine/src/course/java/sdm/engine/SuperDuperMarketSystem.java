@@ -206,10 +206,14 @@ public class SuperDuperMarketSystem {
             {
                 Store curStore = m_StoresInSystem.get(storeID);
                 List<ItemInStoreInfo> items = curStore.getItemList();
-                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList();
+                List<OrdersInStoreInfo> orders = curStore.getOrdeItemInforHistoryList();
+                List<Discount> discounts = curStore.get
 
-                return new StoreInfo(curStore.getCoordinate(),curStore.getStoreID(),
-                        curStore.getName(),curStore.getPPK(),items,orders, curStore.getProfitFromShipping());
+                return new StoreInfo(curStore.getCoordinate(),
+                        curStore.getStoreID(),
+                        curStore.getProfitFromShipping(),
+                        items,orders,discounts
+                        ,curStore.getName(),curStore.getPPK());
 
             }
         throw  (new InvalidKeyException("Store #"+storeID+" is not in System"));

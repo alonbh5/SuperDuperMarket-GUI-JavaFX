@@ -3,10 +3,10 @@ package course.java.sdm.engine;
 public class ProductYouGet {
 
     private Item m_item;
-    private double m_AmountYouGet;
-    private double m_PricePerOne;
+    private Double m_AmountYouGet;
+    private Double m_PricePerOne;
 
-     ProductYouGet(Item m_item, double m_AmountYouGet, double m_PriceToAdd) {
+     ProductYouGet(Item m_item, Double m_AmountYouGet, Double m_PriceToAdd) {
         this.m_item = m_item;
         this.m_AmountYouGet = m_AmountYouGet;
         this.m_PricePerOne = m_PriceToAdd;
@@ -16,11 +16,11 @@ public class ProductYouGet {
         return m_item;
     }
 
-     double getAmountYouGet() {
+     Double getAmountYouGet() {
         return m_AmountYouGet;
     }
 
-     double getPriceToAdd() {
+     Double getPriceToAdd() {
         return m_PricePerOne;
     }
 }

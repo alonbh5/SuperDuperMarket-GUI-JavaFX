@@ -10,17 +10,19 @@ public class StoreInfo {
     public final Double profitFromShipping;
     public final List<ItemInStoreInfo> Items;
     public final List<OrdersInStoreInfo> OrderHistory ; //todo add here discount.....
+    public final List<DiscountInfo> Discount;
     public final String Name;
     public final Integer PPK;
 
-    public StoreInfo(Point locationCoordinate, long storeID, String name, int PPK,List<ItemInStoreInfo> itemsList,List<OrdersInStoreInfo> orders,double profit) {
+    public StoreInfo(Point locationCoordinate, Long storeID, Double profitFromShipping, List<ItemInStoreInfo> items, List<OrdersInStoreInfo> orderHistory, List<DiscountInfo> discount, String name, Integer PPK) {
         this.locationCoordinate = locationCoordinate;
         StoreID = storeID;
+        this.profitFromShipping = profitFromShipping;
+        Items = items;
+        OrderHistory = orderHistory;
+        Discount = discount;
         Name = name;
         this.PPK = PPK;
-        this.Items = itemsList;
-        this.OrderHistory=orders;
-        this.profitFromShipping = profit;
     }
 
     public boolean isItemIDinStore (long ItemID)
