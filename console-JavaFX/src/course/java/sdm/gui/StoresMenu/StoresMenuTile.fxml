@@ -26,17 +26,17 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
       </HBox>
-      <TitledPane animated="false" text="Items">
+      <TitledPane fx:id="ItemTile" text="Items">
         <content>
           <AnchorPane fx:id="ItemsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </TitledPane>
-      <TitledPane animated="false" text="Discounts">
+      <TitledPane fx:id="DiscountTile" text="Discounts">
         <content>
           <AnchorPane fx:id="DiscountPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </TitledPane>
-      <TitledPane animated="false" text="Order History">
+      <TitledPane fx:id="OrderTile" text="Order History">
         <content>
           <AnchorPane fx:id="OrderPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>

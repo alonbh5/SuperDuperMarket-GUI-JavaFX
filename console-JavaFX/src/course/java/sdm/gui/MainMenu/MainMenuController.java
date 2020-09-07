@@ -3,6 +3,7 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
+import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -233,11 +234,15 @@ public class MainMenuController {
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();
+        ScrollPane items,discounts,orders;
 
         Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
 
         for (StoreInfo cur : stores) {
-            InfoController.AddNewStore(); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
+            items = StoresMenuTileController.getItemsPane(cur);
+            discounts = new ScrollPane();
+            orders = new ScrollPane();
+            InfoController.AddNewStore(cur.StoreID.toString(),cur.Name,cur.getPointString(),cur.PPK.toString(),cur.profitFromShipping.toString(),discounts,items,orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
         }
 
         MainPane.setCenter(infoComponent);

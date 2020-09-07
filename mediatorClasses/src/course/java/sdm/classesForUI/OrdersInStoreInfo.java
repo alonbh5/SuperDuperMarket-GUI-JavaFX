@@ -4,14 +4,14 @@ import java.util.Date;
 
 public class OrdersInStoreInfo {
 
-    public final long OrderSerialNumber;
+    public final Long OrderSerialNumber;
     public final Date Date;
-    public final double TotalPrice;
-    public final double ShippingPrice;
-    public final double ItemsPrice;
-    public final int amountOfItems;
+    public final Double TotalPrice;
+    public final Double ShippingPrice;
+    public final Double ItemsPrice;
+    public final Integer amountOfItems;
 
-    public OrdersInStoreInfo(long orderSerialNumber, java.util.Date date, double totalPrice, double shippingPrice, double itemsPrice, int amountOfItems) {
+    public OrdersInStoreInfo(Long orderSerialNumber, java.util.Date date, Double totalPrice, Double shippingPrice, Double itemsPrice, Integer amountOfItems) {
         OrderSerialNumber = orderSerialNumber;
         Date = date;
         TotalPrice = totalPrice;

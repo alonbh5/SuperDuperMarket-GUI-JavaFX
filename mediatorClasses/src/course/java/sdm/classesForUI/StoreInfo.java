@@ -29,4 +29,8 @@ public class StoreInfo {
     {
         return Items.stream().anyMatch(t->t.serialNumber == ItemID);
     }
+
+    public String getPointString () {
+        return ("("+(int)locationCoordinate.getX()+","+(int)locationCoordinate.getY()+")");
+    }
 }

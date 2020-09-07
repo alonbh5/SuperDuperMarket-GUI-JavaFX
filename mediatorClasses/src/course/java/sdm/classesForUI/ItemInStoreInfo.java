@@ -2,11 +2,11 @@ package course.java.sdm.classesForUI;
 
 public class ItemInStoreInfo {
 
-    public final long serialNumber;
+    public final Long serialNumber;
     public final String Name;
     public final String PayBy;
-    public final double PriceInStore;
-    public final double SoldCounter;
+    public final Double PriceInStore;
+    public final Double SoldCounter;
 
 
     public ItemInStoreInfo(long serialNumber, String name, String payBy, double priceInStore, double soldCount) {
@@ -17,11 +17,11 @@ public class ItemInStoreInfo {
         SoldCounter = soldCount;
     }
 
-    public ItemInStoreInfo(long serialNumber, double priceInStore) {
+    public ItemInStoreInfo(Long serialNumber, Double priceInStore) {
         this.serialNumber = serialNumber;
         PriceInStore = priceInStore;
         this.Name=null;
         this.PayBy=null;
-        this.SoldCounter=0;
+        this.SoldCounter=0.0;
     }
 }
