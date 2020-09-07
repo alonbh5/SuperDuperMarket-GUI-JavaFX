@@ -237,7 +237,7 @@ public class MainMenuController {
         Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
 
         for (StoreInfo cur : stores) {
-            InfoController.AddNewStore();
+            InfoController.AddNewStore(); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
         }
 
         MainPane.setCenter(infoComponent);
