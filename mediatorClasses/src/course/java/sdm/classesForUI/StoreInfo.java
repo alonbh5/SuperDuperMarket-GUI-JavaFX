@@ -33,4 +33,12 @@ public class StoreInfo {
     public String getPointString () {
         return ("("+(int)locationCoordinate.getX()+","+(int)locationCoordinate.getY()+")");
     }
+
+    public String getDistanceFromUser (Point UserLocation) {
+        return (Double.toString(locationCoordinate.distance(UserLocation)));
+    }
+
+    public String getShippingPriceFromUser (Point UserLocation) {
+        return (Double.toString(PPK * locationCoordinate.distance(UserLocation)));
+    }
 }

@@ -1,7 +1,7 @@
 package course.java.sdm.gui.OrderMenu;
 
-import course.java.sdm.classesForUI.ItemInOrderInfo;
-import course.java.sdm.classesForUI.ItemInStoreInfo;
+
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.classesForUI.OrderInfo;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import javafx.fxml.FXML;
@@ -42,7 +42,6 @@ public class OrderMenuTileController {
 
 
 
-
     @FXML
     private void initialize() {
         ItemTile.setExpanded(false);
@@ -73,6 +72,20 @@ public class OrderMenuTileController {
         for (ItemInOrderInfo cur : order.ItemsInOrder) {
             InfoController.AddNewOrderItem(cur.serialNumber.toString(),cur.Name,cur.PayBy.toLowerCase(),cur.PricePerUint.toString(),cur.amountBought.toString(),cur.TotalPrice.toString()
             ,cur.FromStoreID.toString(),cur.FromSale);
+        }
+
+        return infoComponent;
+    }
+
+    public static ScrollPane getStoresTile(OrderInfo order) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
+
+        for (StoreInfo cur : order.Stores) {
+            InfoController.AddNewOrderStore(cur.StoreID.toString(),cur.Name,cur.PPK.toString(),cur.getDistanceFromUser(order.customer.Location),cur.getShippingPriceFromUser(order.customer.Location));
         }
 
         return infoComponent;

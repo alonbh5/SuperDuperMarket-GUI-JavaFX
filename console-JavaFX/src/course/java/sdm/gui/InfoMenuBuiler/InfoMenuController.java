@@ -3,6 +3,7 @@ package course.java.sdm.gui.InfoMenuBuiler;
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
 import course.java.sdm.gui.OrderMenu.OrderItemTileController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
+import course.java.sdm.gui.OrderMenu.OrderStoreTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
 import course.java.sdm.gui.StoresMenu.StoreItemTileController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
@@ -117,7 +118,7 @@ public class InfoMenuController {
     }
 
     public void AddNewOrderItem(String ID,String Name,String PayBy,String PricePerUnit,String Amount,String TotalPrice,String StoreInfo,boolean isDiscount) throws Exception {
-       // OrderItemTileController
+
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = OrderItemTileController.class.getResource("OrderItemTile.fxml");
         fxmlLoader.setLocation(url);
@@ -126,6 +127,19 @@ public class InfoMenuController {
 
         // add sub components to master app placeholders
         TileController.setValues(ID,Name,PayBy,PricePerUnit,Amount,TotalPrice,StoreInfo,isDiscount);
+        VBoxPane.getChildren().add(Tile);
+    }
+
+    public void AddNewOrderStore(String ID, String Name, String PPK, String distanceFromUser, String shippingPriceFromUser) throws Exception {
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = OrderStoreTileController.class.getResource("OrderItemTile.fxml");
+        fxmlLoader.setLocation(url);
+        HBox Tile = fxmlLoader.load(url.openStream());
+        OrderStoreTileController TileController = fxmlLoader.getController();
+
+        // add sub components to master app placeholders
+        TileController.setValues(ID,Name,PPK,distanceFromUser,shippingPriceFromUser);
         VBoxPane.getChildren().add(Tile);
     }
 }

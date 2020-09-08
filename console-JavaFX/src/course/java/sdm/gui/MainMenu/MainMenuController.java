@@ -208,7 +208,7 @@ public class MainMenuController {
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url;
-        ScrollPane items=null,stores=null;
+        ScrollPane items,stores;
         String OrderType = new String();
 
         Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
@@ -231,6 +231,7 @@ public class MainMenuController {
                 else
                     OrderType = "Dynamic";
                 items = OrderMenuTileController.getItemsTile (cur);
+                stores =OrderMenuTileController.getStoresTile (cur);
                 InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(),cur.getDateString(),cur.customer.name,cur.getPointString(),
                         OrderType,items,stores,cur.m_ShippingPrice.toString(),cur.m_ItemsPrice.toString(),cur.m_TotalPrice.toString());
             }
