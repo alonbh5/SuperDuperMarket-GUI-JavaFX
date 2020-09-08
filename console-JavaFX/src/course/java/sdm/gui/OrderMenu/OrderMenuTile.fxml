@@ -16,7 +16,7 @@
             <Label text="Date:" />
             <Label fx:id="DateLabel" />
             <Label fx:id="UserNameLabel" text="User Name:" />
-            <Label fx:id="NameLabel" />
+            <Label fx:id="UserNameLabel" />
             <Label text="User Loaction:" />
             <Label fx:id="LocationLabel" />
             <Label text="Order Type:" />

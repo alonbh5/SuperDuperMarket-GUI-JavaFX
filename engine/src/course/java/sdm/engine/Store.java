@@ -132,14 +132,19 @@ class Store implements HasName, Coordinatable,Serializable {
             return res;
     }
 
-    List<OrdersInStoreInfo> getOrderHistoryList()
+    List<OrderInfo> getOrderHistoryList()
     {
-        List<OrdersInStoreInfo> res = new ArrayList<>();
+        List<OrderInfo> res = new ArrayList<>();
+        List<ItemInOrderInfo> itemsOnlyFromStore;
+        CustomerInfo customer;
 
         for (Order curOrder : m_OrderHistory.values())
         {
-            OrdersInStoreInfo newOrder = new OrdersInStoreInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),curOrder.getTotalPrice()
-            ,curOrder.getShippingPrice(),curOrder.getItemsPrice(),curOrder.getAmountOfItems());
+            itemsOnlyFromStore = curOrder.getItemsOnlyFromStore(this.m_StoreID);
+            customer =  new CustomerInfo(curOrder.getCostumer().getName(),curOrder.getCostumer().getId(),curOrder.getCostumer().getCoordinate(),curOrder.getCostumer().getAvgPriceOfShipping(),curOrder.getCostumer().getAvgPriceOfOrdersWithoutShipping(),curOrder.getCostumer().getAmountOFOrders());
+            OrderInfo newOrder = new OrderInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),null  //todo this is null no point to show everyone..
+            ,itemsOnlyFromStore,curOrder.getTotalPrice(),curOrder.getShippingPrice()
+                    ,curOrder.getItemsPrice(),curOrder.getAmountOfItems(),customer,curOrder.isStatic());
             res.add(newOrder);
         }
 

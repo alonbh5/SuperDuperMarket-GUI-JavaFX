@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox prefHeight="167.0" prefWidth="796.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.StoresMenu.StoreDiscountTileController">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="796.0" spacing="20.0">
@@ -14,9 +13,9 @@
             <Label text="Name: " />
             <Label fx:id="NameLabel" />
             <Label text="If You Buy" />
-            <Label fx:id="ItemYouButLabel" />
+            <Label fx:id="AmountYouBuyLabe" />
             <Label text="X" />
-            <Label fx:id="AmountYouBuyLabel" />
+            <Label fx:id="ItemYouButLabel" />
             <Label text="Disount Type:" />
             <Label fx:id="DiscountTypeLabel" />
          </children>

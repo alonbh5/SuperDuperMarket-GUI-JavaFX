@@ -17,13 +17,13 @@ public class OrderInfo {
     public final Double m_ShippingPrice;
     public final Double m_ItemsPrice;
     public final Integer m_amountOfItems;
-    public final Double Distance;
-    public final Integer StaticPPK;
+    //public final Double Distance;
+    //public final Integer StaticPPK;
     public final boolean isStatic;
 
     public OrderInfo(long m_OrderSerialNumber, Date m_Date, List<StoreInfo> stores, List<ItemInOrderInfo> itemsInOrder,
-                     Double m_TotalPrice, Double m_ShippingPrice, Double m_ItemsPrice, Integer m_amountOfItems,Double distance,
-                     Integer PPK, CustomerInfo customer,boolean isStatic) {
+                     Double m_TotalPrice, Double m_ShippingPrice, Double m_ItemsPrice, Integer m_amountOfItems,
+                     CustomerInfo customer,boolean isStatic) {
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
         this.Stores = stores;
@@ -32,8 +32,8 @@ public class OrderInfo {
         this.m_ShippingPrice = m_ShippingPrice;
         this.m_ItemsPrice = m_ItemsPrice;
         this.m_amountOfItems = m_amountOfItems;
-        this.Distance = distance;
-        this.StaticPPK=PPK;
+        //this.Distance = distance;
+        //this.StaticPPK=PPK;
         this.customer =   customer;
         this.isStatic=isStatic;
     }

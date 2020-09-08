@@ -201,7 +201,7 @@ public class SuperDuperMarketSystem {
             {
                 Store curStore = m_StoresInSystem.get(storeID);
                 List<ItemInStoreInfo> items = curStore.getItemList();
-                List<OrdersInStoreInfo> orders = curStore.getOrderHistoryList(); //todo this need to return new info
+                List<OrderInfo> orders = curStore.getOrderHistoryList(); //todo this need to return new info
                 List<DiscountInfo> discounts = curStore.getDiscountsList();
 
                 return new StoreInfo(curStore.getCoordinate(),
@@ -360,7 +360,7 @@ public class SuperDuperMarketSystem {
 
         return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
                 storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice()
-                ,CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk,UserInOrder,CurOrder.isStatic());
+                ,CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),UserInOrder,CurOrder.isStatic());
     }
 
     private CustomerInfo createCustomerInfo (Customer user) {
@@ -370,8 +370,8 @@ public class SuperDuperMarketSystem {
     private Order createEmptyOrder (Customer customer, Date OrderDate,boolean isStatic) throws PointOutOfGridException {
         if (!isCoordinateInRange(customer.getCoordinate()))
             throw (new PointOutOfGridException(customer.getCoordinate()));
-        if (m_SystemGrid.containsKey(customer.getCoordinate()))
-            throw (new KeyAlreadyExistsException("There is a store at "+ customer.getCoordinate().toString()));
+       // if (m_SystemGrid.containsKey(customer.getCoordinate())) //todo there is now need to check  - xml checkes...
+            //throw (new KeyAlreadyExistsException("There is a store at "+ customer.getCoordinate().toString()));
 
         while (m_OrderHistory.containsKey(OrdersSerialGenerator))
             OrdersSerialGenerator++;
@@ -626,6 +626,39 @@ public class SuperDuperMarketSystem {
         this.m_OrderHistory=OrderHistory;
         this.m_ItemsInSystem=ItemsInSystem;
         locked = false;
+    }
+
+
+    public void test() {
+        Order emptyOrder = null;
+        Date dt = new Date();
+
+        try {
+            emptyOrder = createEmptyOrder(m_CustomersInSystem.get((long)1), dt, true);
+        } catch (PointOutOfGridException e) {
+            e.printStackTrace();
+        }
+
+        ProductInOrder productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)1),false);
+        productInOrder.setAmountBought(5);
+        emptyOrder.addProductToOrder(productInOrder);
+        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)2),false);
+        productInOrder.setAmountBought(25);
+        emptyOrder.addProductToOrder(productInOrder);
+
+        m_OrderHistory.put(emptyOrder.getOrderSerialNumber(),emptyOrder); //todo dont add it yet...
+        updateShippingProfitAfterOrder(emptyOrder); //update shipping profit
+        updateSoldCounterInStore(emptyOrder); // updated the counter of item in the store (how many times has been sold)
+        m_StoresInSystem.get((long)1).addOrderToStoreHistory(emptyOrder);
+        try {
+            m_CustomersInSystem.get((long)1).addOrderToHistory(emptyOrder);
+        } catch (OrderIsNotForThisCustomerException e) {
+            e.printStackTrace();
+        }
+
+        for (ProductInOrder curItem :emptyOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+
     }
 
 

@@ -1,15 +1,15 @@
 package course.java.sdm.gui.StoresMenu;
 
-import course.java.sdm.classesForUI.DiscountInfo;
-import course.java.sdm.classesForUI.ItemInStoreInfo;
-import course.java.sdm.classesForUI.StoreInfo;
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
+import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 
 import java.io.IOException;
@@ -58,18 +58,28 @@ public class StoresMenuTileController {
         DiscountTile.setExpanded(false);
     }
 
-    public void setValues(String Id, String Name, String Location, String PPK, String ShippingProfit, ScrollPane Discounts, ScrollPane Items, ScrollPane Orders){
+    public void setValues(String Id, String Name, String Location, String PPK, String ShippingProfit, ScrollPane Discounts, ScrollPane Items, ScrollPane Orders) {
         IDLabel.setText(Id);
         NameLabel.setText(Name);
         LocationLabel.setText(Location);
         PpkLabel.setText(PPK);
         ShippingProfitLabel.setText(ShippingProfit);
-        DiscountPane.getChildren().add(Discounts);
         ItemsPane.getChildren().add(Items);
-        OrderPane.getChildren().add(Orders);
+        if (Discounts == null) {
+            DiscountTile.setText(DiscountTile.getText() + " (Empty)");
+            DiscountTile.setCollapsible(false);
+        }
+        else
+             DiscountPane.getChildren().add(Discounts);
+        if (Orders == null) {
+            OrderTile.setText(OrderTile.getText() + " (Empty)");
+            OrderTile.setCollapsible(false);
+        }
+        else
+            OrderPane.getChildren().add(Orders);
     }
 
-    public static ScrollPane getItemsPane (StoreInfo store) throws IOException {
+    public static ScrollPane getItemsPane(StoreInfo store) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
@@ -77,15 +87,19 @@ public class StoresMenuTileController {
         InfoMenuController InfoController = fxmlLoader.getController();
 
         for (ItemInStoreInfo cur : store.Items) {
-            InfoController.AddNewStoreItem(cur.serialNumber.toString(),cur.Name,cur.PayBy.toLowerCase(),cur.PriceInStore.toString(),cur.SoldCounter.toString());
+            InfoController.AddNewStoreItem(cur.serialNumber.toString(), cur.Name, cur.PayBy.toLowerCase(), cur.PriceInStore.toString(), cur.SoldCounter.toString());
         }
 
         return infoComponent;
     }
 
-    public static ScrollPane getDiscountPane (StoreInfo store) throws IOException {
+    public static ScrollPane getDiscountPane(StoreInfo store) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        if (store.Discount.isEmpty()) {
+            return null;
+        }
+
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();
@@ -96,4 +110,22 @@ public class StoresMenuTileController {
         return infoComponent;
     }
 
+    public static ScrollPane getOrdersPane(StoreInfo store) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        if (store.OrderHistory.isEmpty()) {
+            return null;
+        }
+
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml");
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
+
+        for (OrderInfo cur : store.OrderHistory) {
+
+        }
+        return infoComponent;
+    }
 }
+
+

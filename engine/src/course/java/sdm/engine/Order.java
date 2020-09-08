@@ -1,7 +1,10 @@
 package course.java.sdm.engine;
+import course.java.sdm.classesForUI.ItemInOrderInfo;
+
 import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
 
 
 class Order implements Coordinatable, Serializable {
@@ -153,5 +156,17 @@ class Order implements Coordinatable, Serializable {
 
     public Boolean isStatic() {
         return isStatic;
+    }
+
+    public List<ItemInOrderInfo> getItemsOnlyFromStore(long storeID) {
+        List<ItemInOrderInfo> res = new ArrayList<>();
+
+        for (ProductInOrder cur : m_Basket) {
+            if (cur.getProductInStore().getStore().getStoreID() == storeID)
+                res.add(new ItemInOrderInfo(cur.getSerialNumber(),cur.getProductInStore().getItem().getName(),
+                        cur.getPayBy().toString(),cur.getProductInStore().getStore().getStoreID(),
+                        cur.getAmount(),cur.getProductInStore().getPricePerUnit(),cur.getPriceOfTotalItems(),cur.isFromSale()));
+        }
+        return res;
     }
 }

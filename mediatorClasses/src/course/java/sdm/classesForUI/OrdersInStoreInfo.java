@@ -1,5 +1,9 @@
 package course.java.sdm.classesForUI;
 
+
+
+import course.java.sdm.classesForUI.*;
+
 import java.util.Date;
 
 public class OrdersInStoreInfo {
@@ -10,6 +14,7 @@ public class OrdersInStoreInfo {
     public final Double ShippingPrice;
     public final Double ItemsPrice;
     public final Integer amountOfItems;
+
 
     public OrdersInStoreInfo(Long orderSerialNumber, java.util.Date date, Double totalPrice, Double shippingPrice, Double itemsPrice, Integer amountOfItems) {
         OrderSerialNumber = orderSerialNumber;

@@ -9,12 +9,12 @@ public class StoreInfo {
     public final Long StoreID;
     public final Double profitFromShipping;
     public final List<ItemInStoreInfo> Items;
-    public final List<OrdersInStoreInfo> OrderHistory ; //todo add here discount.....
+    public final List<OrderInfo> OrderHistory ;
     public final List<DiscountInfo> Discount;
     public final String Name;
     public final Integer PPK;
 
-    public StoreInfo(Point locationCoordinate, Long storeID, Double profitFromShipping, List<ItemInStoreInfo> items, List<OrdersInStoreInfo> orderHistory, List<DiscountInfo> discount, String name, Integer PPK) {
+    public StoreInfo(Point locationCoordinate, Long storeID, Double profitFromShipping, List<ItemInStoreInfo> items, List<OrderInfo> orderHistory, List<DiscountInfo> discount, String name, Integer PPK) {
         this.locationCoordinate = locationCoordinate;
         StoreID = storeID;
         this.profitFromShipping = profitFromShipping;

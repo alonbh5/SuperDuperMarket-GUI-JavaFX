@@ -145,6 +145,7 @@ public class MainMenuController {
                 MainPane.setId("MainMenuPane1");
                 break;
             case "Skin 2":
+                MainSDMSystem.test();
                 MainPane.setId("MainMenuPane2");
                 break;
             case "Skin 3":
@@ -254,8 +255,8 @@ public class MainMenuController {
 
         for (StoreInfo cur : stores) {
             items = StoresMenuTileController.getItemsPane(cur);
-            discounts = new ScrollPane();
-            orders = new ScrollPane();
+            discounts = null; //discounts = StoresMenuTileController.getDiscountPane(cur);
+            orders = null; //orders = StoresMenuTileController.getOrdersPane(cur);
             InfoController.AddNewStore(cur.StoreID.toString(),cur.Name,cur.getPointString(),cur.PPK.toString(),cur.profitFromShipping.toString(),discounts,items,orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
         }
 

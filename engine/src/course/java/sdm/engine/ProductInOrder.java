@@ -52,6 +52,8 @@ class ProductInOrder implements Serializable {
         return productInStore.getItem().getPayBy();
     }
 
+    boolean isFromSale () {return isFromSale;}
+
 
 
 

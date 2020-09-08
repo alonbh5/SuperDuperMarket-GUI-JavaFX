@@ -133,7 +133,7 @@ public class InfoMenuController {
     public void AddNewOrderStore(String ID, String Name, String PPK, String distanceFromUser, String shippingPriceFromUser) throws Exception {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = OrderStoreTileController.class.getResource("OrderItemTile.fxml");
+        URL url = OrderStoreTileController.class.getResource("OrderStoreTile.fxml");
         fxmlLoader.setLocation(url);
         HBox Tile = fxmlLoader.load(url.openStream());
         OrderStoreTileController TileController = fxmlLoader.getController();
