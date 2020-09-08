@@ -16,13 +16,15 @@ public class OrderMenuTileController {
 
     @FXML    private Label LocationLabel;
 
+    @FXML    private Label OrderTypeLabel;
+
     @FXML    private TitledPane ItemTile;
 
     @FXML    private AnchorPane ItemsPane;
 
     @FXML    private TitledPane StoreTile;
 
-    @FXML    private AnchorPane DiscountPane;
+    @FXML    private AnchorPane StoresPane;
 
     @FXML    private Label ItemPriceLabel;
 

@@ -19,6 +19,8 @@
             <Label fx:id="NameLabel" />
             <Label text="User Loaction:" />
             <Label fx:id="LocationLabel" />
+            <Label text="Order Type:" />
+            <Label fx:id="OrderTypeLabel" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -29,9 +31,9 @@
           <AnchorPane fx:id="ItemsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </TitledPane>
-      <TitledPane fx:id="DiscountTile" text="Stores">
+      <TitledPane fx:id="StoreTile" text="Store(s)">
         <content>
-          <AnchorPane fx:id="DiscountPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="StoresPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </TitledPane>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
