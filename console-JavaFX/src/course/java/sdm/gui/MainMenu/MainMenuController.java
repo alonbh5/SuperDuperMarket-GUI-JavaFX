@@ -2,6 +2,7 @@ package course.java.sdm.gui.MainMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
@@ -261,6 +262,18 @@ public class MainMenuController {
         }
 
         MainPane.setCenter(infoComponent);
+    }
+
+    @FXML
+    void OnItemUpdate(ActionEvent event) throws Exception {
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = ChangeItemMenuController.class.getResource("ChangeItemMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        Pane component = fxmlLoader.load(url.openStream());
+        ChangeItemMenuController controller = fxmlLoader.getController();
+        controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(),this);
+        MainPane.setCenter(component);
     }
 
 
