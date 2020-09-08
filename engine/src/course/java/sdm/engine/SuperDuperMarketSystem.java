@@ -270,7 +270,7 @@ public class SuperDuperMarketSystem {
 
         Store minSellingStore;
         ProductInSystem itemInSys;
-        Order newOrder = createEmptyOrder(curCustomer,OrderDate);
+        Order newOrder = createEmptyOrder(curCustomer,OrderDate,false);
 
         for (ItemInOrderInfo curItem : itemsChosen) {
             if (!isItemInSystem(curItem.serialNumber))
@@ -280,12 +280,12 @@ public class SuperDuperMarketSystem {
 
             itemInSys = getItemByID(curItem.serialNumber); //get the item in sys
             minSellingStore = getMinSellingStoreForItem (itemInSys.getSerialNumber()); //get min selling store
-            ProductInOrder newItem = new ProductInOrder(minSellingStore.getItemInStore(curItem.serialNumber)); //create prod in order
+            ProductInOrder newItem = new ProductInOrder(minSellingStore.getItemInStore(curItem.serialNumber),false); //create prod in order
             newItem.setAmountBought(curItem.amountBought); //set how much you want
             newOrder.addProductToOrder(newItem); //added it to order
         }
 
-        m_tempDynamicOrder = newOrder;
+        m_tempDynamicOrder = newOrder; //todo wait for sale items...
         return createOrderInfo(newOrder);
     }
 
@@ -307,7 +307,7 @@ public class SuperDuperMarketSystem {
         Customer curCustomer = m_CustomersInSystem.get(curUser.ID);
 
 
-        Order newOrder = createEmptyOrder(curCustomer,OrderDate);
+        Order newOrder = createEmptyOrder(curCustomer,OrderDate,true);
         Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
 
 
@@ -318,7 +318,7 @@ public class SuperDuperMarketSystem {
                 throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
 
             ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
-            ProductInOrder newItem = new ProductInOrder(curProd);
+            ProductInOrder newItem = new ProductInOrder(curProd,false);
             newItem.setAmountBought(curItem.amountBought);
             newOrder.addProductToOrder(newItem);
         }
@@ -326,7 +326,7 @@ public class SuperDuperMarketSystem {
         for (ProductInOrder curItem :newOrder.getBasket())
             m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
 
-        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder);
+        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder); //todo dont add it yet...
         updateShippingProfitAfterOrder(newOrder); //update shipping profit
         updateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
         curStore.addOrderToStoreHistory(newOrder);
@@ -335,18 +335,18 @@ public class SuperDuperMarketSystem {
 
     private OrderInfo createOrderInfo(Order CurOrder) {
         Set<Store> stores = CurOrder.getStoreSet();
-        List<String> storesList = new ArrayList<>();
+        List<StoreInfo> storesList = new ArrayList<>();
 
         Set<ProductInOrder> Items = CurOrder.getBasket();
         List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
 
         for (Store curStore : stores)
-            storesList.add("Store Name: "+curStore.getName()+ " #"+curStore.getStoreID());
+            storesList.add(getStoreInfoByID(curStore.getStoreID()));
 
         for (ProductInOrder curProd : Items)
             itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
                     curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
-                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems()));
+                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems(),CurOrder.isStatic()));
 
         int ppk =0;
         double distance = 0;
@@ -359,14 +359,15 @@ public class SuperDuperMarketSystem {
         CustomerInfo UserInOrder = createCustomerInfo(CurOrder.getCostumer());
 
         return new OrderInfo(CurOrder.getOrderSerialNumber(),CurOrder.getDate(),
-                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice(),CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk,UserInOrder);
+                storesList,itemsInOrder,CurOrder.getTotalPrice(),CurOrder.getShippingPrice()
+                ,CurOrder.getItemsPrice(),CurOrder.getAmountOfItems(),distance,ppk,UserInOrder,CurOrder.isStatic());
     }
 
     private CustomerInfo createCustomerInfo (Customer user) {
         return new CustomerInfo(user.getName(),user.getId(),user.getCoordinate(),user.getAvgPriceOfShipping(),user.getAvgPriceOfOrdersWithoutShipping(),user.getAmountOFOrders());
     }
 
-    private Order createEmptyOrder (Customer customer, Date OrderDate) throws PointOutOfGridException {
+    private Order createEmptyOrder (Customer customer, Date OrderDate,boolean isStatic) throws PointOutOfGridException {
         if (!isCoordinateInRange(customer.getCoordinate()))
             throw (new PointOutOfGridException(customer.getCoordinate()));
         if (m_SystemGrid.containsKey(customer.getCoordinate()))
@@ -375,7 +376,7 @@ public class SuperDuperMarketSystem {
         while (m_OrderHistory.containsKey(OrdersSerialGenerator))
             OrdersSerialGenerator++;
 
-        return new Order (customer,OrdersSerialGenerator++,OrderDate);
+        return new Order (customer,OrdersSerialGenerator++,OrderDate,isStatic);
     }
 
     public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus

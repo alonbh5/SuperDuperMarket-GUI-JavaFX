@@ -3,6 +3,7 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
+import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
@@ -195,7 +196,7 @@ public class MainMenuController {
                     ,cur.PayBy //todo chack label Css class -> picture
                     ,cur.NumOfSellingStores.toString()
                     ,cur.AvgPrice.toString()
-                    ,cur.NumOfSellingStores.toString());
+                    ,cur.SoldCount.toString());
         }
 
         MainPane.setCenter(infoComponent);
@@ -206,20 +207,31 @@ public class MainMenuController {
     void OnOrderHistoryAction(ActionEvent event) throws Exception {
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
-        fxmlLoader.setLocation(url);
-        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
+        URL url;
+        ScrollPane items=null,stores=null;
+        String OrderType = new String();
 
         Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
 
         if (orders.isEmpty()){
-            //todo
+            url = OrderMenuTileController.class.getResource("EmptyOrdersTile.fxml");
+            fxmlLoader.setLocation(url);
+            Pane Tile = fxmlLoader.load(url.openStream());
+            MainPane.setCenter(Tile);
         }
         else {
+            url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+            fxmlLoader.setLocation(url);
+            ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+            InfoMenuController InfoController = fxmlLoader.getController();
 
             for (OrderInfo cur : orders) {
-
+                if (cur.isStatic)
+                    OrderType = "Static";
+                else
+                    OrderType = "Dynamic";
+                InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(),cur.getDateString(),cur.customer.name,cur.getPointString(),
+                        OrderType,items,stores,cur.m_ShippingPrice.toString(),cur.m_ItemsPrice.toString(),cur.m_TotalPrice.toString());
             }
 
             MainPane.setCenter(infoComponent);

@@ -1,6 +1,7 @@
 package course.java.sdm.classesForUI;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class OrderInfo {
 
     public final Long m_OrderSerialNumber;
     public final Date m_Date;
-    public final List<String> Stores;
+    public final List<StoreInfo> Stores;
     public final List<ItemInOrderInfo> ItemsInOrder;
     public final CustomerInfo customer;
     public final Double m_TotalPrice;
@@ -18,12 +19,15 @@ public class OrderInfo {
     public final Integer m_amountOfItems;
     public final Double Distance;
     public final Integer StaticPPK;
+    public final boolean isStatic;
 
-    public OrderInfo(long m_OrderSerialNumber, Date m_Date, List<String> stores, List<ItemInOrderInfo> itemsInOrder, double m_TotalPrice, double m_ShippingPrice, double m_ItemsPrice, int m_amountOfItems,double distance,int PPK, CustomerInfo customer) {
+    public OrderInfo(long m_OrderSerialNumber, Date m_Date, List<StoreInfo> stores, List<ItemInOrderInfo> itemsInOrder,
+                     Double m_TotalPrice, Double m_ShippingPrice, Double m_ItemsPrice, Integer m_amountOfItems,Double distance,
+                     Integer PPK, CustomerInfo customer,boolean isStatic) {
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
-        Stores = stores;
-        ItemsInOrder = itemsInOrder;
+        this.Stores = stores;
+        this.ItemsInOrder = itemsInOrder;
         this.m_TotalPrice = m_TotalPrice;
         this.m_ShippingPrice = m_ShippingPrice;
         this.m_ItemsPrice = m_ItemsPrice;
@@ -31,5 +35,16 @@ public class OrderInfo {
         this.Distance = distance;
         this.StaticPPK=PPK;
         this.customer =   customer;
+        this.isStatic=isStatic;
+    }
+
+    public String getPointString () {
+        return customer.getLocationString();
+    }
+
+    public String getDateString () {
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        df.format(m_Date);
+        return (df.toPattern());
     }
 }

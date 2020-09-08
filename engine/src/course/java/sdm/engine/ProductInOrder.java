@@ -6,11 +6,14 @@ import java.util.Objects;
 class ProductInOrder implements Serializable {
 
         private final ProductInStore productInStore;
+        private final boolean isFromSale;
         private double amountBought;
         private double PriceOfTotalItems;
 
-     ProductInOrder(ProductInStore productInStore) {
-        this.productInStore = productInStore;
+     ProductInOrder(ProductInStore productInStore,boolean isFromSale) {
+
+         this.productInStore = productInStore;
+         this.isFromSale =isFromSale;
     }
 
      void setAmountBought(double amountBought) {

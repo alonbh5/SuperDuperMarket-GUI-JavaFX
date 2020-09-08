@@ -1,6 +1,7 @@
 package course.java.sdm.gui.InfoMenuBuiler;
 
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
+import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
 import course.java.sdm.gui.StoresMenu.StoreItemTileController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
@@ -48,17 +50,18 @@ public class InfoMenuController {
 
     }
 
-    public void AddNewOrder (String ID,String Name,String payingMethodLabel,String sellingStoresLabel,String avgPriceLabel,String soldNumberLabel) throws Exception {
+    public void AddNewOrder (String ID, String Date, String UserName, String Location, String OrderType, ScrollPane items,ScrollPane Stores,
+                             String PriceShipping,String PriceItems,String PriceTotal) throws Exception {
 
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ShowItemsController.class.getResource("ShowOrdersTile.fxml");
+        URL url = OrderMenuTileController.class.getResource("OrderMenuTile.fxml");
         fxmlLoader.setLocation(url);
-        HBox Tile = fxmlLoader.load(url.openStream());
-        ShowItemsController TileController = fxmlLoader.getController();
+        VBox Tile = fxmlLoader.load(url.openStream());
+        OrderMenuTileController TileController = fxmlLoader.getController();
 
         // add sub components to master app placeholders
-        TileController.SetValues(ID,Name,payingMethodLabel,sellingStoresLabel,avgPriceLabel,soldNumberLabel);
+        TileController.setValues(ID,Date,UserName,Location,OrderType,items,Stores,PriceShipping,PriceItems,PriceTotal);
         VBoxPane.getChildren().add(Tile);
 
     }
@@ -100,7 +103,7 @@ public class InfoMenuController {
         VBoxPane.getChildren().add(Tile);
     }
 
-    public void AddNewStoreOrder(String serialNumber, String name, String PayBy, String priceInStore, String soldCounter) throws IOException {
+    public void AddNewStoreOrder(String serialNumber, String name, String PayBy, String priceInStore, String soldCounter) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = StoreItemTileController.class.getResource("StoreItemTile.fxml");
         fxmlLoader.setLocation(url);
@@ -111,4 +114,5 @@ public class InfoMenuController {
         TileController.SetValues(serialNumber,name,PayBy,priceInStore,soldCounter);
         VBoxPane.getChildren().add(Tile);
     }
+
 }

@@ -15,11 +15,13 @@ class Order implements Coordinatable, Serializable {
     private int m_amountOfItems=0;
     private final Set<ProductInOrder> m_Basket = new HashSet<>();
     private final Set<Store> m_StoresInOrder = new HashSet<>();
+    private final boolean isStatic;
 
-     Order(Customer Costumer, long m_OrderSerialNumber, Date m_Date) {
+     Order(Customer Costumer, long m_OrderSerialNumber, Date m_Date,boolean isStatic) {
         this.m_Costumer = Costumer;
         this.m_OrderSerialNumber = m_OrderSerialNumber;
         this.m_Date = m_Date;
+        this.isStatic=isStatic;
     }
 
      long getOrderSerialNumber() {
@@ -147,5 +149,9 @@ class Order implements Coordinatable, Serializable {
 
     public long getCustomerID() {
          return m_Costumer.getId();
+    }
+
+    public Boolean isStatic() {
+        return isStatic;
     }
 }
