@@ -1,10 +1,18 @@
 package course.java.sdm.gui.OrderMenu;
 
+import course.java.sdm.classesForUI.ItemInOrderInfo;
+import course.java.sdm.classesForUI.ItemInStoreInfo;
+import course.java.sdm.classesForUI.OrderInfo;
+import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class OrderMenuTileController {
 
@@ -33,6 +41,8 @@ public class OrderMenuTileController {
     @FXML    private Label TotalPriceLabel;
 
 
+
+
     @FXML
     private void initialize() {
         ItemTile.setExpanded(false);
@@ -51,6 +61,21 @@ public class OrderMenuTileController {
         TotalPriceLabel.setText(PriceTotal);
         StoresPane.getChildren().add(Stores);
         ItemsPane.getChildren().add(items);
+    }
+
+    public static ScrollPane getItemsTile(OrderInfo order) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
+        InfoMenuController InfoController = fxmlLoader.getController();
+
+        for (ItemInOrderInfo cur : order.ItemsInOrder) {
+            InfoController.AddNewOrderItem(cur.serialNumber.toString(),cur.Name,cur.PayBy.toLowerCase(),cur.PricePerUint.toString(),cur.amountBought.toString(),cur.TotalPrice.toString()
+            ,cur.FromStoreID.toString(),cur.FromSale);
+        }
+
+        return infoComponent;
     }
 
 }

@@ -1,6 +1,7 @@
 package course.java.sdm.gui.InfoMenuBuiler;
 
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
+import course.java.sdm.gui.OrderMenu.OrderItemTileController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
 import course.java.sdm.gui.StoresMenu.StoreItemTileController;
@@ -115,4 +116,16 @@ public class InfoMenuController {
         VBoxPane.getChildren().add(Tile);
     }
 
+    public void AddNewOrderItem(String ID,String Name,String PayBy,String PricePerUnit,String Amount,String TotalPrice,String StoreInfo,boolean isDiscount) throws Exception {
+       // OrderItemTileController
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = OrderItemTileController.class.getResource("OrderItemTile.fxml");
+        fxmlLoader.setLocation(url);
+        HBox Tile = fxmlLoader.load(url.openStream());
+        OrderItemTileController TileController = fxmlLoader.getController();
+
+        // add sub components to master app placeholders
+        TileController.setValues(ID,Name,PayBy,PricePerUnit,Amount,TotalPrice,StoreInfo,isDiscount);
+        VBoxPane.getChildren().add(Tile);
+    }
 }

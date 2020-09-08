@@ -230,6 +230,7 @@ public class MainMenuController {
                     OrderType = "Static";
                 else
                     OrderType = "Dynamic";
+                items = OrderMenuTileController.getItemsTile (cur);
                 InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(),cur.getDateString(),cur.customer.name,cur.getPointString(),
                         OrderType,items,stores,cur.m_ShippingPrice.toString(),cur.m_ItemsPrice.toString(),cur.m_TotalPrice.toString());
             }
