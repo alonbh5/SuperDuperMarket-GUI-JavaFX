@@ -34,6 +34,8 @@ class Store implements HasName, Coordinatable,Serializable {
         return m_StoreID;
     }
 
+    int getAmountOfItems () {return m_items.size();}
+
     Collection getDiscounts () {return m_Discounts;};
 
     double getProfitFromShipping() {
@@ -195,6 +197,13 @@ class Store implements HasName, Coordinatable,Serializable {
         if (!m_items.containsKey(itemID))
             throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
 
+        List<Discount> removeDis = new ArrayList<>();
+
+        for (Discount cur : m_Discounts) {
+            if (cur.getWhatYouBuy().getItem().getSerialNumber() == itemID)
+                removeDis.add(cur);
+        }
+        m_Discounts.removeAll(removeDis);
         m_items.remove(itemID);
     }
 

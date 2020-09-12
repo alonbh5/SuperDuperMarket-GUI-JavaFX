@@ -379,7 +379,7 @@ public class SuperDuperMarketSystem {
         return new Order (customer,OrdersSerialGenerator++,OrderDate,isStatic);
     }
 
-    public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException { //bonus
+    public void DeleteItemFromStore(long itemID, long storeID) throws InvalidKeyException, StoreDoesNotSellItemException, ItemIsNotSoldAtAllException, ItemIsTheOnlyOneInStoreException { //bonus
 
         Store storeByID = getStoreByID(storeID);
         ProductInSystem itemByID = getItemByID(itemID);
@@ -389,6 +389,9 @@ public class SuperDuperMarketSystem {
 
         if (itemByID.getNumberOfSellingStores() == 1)
             throw new ItemIsNotSoldAtAllException(itemByID.getSerialNumber(), itemByID.getItem().getName());
+
+        if (storeByID.getAmountOfItems() == 1)
+            throw new ItemIsTheOnlyOneInStoreException(itemID);
 
         storeByID.DeleteItem(itemID);
         ProductInSystem productInSystem = m_ItemsInSystem.get(itemID);
