@@ -295,6 +295,10 @@ public class MainMenuController {
         MainPane.setCenter(component);
     }
 
+    public Collection<ItemInfo> getAllItems() throws NoValidXMLException {
+        return MainSDMSystem.getListOfAllItems();
+    }
+
 
 
 }

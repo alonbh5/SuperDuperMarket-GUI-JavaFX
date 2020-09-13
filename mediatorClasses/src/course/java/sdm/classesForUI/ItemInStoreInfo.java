@@ -27,4 +27,24 @@ public class ItemInStoreInfo {
         this.PayBy=null;
         this.SoldCounter=0.0;
     }
+
+    public Long getSerialNumber() {
+        return serialNumber;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public String getPayBy() {
+        return PayBy;
+    }
+
+    public Double getPriceInStore() {
+        return PriceInStore;
+    }
+
+    public Double getSoldCounter() {
+        return SoldCounter;
+    }
 }

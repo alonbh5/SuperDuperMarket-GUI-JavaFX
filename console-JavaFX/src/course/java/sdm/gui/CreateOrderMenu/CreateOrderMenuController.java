@@ -2,7 +2,9 @@ package course.java.sdm.gui.CreateOrderMenu;
 
 import course.java.sdm.classesForUI.CustomerInfo;
 import course.java.sdm.classesForUI.ItemInStoreInfo;
+import course.java.sdm.classesForUI.ItemInfo;
 import course.java.sdm.classesForUI.StoreInfo;
+import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.MainMenu.MainMenuController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -56,6 +58,7 @@ public class CreateOrderMenuController {
     private SimpleBooleanProperty isDynamicOrderTypeSelected;
     private SimpleBooleanProperty isStoreSelected;
     private SimpleBooleanProperty showStores;
+    private SimpleBooleanProperty showAllItems;
 
 
 
@@ -66,12 +69,16 @@ public class CreateOrderMenuController {
         isDynamicOrderTypeSelected = new SimpleBooleanProperty(false);
         isStoreSelected = new SimpleBooleanProperty(false);
         showStores = new SimpleBooleanProperty(false);
+        showAllItems = new SimpleBooleanProperty(false);
     }
 
     @FXML
     private void initialize() {
         showStores.bind(isDateSelected.and(isStaticOrderTypeSelected));
         showStores.addListener(this::exposeStore);
+
+        showAllItems.bind(isDateSelected.and(isDynamicOrderTypeSelected));
+        showAllItems.addListener(this::exposeAllItems);
 
         DateAndTypeTIle.collapsibleProperty().bind(isUserSelected);
         DateAndTypeTIle.setExpanded(false);
@@ -86,6 +93,24 @@ public class CreateOrderMenuController {
         ItemNameColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, String>("Name"));
         PayByColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, String>("PayBy"));
         PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("PriceInStore"));
+    }
+
+    private void exposeAllItems(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1)  {
+        Collection<ItemInfo> itemsInSystem = null;
+        try {
+            itemsInSystem = MainController.getAllItems();
+        } catch (NoValidXMLException e) {
+
+        }
+        ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
+
+        for (ItemInfo cur : itemsInSystem)
+             items.add(new ItemInStoreInfo(cur.serialNumber,cur.Name,cur.PayBy,0,0));
+
+        ItemTable.setItems(items);
+
+        isStoreSelected.setValue(true);
+        ItemTile.setExpanded(true);
     }
 
     private void exposeStore(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1) {
@@ -115,14 +140,7 @@ public class CreateOrderMenuController {
         Collection<ItemInStoreInfo> itemsInStore = StoresCombo.getSelectionModel().getSelectedItem().Items;
         ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
         items.addAll(itemsInStore);
-
-        TableView<ItemInStoreInfo> newTable = new TableView<>();
-        //items.add(new ItemInStoreInfo(121,"54","32",2.2,1));
         ItemTable.setItems(items);
-        //ItemTable.getItems().addAll(items);
-       // newTable.getColumns().addAll(ItemIdColumn,ItemNameColumn,PayByColumn,PricePerUnitColumn);
-        //newTable.getItems().addAll(items);
-        //ItemTable = newTable;
 
         isStoreSelected.setValue(true);
         ItemTile.setExpanded(true);
@@ -150,5 +168,8 @@ public class CreateOrderMenuController {
     void OnDateSelected(ActionEvent event) {
         isDateSelected.setValue(true);
     }
+
+
+
 
 }
