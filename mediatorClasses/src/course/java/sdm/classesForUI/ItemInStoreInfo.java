@@ -10,6 +10,7 @@ public class ItemInStoreInfo {
     public final String PayBy;
     public final Double PriceInStore;
     public final Double SoldCounter;
+    private final String AmountWanted = "Enter Amount Wanted Here";
 
 
     public ItemInStoreInfo(long serialNumber, String name, String payBy, double priceInStore, double soldCount) {
@@ -46,5 +47,9 @@ public class ItemInStoreInfo {
 
     public Double getSoldCounter() {
         return SoldCounter;
+    }
+
+    public String getAmountWanted() {
+        return AmountWanted;
     }
 }

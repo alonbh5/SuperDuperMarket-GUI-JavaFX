@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 import javax.script.Bindings;
 import javax.xml.ws.Binding;
@@ -50,6 +51,7 @@ public class CreateOrderMenuController {
     @FXML    private TableColumn<ItemInStoreInfo, String> PayByColumn;
 
     @FXML    private TableColumn<ItemInStoreInfo, Double> PricePerUnitColumn;
+
 
     private MainMenuController MainController;
     private SimpleBooleanProperty isUserSelected;

@@ -75,7 +75,7 @@
             </AnchorPane>
         </content>
       </TitledPane>
-      <TitledPane fx:id="ItemTile" animated="false" prefHeight="388.0" prefWidth="1061.0" text="Items">
+      <TitledPane fx:id="ItemTile" prefHeight="388.0" prefWidth="1061.0" text="Items">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
