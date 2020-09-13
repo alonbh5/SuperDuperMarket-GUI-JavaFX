@@ -3,6 +3,7 @@ import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
+import course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
@@ -11,6 +12,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -88,7 +90,13 @@ public class MainMenuController {
         String absolutePath = selectedFile.getAbsolutePath();
         selectedFileProperty.set(absolutePath);
         isFileSelected.set(true);
-        MassageLabel.setText("Please Load System");
+
+        if (MassageLabel.textProperty().isBound()) {
+            MassageLabel.textProperty().unbind();
+            MassageLabel.setText("Please Load System To Update System");
+        }
+        else
+             MassageLabel.setText("Please Load System");
     }
 
     @FXML
@@ -244,6 +252,17 @@ public class MainMenuController {
     }
 
     @FXML
+    void OnNewOrder(ActionEvent event) throws IOException, NoValidXMLException {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = CreateOrderMenuController.class.getResource("CreateOrderMenu.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        Parent component = fxmlLoader.load(url.openStream());
+        CreateOrderMenuController controller = fxmlLoader.getController();
+        controller.OnCreation(MainSDMSystem.getListOfAllCustomerInSystem(),MainSDMSystem.getListOfAllStoresInSystem(),this);
+        MainPane.setCenter(component);
+    }
+
+    @FXML
     void OnStoresAction(ActionEvent event) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
@@ -275,6 +294,7 @@ public class MainMenuController {
         controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(),this);
         MainPane.setCenter(component);
     }
+
 
 
 }

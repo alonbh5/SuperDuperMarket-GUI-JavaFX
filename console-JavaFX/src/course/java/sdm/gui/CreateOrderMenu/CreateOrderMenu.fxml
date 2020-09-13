@@ -12,38 +12,19 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="701.0" prefWidth="1087.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-   <columnConstraints>
-      <ColumnConstraints hgrow="NEVER" maxWidth="99.0" minWidth="9.0" prefWidth="11.0" />
-      <ColumnConstraints hgrow="ALWAYS" maxWidth="1069.0" minWidth="10.0" prefWidth="1061.0" />
-      <ColumnConstraints hgrow="NEVER" maxWidth="97.0" minWidth="7.0" prefWidth="15.0" />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints maxHeight="98.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="206.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="430.0" minHeight="10.0" prefHeight="75.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="437.0" minHeight="10.0" prefHeight="77.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="402.0" minHeight="10.0" prefHeight="390.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="55.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-   </rowConstraints>
+<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController">
    <children>
-      <VBox GridPane.columnIndex="1" GridPane.rowIndex="6" />
-      <TitledPane animated="false" prefHeight="83.0" prefWidth="875.0" text="User" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <TitledPane animated="false" prefHeight="78.0" prefWidth="1196.0" text="User">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="57.0" prefWidth="873.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label text="Please Choose User:" />
-                        <ComboBox prefHeight="25.0" prefWidth="367.0" />
+                        <ComboBox fx:id="UserCombo" onAction="#OnUserSelected" prefHeight="25.0" prefWidth="367.0" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -53,21 +34,21 @@
             </AnchorPane>
         </content>
       </TitledPane>
-      <TitledPane animated="false" prefHeight="87.0" prefWidth="875.0" text="Date &amp; Order Type" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <TitledPane fx:id="DateAndTypeTIle" animated="false" prefHeight="87.0" prefWidth="875.0" text="Date &amp; Order Type">
         <content>
           <AnchorPane>
                <children>
-                  <HBox alignment="CENTER" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label text="Please Choose User:" />
-                        <DatePicker />
+                        <DatePicker fx:id="datePicker" onAction="#OnDateSelected" />
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        <RadioButton mnemonicParsing="false" text="Static Order">
+                        <RadioButton fx:id="StaticRadio" mnemonicParsing="false" onAction="#OnStaticRadio" text="Static Order">
                            <toggleGroup>
                               <ToggleGroup fx:id="OrderType" />
                            </toggleGroup>
                         </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="Dynamic Order" toggleGroup="$OrderType" />
+                        <RadioButton fx:id="DynamicRadio" mnemonicParsing="false" onAction="#OnDynamicRadio" text="Dynamic Order" toggleGroup="$OrderType" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -77,41 +58,43 @@
             </AnchorPane>
         </content>
       </TitledPane>
-      <TitledPane animated="false" prefHeight="86.0" prefWidth="875.0" text="Store" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <TitledPane fx:id="StoreTile" animated="false" text="Store">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="106.0" prefWidth="1058.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="57.0" prefWidth="873.0" spacing="15.0">
+                  <HBox alignment="CENTER_LEFT" minHeight="0.0" minWidth="0.0" prefHeight="60.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
                         <Label text="Please Choose Store" />
-                        <ComboBox prefHeight="25.0" prefWidth="370.0" />
+                        <ComboBox fx:id="StoresCombo" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="370.0" />
                      </children>
                   </HBox>
                </children>
             </AnchorPane>
         </content>
       </TitledPane>
-      <TitledPane animated="false" prefHeight="388.0" prefWidth="1061.0" text="Items" GridPane.columnIndex="1" GridPane.rowIndex="4">
+      <TitledPane fx:id="ItemTile" animated="false" prefHeight="388.0" prefWidth="1061.0" text="Items">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TableView layoutX="-1.0" prefHeight="231.0" prefWidth="873.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TableView fx:id="ItemTable" layoutX="-1.0" prefHeight="231.0" prefWidth="873.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
+                      <TableColumn fx:id="ItemIdColumn" editable="false" prefWidth="75.0" text="Item ID" />
+                      <TableColumn fx:id="ItemNameColumn" editable="false" prefWidth="75.0" text="Item Name" />
+                        <TableColumn fx:id="PayByColumn" editable="false" prefWidth="115.0" text="Paying Method" />
+                        <TableColumn fx:id="PricePerUnitColumn" editable="false" prefWidth="103.0" text="Price Per Unit" />
                     </columns>
                   </TableView>
                </children>
             </AnchorPane>
         </content>
       </TitledPane>
-      <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
+      <HBox alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Continue" />
+            <Button disable="true" mnemonicParsing="false" onAction="#OnContinue" prefHeight="25.0" prefWidth="102.0" text="Continue" />
          </children>
       </HBox>
    </children>
-</GridPane>
+</VBox>

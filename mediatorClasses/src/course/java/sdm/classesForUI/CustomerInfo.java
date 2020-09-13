@@ -22,4 +22,11 @@ public class CustomerInfo {
     public String getLocationString (){
         return ("("+(int)Location.getX()+","+(int)Location.getY()+")");
     }
+
+    @Override
+    public String toString() {
+        return "Customer #"+ID+
+                " (" + name +
+                ") , Location at " + getLocationString() ;}
+
 }

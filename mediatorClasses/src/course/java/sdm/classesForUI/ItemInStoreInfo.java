@@ -1,5 +1,8 @@
 package course.java.sdm.classesForUI;
 
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 public class ItemInStoreInfo {
 
     public final Long serialNumber;

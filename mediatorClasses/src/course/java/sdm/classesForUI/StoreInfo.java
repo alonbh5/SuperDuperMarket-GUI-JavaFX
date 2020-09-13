@@ -41,4 +41,12 @@ public class StoreInfo {
     public String getShippingPriceFromUser (Point UserLocation) {
         return (Double.toString(PPK * locationCoordinate.distance(UserLocation)));
     }
+
+    @Override
+    public String toString() {
+        return "Store #" + StoreID +
+                " (" + Name +
+                "), at " + getPointString() +
+                ", PPK is" + PPK ;
+    }
 }
