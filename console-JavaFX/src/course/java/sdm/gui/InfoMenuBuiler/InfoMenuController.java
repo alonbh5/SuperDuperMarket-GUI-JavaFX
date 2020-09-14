@@ -37,20 +37,6 @@ public class InfoMenuController {
 
     }
 
-    public void AddNewItem (String ID,String Name,String payingMethodLabel,String sellingStoresLabel,String avgPriceLabel,String soldNumberLabel) throws Exception {
-
-        // load header component and controller from fxml
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ShowItemsController.class.getResource("ShowItemsTile.fxml");
-        fxmlLoader.setLocation(url);
-        HBox Tile = fxmlLoader.load(url.openStream());
-        ShowItemsController TileController = fxmlLoader.getController();
-
-        // add sub components to master app placeholders
-        TileController.SetValues(ID,Name,payingMethodLabel,sellingStoresLabel,avgPriceLabel,soldNumberLabel);
-        VBoxPane.getChildren().add(Tile);
-
-    }
 
     public void AddNewOrder (String ID, String Date, String UserName, String Location, String OrderType, ScrollPane items,ScrollPane Stores,
                              String PriceShipping,String PriceItems,String PriceTotal) throws Exception {

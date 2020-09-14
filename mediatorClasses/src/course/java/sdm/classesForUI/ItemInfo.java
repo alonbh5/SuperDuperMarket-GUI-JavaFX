@@ -17,4 +17,28 @@ public class ItemInfo {
         NumOfSellingStores = numOfSellingStores;
         SoldCount = soldCount;
     }
+
+    public Long getSerialNumber() {
+        return serialNumber;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public String getPayBy() {
+        return PayBy;
+    }
+
+    public Double getAvgPrice() {
+        return AvgPrice;
+    }
+
+    public Integer getNumOfSellingStores() {
+        return NumOfSellingStores;
+    }
+
+    public Integer getSoldCount() {
+        return SoldCount;
+    }
 }

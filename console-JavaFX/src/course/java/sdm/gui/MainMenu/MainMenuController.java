@@ -6,6 +6,7 @@ import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
+import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
@@ -199,22 +200,16 @@ public class MainMenuController {
     @FXML
     void OnItemsAction(ActionEvent event) throws Exception {
         // load header component and controller from fxml
+        MassageLabel.setText("Entered Items View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        URL url = ShowItemsController.class.getResource("ShowItemsMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
+        ShowItemsController ItemsController = fxmlLoader.getController();
 
         Collection<ItemInfo> items = MainSDMSystem.getListOfAllItems();
 
-        for (ItemInfo cur : items) {
-            InfoController.AddNewItem(cur.serialNumber.toString()
-                    ,cur.Name
-                    ,cur.PayBy //todo chack label Css class -> picture
-                    ,cur.NumOfSellingStores.toString()
-                    ,cur.AvgPrice.toString()
-                    ,cur.SoldCount.toString());
-        }
+        ItemsController.setItems (items);
 
         MainPane.setCenter(infoComponent);
 
