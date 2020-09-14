@@ -1,9 +1,6 @@
 package course.java.sdm.gui.CreateOrderMenu;
 
-import course.java.sdm.classesForUI.CustomerInfo;
-import course.java.sdm.classesForUI.ItemInStoreInfo;
-import course.java.sdm.classesForUI.ItemInfo;
-import course.java.sdm.classesForUI.StoreInfo;
+import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.MainMenu.MainMenuController;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -16,8 +13,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class CreateOrderMenuController {
 
@@ -50,19 +48,21 @@ public class CreateOrderMenuController {
 
     @FXML    private TableColumn<ItemInStoreInfo, Double> PricePerUnitColumn;
 
+    @FXML    private Button ContinueButton;
 
 
 
-    private MainMenuController MainController;
     private SimpleBooleanProperty isUserSelected;
     private SimpleBooleanProperty isDateSelected;
+    private SimpleBooleanProperty isItemSelected;
     private SimpleBooleanProperty isStaticOrderTypeSelected;
     private SimpleBooleanProperty isDynamicOrderTypeSelected;
     private SimpleBooleanProperty isStoreSelected;
     private SimpleBooleanProperty showStores;
     private SimpleBooleanProperty showAllItems;
 
-
+    private MainMenuController MainController;
+    private List<ItemInOrderInfo> ItemsByUser;
 
     public CreateOrderMenuController () {
         isUserSelected = new SimpleBooleanProperty(false);
@@ -72,8 +72,8 @@ public class CreateOrderMenuController {
         isStoreSelected = new SimpleBooleanProperty(false);
         showStores = new SimpleBooleanProperty(false);
         showAllItems = new SimpleBooleanProperty(false);
-
-
+        isItemSelected = new SimpleBooleanProperty(false);
+        ItemsByUser = new ArrayList<>();
     }
 
     @FXML
@@ -93,11 +93,32 @@ public class CreateOrderMenuController {
         ItemTile.collapsibleProperty().bind(isStoreSelected.or(isDateSelected.and(isDynamicOrderTypeSelected)));
         ItemTile.setExpanded(false);
 
+        ContinueButton.disableProperty().bind(isItemSelected.not());
+
         ItemIdColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
         ItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
         PayByColumn.setCellValueFactory(new PropertyValueFactory<>("PayBy"));
         PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<>("PriceInStore"));
 
+        ItemTable.setRowFactory(tv -> {
+            TableRow<ItemInStoreInfo> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    ItemInStoreInfo rowData = row.getItem();
+                    OnUserPickedItem(rowData);
+                }
+            });
+            return row ;
+        });
+
+    }
+
+    private void OnUserPickedItem(ItemInStoreInfo rowData) {
+        //Double userAmount = MainController.getUserAmount(rowData);
+        Double userAmount =0.5;
+        ItemsByUser.add(new ItemInOrderInfo(rowData,userAmount));
+        MainController.PrintMassage("Amount for "+rowData.Name + "is " + userAmount);
+        isItemSelected.setValue(true);
     }
 
     private void exposeAllItems(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1)  {
@@ -105,7 +126,7 @@ public class CreateOrderMenuController {
         try {
             itemsInSystem = MainController.getAllItems();
         } catch (NoValidXMLException e) {
-
+                MainController.PrintMassage("No Valid XML");
         }
         ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
 
@@ -155,7 +176,7 @@ public class CreateOrderMenuController {
                 ItemTable.setItems(items);
                 isStoreSelected.setValue(true);
                 ItemTile.setExpanded(true);
-                MainController.PrintMassage("Static Order - Please Choose Items From Store...");
+                MainController.PrintMassage("Static Order - Please Choose Items From Store (Double CLick)...");
             }
     }
 
@@ -176,7 +197,7 @@ public class CreateOrderMenuController {
 
         StoreTile.setExpanded(false); //todo this not works..
 
-        MainController.PrintMassage("Dynamic Order - Please Choose From All Items...");
+        MainController.PrintMassage("Dynamic Order - Please Choose From All Items (Double Click)...");
     }
 
     @FXML

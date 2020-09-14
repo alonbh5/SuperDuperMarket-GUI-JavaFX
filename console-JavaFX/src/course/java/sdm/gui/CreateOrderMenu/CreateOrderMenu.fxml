@@ -93,7 +93,7 @@
       </TitledPane>
       <HBox alignment="CENTER">
          <children>
-            <Button disable="true" mnemonicParsing="false" onAction="#OnContinue" prefHeight="25.0" prefWidth="102.0" text="Continue" />
+            <Button fx:id="ContinueButton" disable="true" mnemonicParsing="false" onAction="#OnContinue" prefHeight="25.0" prefWidth="102.0" text="Continue" />
          </children>
       </HBox>
    </children>
