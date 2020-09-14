@@ -106,6 +106,8 @@ public class CreateOrderMenuController {
         }
         ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
 
+        PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("off"));
+
         for (ItemInfo cur : itemsInSystem)
              items.add(new ItemInStoreInfo(cur.serialNumber,cur.Name,cur.PayBy,0,0));
 
@@ -117,7 +119,7 @@ public class CreateOrderMenuController {
 
     private void exposeStore(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1) {
             StoreTile.setExpanded(observableValue.getValue());
-            StoresCombo.setDisable(!observableValue.getValue());
+            StoresCombo.setDisable(!observableValue.getValue()); //todo stores not Closing...
     }
 
     public void OnCreation (Collection<CustomerInfo> customer, Collection<StoreInfo> stores, MainMenuController mainController ) {
@@ -141,9 +143,10 @@ public class CreateOrderMenuController {
     void OnStoreSelected(ActionEvent event) {
         Collection<ItemInStoreInfo> itemsInStore = StoresCombo.getSelectionModel().getSelectedItem().Items;
         ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
+        PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("PriceInStore"));
+
         items.addAll(itemsInStore);
         ItemTable.setItems(items);
-
         isStoreSelected.setValue(true);
         ItemTile.setExpanded(true);
         MainController.PrintMassage("Static Order - Please Choose Items From Store...");

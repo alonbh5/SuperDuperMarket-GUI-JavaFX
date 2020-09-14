@@ -487,6 +487,14 @@ public class SuperDuperMarketSystem {
         }
     }*/
 
+    private Collection<Discount> getAllEntitledDiscounts (Order order) {
+        List<Discount> res = new ArrayList<>();
+
+        //for (order.getBasket())
+
+        return res;
+    }
+
     public void UploadInfoFromXML (String XMLPath) throws  NoValidXMLException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
 
