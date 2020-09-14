@@ -4,6 +4,7 @@ import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.NoValidXMLException;
 import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController;
+import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
@@ -46,6 +47,7 @@ public class MainMenuController {
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
     private SimpleBooleanProperty isXmlLoaded;
+    private SimpleBooleanProperty isLoadedDone;
 
 
     private Stage primaryStage;
@@ -57,12 +59,13 @@ public class MainMenuController {
         isFileSelected = new SimpleBooleanProperty(false);
         MainSDMSystem = new SuperDuperMarketSystem(this);
         isXmlLoaded = new SimpleBooleanProperty(false);
+        isLoadedDone = new SimpleBooleanProperty(false);
     }
 
     @FXML
     private void initialize() {
         //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
-        LoadButton.disableProperty().bind(isFileSelected.not());
+        LoadButton.disableProperty().bind(isFileSelected.not().or(isLoadedDone));
         bindAllButtonsToXmlLoaded();
         SkinComboBox.getItems().addAll("Skin 1","Skin 2","Skin 3");
     }
@@ -91,6 +94,7 @@ public class MainMenuController {
         String absolutePath = selectedFile.getAbsolutePath();
         selectedFileProperty.set(absolutePath);
         isFileSelected.set(true);
+        isLoadedDone.set(false);
 
         if (MassageLabel.textProperty().isBound()) {
             MassageLabel.textProperty().unbind();
@@ -143,6 +147,14 @@ public class MainMenuController {
        // aTask.setOnSucceeded(e->isXmlLoaded.set(true));
         aTask.setOnSucceeded(e->{
             isXmlLoaded.set(true);
+            isLoadedDone.set(true);
+            MassageLabel.textProperty().unbind();
+            ProgressBar.progressProperty().unbind();
+
+        });
+
+        aTask.setOnFailed(e->{
+            isLoadedDone.set(true);
             MassageLabel.textProperty().unbind();
             ProgressBar.progressProperty().unbind();
         });
@@ -173,21 +185,14 @@ public class MainMenuController {
         // load header component and controller from fxml
         MassageLabel.setText("Entered Customer View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        URL url = CustomersMenuTileController.class.getResource("CustomerMenuTile.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
+        CustomersMenuTileController CustomerController = fxmlLoader.getController();
 
         Collection<CustomerInfo> customers = MainSDMSystem.getListOfAllCustomerInSystem();
 
-        for (CustomerInfo cur : customers) {
-            InfoController.AddNewCustomer(cur.ID.toString()
-                    ,cur.name
-                    ,cur.getLocationString()
-                    ,cur.AmountOfOrders.toString()
-                    ,cur.AvgPriceForShipping.toString()
-                    ,cur.AvgPriceForOrderWithoutShipping.toString());
-        }
+        CustomerController.setValues(customers);
 
         MainPane.setCenter(infoComponent);
         //primaryStage.show();

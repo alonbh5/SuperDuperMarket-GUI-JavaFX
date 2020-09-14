@@ -22,21 +22,6 @@ public class InfoMenuController {
     private VBox VBoxPane;
 
 
-    public void AddNewCustomer (String ID,String Name,String Location,String NumOfOrder,String PriceShipping,String PriceOrders) throws Exception {
-
-        // load header component and controller from fxml
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = CustomersMenuTileController.class.getResource("CustomerMenuTile.fxml");
-        fxmlLoader.setLocation(url);
-        HBox Tile = fxmlLoader.load(url.openStream());
-        CustomersMenuTileController TileController = fxmlLoader.getController();
-
-        // add sub components to master app placeholders
-        TileController.SetValues(ID,Name,Location,NumOfOrder,PriceShipping,PriceOrders);
-        VBoxPane.getChildren().add(Tile);
-
-    }
-
 
     public void AddNewOrder (String ID, String Date, String UserName, String Location, String OrderType, ScrollPane items,ScrollPane Stores,
                              String PriceShipping,String PriceItems,String PriceTotal) throws Exception {

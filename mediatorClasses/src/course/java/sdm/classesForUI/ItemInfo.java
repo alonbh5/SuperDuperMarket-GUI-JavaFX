@@ -1,5 +1,7 @@
 package course.java.sdm.classesForUI;
 
+import java.text.DecimalFormat;
+
 public class ItemInfo {
 
     public final Long serialNumber;
@@ -31,7 +33,8 @@ public class ItemInfo {
     }
 
     public Double getAvgPrice() {
-        return AvgPrice;
+
+        return Double.parseDouble(String.format("%.2f", AvgPrice));
     }
 
     public Integer getNumOfSellingStores() {

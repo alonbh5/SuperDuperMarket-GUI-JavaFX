@@ -23,6 +23,30 @@ public class CustomerInfo {
         return ("("+(int)Location.getX()+","+(int)Location.getY()+")");
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Long getID() {
+        return ID;
+    }
+
+    public String getLocation() {
+        return getLocationString();
+    }
+
+    public Double getAvgPriceForShipping() {
+        return Double.parseDouble(String.format("%.2f", AvgPriceForShipping));
+    }
+
+    public Double getAvgPriceForOrderWithoutShipping() {
+        return Double.parseDouble(String.format("%.2f", AvgPriceForOrderWithoutShipping));
+    }
+
+    public Integer getAmountOfOrders() {
+        return AmountOfOrders;
+    }
+
     @Override
     public String toString() {
         return "Customer #"+ID+
