@@ -112,14 +112,12 @@ public class MainMenuController {
 
         try {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
-            //LoadButton.setDisable(true); todo can i do it?
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
         } catch (Exception e) { //todo this is not working..
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Error-Label");
         }
-
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -141,8 +139,11 @@ public class MainMenuController {
            }
         });
 
-        aTask.setOnSucceeded(e->isXmlLoaded.set(true));
-
+       // aTask.setOnSucceeded(e->isXmlLoaded.set(true));
+        aTask.setOnSucceeded(e->{
+            isXmlLoaded.set(true);
+            MassageLabel.textProperty().unbind();
+        });
     }
 
     @FXML
@@ -168,6 +169,7 @@ public class MainMenuController {
     void OnCustomersAction(ActionEvent event) throws Exception{
 
         // load header component and controller from fxml
+        MassageLabel.setText("Entered Customer View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
@@ -187,6 +189,10 @@ public class MainMenuController {
 
         MainPane.setCenter(infoComponent);
         //primaryStage.show();
+    }
+
+    public void PrintMassage(String str) {
+        MassageLabel.setText(str);
     }
 
     @FXML

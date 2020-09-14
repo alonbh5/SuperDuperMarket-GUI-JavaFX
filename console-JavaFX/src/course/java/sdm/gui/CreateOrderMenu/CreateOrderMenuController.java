@@ -146,6 +146,7 @@ public class CreateOrderMenuController {
 
         isStoreSelected.setValue(true);
         ItemTile.setExpanded(true);
+        MainController.PrintMassage("Static Order - Please Choose Items From Store...");
     }
 
     @FXML
@@ -158,12 +159,14 @@ public class CreateOrderMenuController {
     void OnDynamicRadio(ActionEvent event) {
         isStaticOrderTypeSelected.setValue(false);
         isDynamicOrderTypeSelected.setValue(true);
+        MainController.PrintMassage("Dynamic Order - Please Choose From All Items...");
     }
 
     @FXML
     void OnStaticRadio(ActionEvent event) {
         isStaticOrderTypeSelected.setValue(true);
         isDynamicOrderTypeSelected.setValue(false);
+        MainController.PrintMassage("Static Order - Please Choose Store...");
     }
 
     @FXML

@@ -47,6 +47,6 @@ public class StoreInfo {
         return "Store #" + StoreID +
                 " (" + Name +
                 "), at " + getPointString() +
-                ", PPK is" + PPK ;
+                ", PPK is " + PPK ;
     }
 }

@@ -26,7 +26,7 @@ public class ChangeItemMenuController {
 
     @FXML    private RadioButton AddRadio;
 
-    @FXML    private ComboBox<String> StoresComboBox;
+    @FXML    private ComboBox<StoreInfo> StoresComboBox;
 
     @FXML    private Label MassageLabel;
 
@@ -44,13 +44,14 @@ public class ChangeItemMenuController {
         //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
         OkButton.disableProperty().bind(Bindings.or(isStoreSelected.not(),ChoiceSelected.not()));
         AddRadio.disableProperty().bind(isStoreSelected.not());
-        ChangeRadio.disableProperty().bind(isStoreSelected.not()); //todo not?
+        ChangeRadio.disableProperty().bind(isStoreSelected.not());
+        DeleteRadio.disableProperty().bind(isStoreSelected.not());
     }
 
 
     public void OnCreation (Collection<StoreInfo> stores,MainMenuController main) {
         for (StoreInfo cur : stores) {
-            StoresComboBox.getItems().add(cur.StoreID +" - "+ cur.Name);
+            StoresComboBox.getItems().add(cur);
         }
         this.MainController = main;
     }
