@@ -3,6 +3,8 @@ package course.java.sdm.classesForUI;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.awt.*;
+
 public class ItemInStoreInfo {
 
     public final Long serialNumber;
@@ -10,7 +12,6 @@ public class ItemInStoreInfo {
     public final String PayBy;
     public final Double PriceInStore;
     public final Double SoldCounter;
-    private final String AmountWanted = "Enter Amount Wanted Here";
 
 
     public ItemInStoreInfo(long serialNumber, String name, String payBy, double priceInStore, double soldCount) {
@@ -19,6 +20,7 @@ public class ItemInStoreInfo {
         PayBy = payBy;
         PriceInStore = priceInStore;
         SoldCounter = soldCount;
+
     }
 
     public ItemInStoreInfo(Long serialNumber, Double priceInStore) {
@@ -27,6 +29,7 @@ public class ItemInStoreInfo {
         this.Name=null;
         this.PayBy=null;
         this.SoldCounter=0.0;
+
     }
 
     public Long getSerialNumber() {
@@ -49,7 +52,7 @@ public class ItemInStoreInfo {
         return SoldCounter;
     }
 
-    public String getAmountWanted() {
-        return AmountWanted;
-    }
+
+
+
 }

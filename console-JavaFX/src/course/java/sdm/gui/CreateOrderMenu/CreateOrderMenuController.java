@@ -10,15 +10,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 
-import javax.script.Bindings;
-import javax.xml.ws.Binding;
+
+
 import java.util.Collection;
 
 public class CreateOrderMenuController {
@@ -53,6 +51,8 @@ public class CreateOrderMenuController {
     @FXML    private TableColumn<ItemInStoreInfo, Double> PricePerUnitColumn;
 
 
+
+
     private MainMenuController MainController;
     private SimpleBooleanProperty isUserSelected;
     private SimpleBooleanProperty isDateSelected;
@@ -72,6 +72,8 @@ public class CreateOrderMenuController {
         isStoreSelected = new SimpleBooleanProperty(false);
         showStores = new SimpleBooleanProperty(false);
         showAllItems = new SimpleBooleanProperty(false);
+
+
     }
 
     @FXML
@@ -91,10 +93,11 @@ public class CreateOrderMenuController {
         ItemTile.collapsibleProperty().bind(isStoreSelected.or(isDateSelected.and(isDynamicOrderTypeSelected)));
         ItemTile.setExpanded(false);
 
-        ItemIdColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Long>("serialNumber"));
-        ItemNameColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, String>("Name"));
-        PayByColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, String>("PayBy"));
-        PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("PriceInStore"));
+        ItemIdColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
+        ItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        PayByColumn.setCellValueFactory(new PropertyValueFactory<>("PayBy"));
+        PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<>("PriceInStore"));
+
     }
 
     private void exposeAllItems(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1)  {
@@ -168,10 +171,11 @@ public class CreateOrderMenuController {
         isDynamicOrderTypeSelected.setValue(true);
         isStoreSelected.setValue(false);
 
-        StoresCombo.setValue(null);
+        StoresCombo.setValue(null); //reset the store comboBox..
         StoresCombo.getSelectionModel().clearSelection();
 
         StoreTile.setExpanded(false); //todo this not works..
+
         MainController.PrintMassage("Dynamic Order - Please Choose From All Items...");
     }
 
