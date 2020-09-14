@@ -141,15 +141,19 @@ public class CreateOrderMenuController {
 
     @FXML
     void OnStoreSelected(ActionEvent event) {
-        Collection<ItemInStoreInfo> itemsInStore = StoresCombo.getSelectionModel().getSelectedItem().Items;
-        ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
-        PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("PriceInStore"));
 
-        items.addAll(itemsInStore);
-        ItemTable.setItems(items);
-        isStoreSelected.setValue(true);
-        ItemTile.setExpanded(true);
-        MainController.PrintMassage("Static Order - Please Choose Items From Store...");
+            if (StoresCombo.getValue() != null) {
+
+                Collection<ItemInStoreInfo> itemsInStore = StoresCombo.getSelectionModel().getSelectedItem().Items;
+                ObservableList<ItemInStoreInfo> items = FXCollections.observableArrayList();
+                PricePerUnitColumn.setCellValueFactory(new PropertyValueFactory<ItemInStoreInfo, Double>("PriceInStore"));
+
+                items.addAll(itemsInStore);
+                ItemTable.setItems(items);
+                isStoreSelected.setValue(true);
+                ItemTile.setExpanded(true);
+                MainController.PrintMassage("Static Order - Please Choose Items From Store...");
+            }
     }
 
     @FXML
@@ -162,6 +166,12 @@ public class CreateOrderMenuController {
     void OnDynamicRadio(ActionEvent event) {
         isStaticOrderTypeSelected.setValue(false);
         isDynamicOrderTypeSelected.setValue(true);
+        isStoreSelected.setValue(false);
+
+        StoresCombo.setValue(null);
+        StoresCombo.getSelectionModel().clearSelection();
+
+        StoreTile.setExpanded(false); //todo this not works..
         MainController.PrintMassage("Dynamic Order - Please Choose From All Items...");
     }
 
