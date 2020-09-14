@@ -143,6 +143,7 @@ public class MainMenuController {
         aTask.setOnSucceeded(e->{
             isXmlLoaded.set(true);
             MassageLabel.textProperty().unbind();
+            ProgressBar.progressProperty().unbind();
         });
     }
 

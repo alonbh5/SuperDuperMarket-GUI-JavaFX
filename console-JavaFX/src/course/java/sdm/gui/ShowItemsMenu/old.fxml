@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="1081.0" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.ShowItemsMenu.ShowItemsController">
+   <children>
+      <Label text="ID: " />
+      <Label fx:id="IDLabel" />
+      <Label text="Name: " />
+      <Label fx:id="NameLabel" />
+      <Label text="Paying Method:" />
+      <Label fx:id="PayingMethodLabel" />
+      <Label text="Number Of Selling Stores:" />
+      <Label fx:id="SellingStoresLabel" />
+      <Label text="Avg. Price:" />
+      <Label fx:id="AvgPriceLabel" />
+      <Label text="Number Of Times Sold" />
+      <Label fx:id="SoldNumberLabel" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</HBox>

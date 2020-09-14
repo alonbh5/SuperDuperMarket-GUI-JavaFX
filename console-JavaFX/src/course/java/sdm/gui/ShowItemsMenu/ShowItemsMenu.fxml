@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="course.java.sdm.gui.ShowItemsMenu.ShowItemsController">
+   <content>
+      <TableView prefHeight="760.0" prefWidth="1119.0">
+        <columns>
+          <TableColumn fx:id="itemsIdColumn" prefWidth="85.0" text="Item ID" />
+          <TableColumn fx:id="ItemNameColumn" prefWidth="111.0" text="Item Name" />
+            <TableColumn fx:id="PayByColumn" prefWidth="104.0" text="Paying Method" />
+            <TableColumn fx:id="StoresColumn" minWidth="0.0" prefWidth="172.0" text="Number Of Selling Stores" />
+            <TableColumn fx:id="AvgPriceColumn" prefWidth="195.0" text="Averege Price" />
+            <TableColumn fx:id="SoldCounterColumn" prefWidth="195.0" text="Sold Counter" />
+        </columns>
+      </TableView>
+   </content>
+</ScrollPane>
