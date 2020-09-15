@@ -335,13 +335,16 @@ public class SuperDuperMarketSystem {
 
     private OrderInfo createOrderInfo(Order CurOrder) {
         Set<Store> stores = CurOrder.getStoreSet();
-        List<StoreInfo> storesList = new ArrayList<>();
+        List<StoreInOrderInfo> storesList = new ArrayList<>();
 
         Set<ProductInOrder> Items = CurOrder.getBasket();
         List<ItemInOrderInfo> itemsInOrder = new ArrayList<>();
 
         for (Store curStore : stores)
-            storesList.add(getStoreInfoByID(curStore.getStoreID()));
+            storesList.add(new StoreInOrderInfo(getStoreInfoByID(curStore.getStoreID()),
+                    CalculateDistance(curStore.getStoreID(),CurOrder.getCoordinate()),
+                    CalculatePPK(curStore,CurOrder.getCoordinate()),CurOrder.getPriceFromStore(curStore),
+                    CurOrder.getAmountOfItemFromStore(curStore)));
 
         for (ProductInOrder curProd : Items)
             itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
@@ -487,10 +490,18 @@ public class SuperDuperMarketSystem {
         }
     }*/
 
-    private Collection<Discount> getAllEntitledDiscounts (Order order) {
-        List<Discount> res = new ArrayList<>();
+    public Collection<DiscountInfo> getAllEntitledDiscounts(List<ItemInOrderInfo> wantedItems, boolean isStatic, StoreInfo storeChosen) {
+        List<DiscountInfo> res = new ArrayList<>();
 
-        //for (order.getBasket())
+
+        if (isStatic) {
+            Store staticStore = getStoreByID(storeChosen.StoreID);
+            List<ProductInStore> wantedItemsInStore = new ArrayList<>();
+            for (ItemInOrderInfo cur : wantedItems)
+                wantedItemsInStore.add(staticStore.getProductInStoreByID(cur.serialNumber));
+
+
+        }
 
         return res;
     }

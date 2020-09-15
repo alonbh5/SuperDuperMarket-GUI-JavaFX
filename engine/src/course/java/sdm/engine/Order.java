@@ -169,4 +169,23 @@ class Order implements Coordinatable, Serializable {
         }
         return res;
     }
+
+    public Integer getAmountOfItemFromStore(Store store) {
+        Integer res= 0;
+        for (ProductInOrder cur : m_Basket) {
+            if(cur.getProductInStore().getStore().equals(store))
+                res++;
+        }
+        return res;
+    }
+
+    public Double getPriceFromStore(Store store) {
+        Double res= 0d;
+        for (ProductInOrder cur : m_Basket) {
+            if(cur.getProductInStore().getStore().equals(store))
+                res+=cur.getPriceOfTotalItems();
+        }
+        return res;
+
+    }
 }

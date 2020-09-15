@@ -84,8 +84,10 @@ public class OrderMenuTileController {
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();
 
-        for (StoreInfo cur : order.Stores) {
-            InfoController.AddNewOrderStore(cur.StoreID.toString(),cur.Name,cur.PPK.toString(),cur.getDistanceFromUser(order.customer.Location),cur.getShippingPriceFromUser(order.customer.Location));
+        for (StoreInOrderInfo cur : order.Stores) {
+            InfoController.AddNewOrderStore(cur.Store.StoreID.toString(),cur.Store.Name
+                    ,cur.Store.PPK.toString(),cur.Store.getDistanceFromUser(order.customer.Location)
+                    ,cur.Store.getShippingPriceFromUser(order.customer.Location));
         }
 
         return infoComponent;

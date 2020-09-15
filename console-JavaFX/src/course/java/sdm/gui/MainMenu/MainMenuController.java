@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 
 public class MainMenuController {
@@ -307,5 +308,7 @@ public class MainMenuController {
     }
 
 
-
+    public Collection<DiscountInfo> getDiscounts(List<ItemInOrderInfo> itemsByUser,boolean isStatic,StoreInfo storeChosen) {
+        return MainSDMSystem.getAllEntitledDiscounts(itemsByUser,isStatic,storeChosen);
+    }
 }

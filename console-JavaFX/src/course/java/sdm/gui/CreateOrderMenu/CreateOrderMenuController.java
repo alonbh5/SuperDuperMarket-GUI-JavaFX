@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
@@ -147,12 +148,14 @@ public class CreateOrderMenuController {
         InputController.OnCreation(isDec, () -> OnInputFinished(itemPressed,InputController.getAmount()));
 
         MainStackPane.getChildren().get(0).setOpacity(0);
+        MainStackPane.getChildren().get(0).setDisable(true);
         MainStackPane.getChildren().add(infoComponent);
 
 
     }
 
     private void OnInputFinished(ItemInStoreInfo itemPressed,Double userAmount) {
+        //called from input after it's done
         boolean isNew = true;
 
         for (ItemInOrderInfo cur : ItemsByUser) {
@@ -169,6 +172,7 @@ public class CreateOrderMenuController {
         }
         isItemSelected.setValue(true);
         MainStackPane.getChildren().get(0).setOpacity(1);
+        MainStackPane.getChildren().get(0).setDisable(false);
         MainStackPane.getChildren().remove(MainStackPane.getChildren().get(1));
     }
 
@@ -210,7 +214,12 @@ public class CreateOrderMenuController {
 
     @FXML
     void OnContinue(ActionEvent event) {
-
+        CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
+        StoreInfo selectedStore = StoresCombo.getSelectionModel().getSelectedItem();
+        if (isStaticOrderTypeSelected.getValue())
+            doStaticOrder(selectedStore);
+        else
+            doDynamicOrder();
     }
 
 
@@ -261,6 +270,14 @@ public class CreateOrderMenuController {
     @FXML
     void OnDateSelected(ActionEvent event) {
         isDateSelected.setValue(true);
+    }
+
+    private void doDynamicOrder() {
+        Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,false,null);
+    }
+
+    private void doStaticOrder(StoreInfo selectedStore) {
+        Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,true,selectedStore);
     }
 
 
