@@ -28,17 +28,17 @@
       </HBox>
       <TitledPane fx:id="ItemTile" text="Items">
         <content>
-          <AnchorPane fx:id="ItemsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="ItemsPane" />
         </content>
       </TitledPane>
       <TitledPane fx:id="DiscountTile" text="Discounts">
         <content>
-          <AnchorPane fx:id="DiscountPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="DiscountPane" />
         </content>
       </TitledPane>
       <TitledPane fx:id="OrderTile" text="Order History">
         <content>
-          <AnchorPane fx:id="OrderPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="OrderPane" />
         </content>
       </TitledPane>
    </children>

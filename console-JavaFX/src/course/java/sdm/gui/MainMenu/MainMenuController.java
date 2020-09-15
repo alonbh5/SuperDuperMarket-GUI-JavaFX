@@ -1,7 +1,7 @@
 package course.java.sdm.gui.MainMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
-import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.exceptions.*;
 import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController;
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,6 +61,15 @@ public class MainMenuController {
         MainSDMSystem = new SuperDuperMarketSystem(this);
         isXmlLoaded = new SimpleBooleanProperty(false);
         isLoadedDone = new SimpleBooleanProperty(false);
+    }
+
+    public OrderInfo getDynamicOrderWithoutDiscounts(List<ItemInOrderInfo> itemsByUser, CustomerInfo selectedUser, Date selectedDate) {
+        try {
+            return MainSDMSystem.addDynamicOrderToSystem(itemsByUser,selectedUser,selectedDate);
+        } catch (Exception e) {
+            PrintMassage("Unknown Error!");
+        }
+        return null;
     }
 
     @FXML
@@ -297,7 +307,7 @@ public class MainMenuController {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = ChangeItemMenuController.class.getResource("ChangeItemMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
-        Pane component = fxmlLoader.load(url.openStream());
+        Parent component = fxmlLoader.load(url.openStream());
         ChangeItemMenuController controller = fxmlLoader.getController();
         controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(),this);
         MainPane.setCenter(component);
@@ -310,5 +320,26 @@ public class MainMenuController {
 
     public Collection<DiscountInfo> getDiscounts(List<ItemInOrderInfo> itemsByUser,boolean isStatic,StoreInfo storeChosen) {
         return MainSDMSystem.getAllEntitledDiscounts(itemsByUser,isStatic,storeChosen);
+    }
+
+    public void RestoreItemChange () {
+        try {
+            OnItemUpdate(null);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public boolean isItemOkToDelete(ItemInStoreInfo itemSelected) {
+        return MainSDMSystem.isItemOkToDelete(itemSelected);
+    }
+
+    public void DeleteItemFromStore(StoreInfo curStore, ItemInStoreInfo itemSelected) {
+        try {
+            MainSDMSystem.DeleteItemFromStore(itemSelected.serialNumber,curStore.StoreID);
+        } catch (Exception e) {
+            PrintMassage("Sorry - Unknown Error ");
+            RestoreItemChange();
+        }
     }
 }

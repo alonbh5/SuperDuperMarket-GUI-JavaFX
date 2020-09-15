@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -213,17 +214,6 @@ public class CreateOrderMenuController {
 
 
     @FXML
-    void OnContinue(ActionEvent event) {
-        CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
-        StoreInfo selectedStore = StoresCombo.getSelectionModel().getSelectedItem();
-        if (isStaticOrderTypeSelected.getValue())
-            doStaticOrder(selectedStore);
-        else
-            doDynamicOrder();
-    }
-
-
-    @FXML
     void OnStoreSelected(ActionEvent event) {
 
             if (StoresCombo.getValue() != null) {
@@ -272,7 +262,20 @@ public class CreateOrderMenuController {
         isDateSelected.setValue(true);
     }
 
-    private void doDynamicOrder() {
+    @FXML
+    void OnContinue(ActionEvent event) {
+        CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
+        Date SelectedDate = Date.valueOf(datePicker.getValue());
+        StoreInfo selectedStore = StoresCombo.getSelectionModel().getSelectedItem();
+        if (isStaticOrderTypeSelected.getValue())
+            doStaticOrder(selectedStore);
+        else
+            doDynamicOrder(SelectedUser,SelectedDate);
+    }
+
+    private void doDynamicOrder(CustomerInfo selectedUser, Date selectedDate) {
+        OrderInfo getOrderSum = MainController.getDynamicOrderWithoutDiscounts(ItemsByUser,selectedUser,selectedDate);
+        //todo show all store here......
         Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,false,null);
     }
 

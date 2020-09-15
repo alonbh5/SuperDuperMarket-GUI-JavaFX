@@ -1,20 +1,26 @@
 package course.java.sdm.gui.ChangeItemsMenu;
 
+import course.java.sdm.classesForUI.ItemInStoreInfo;
+import course.java.sdm.classesForUI.ItemInfo;
 import course.java.sdm.classesForUI.StoreInfo;
 import course.java.sdm.gui.MainMenu.MainMenuController;
+import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 
 public class ChangeItemMenuController {
+
+    @FXML    private StackPane MainStackPane;
 
     @FXML    private Button OkButton;
 
@@ -59,13 +65,6 @@ public class ChangeItemMenuController {
     @FXML
     void OnStoreSelected(ActionEvent event) {
         isStoreSelected.setValue(true); //todo check store.....
-        /*if main.Can I show Delete botton?
-            DeleteRadio.setDisable(false);
-            else
-            MaasageLabel.setText ("Sorry there only one item...")
-
-
-         */
     }
 
     @FXML
@@ -85,10 +84,38 @@ public class ChangeItemMenuController {
 
 
     @FXML
-    void OnContinueButton(ActionEvent event) {
+    void OnContinueButton(ActionEvent event) throws IOException {
+
+        StoreInfo curStore = StoresComboBox.getSelectionModel().getSelectedItem();
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = ShowItemsInStoreController.class.getResource("ShowItemsInStore.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        Parent infoComponent = fxmlLoader.load(url.openStream());
+        ShowItemsInStoreController ItemsController = fxmlLoader.getController();
+        ItemsController.setItems(curStore.Items,this);
+
+        MainStackPane.getChildren().add(infoComponent);
+        MainStackPane.getChildren().get(0).setDisable(true);
+        MainController.PrintMassage("Double Click On Item");
+
+
+
+    }
+
+    void onPickedItem(ItemInStoreInfo itemSelected) {
+
+        StoreInfo curStore = StoresComboBox.getSelectionModel().getSelectedItem();
 
         if (DeleteRadio.isSelected()) {
-            //load delete menu with store..
+            if (curStore.Items.size() == 1)
+                MainController.PrintMassage("Sorry - There is Only One Item In Store");
+            else if (!MainController.isItemOkToDelete(itemSelected))
+                MainController.PrintMassage("Sorry - This is the Only Store that Sell it..");
+            else {
+                MainController.DeleteItemFromStore(curStore, itemSelected);
+                MainController.PrintMassage(itemSelected.Name + " Was Deleted From Store " + curStore.Name);
+            }
         }
         if (AddRadio.isSelected()) {
             //load add menu with store..
@@ -96,6 +123,8 @@ public class ChangeItemMenuController {
         if (ChangeRadio.isSelected()) {
             //load change menu with store..
         }
+
+        MainController.RestoreItemChange();
 
     }
 

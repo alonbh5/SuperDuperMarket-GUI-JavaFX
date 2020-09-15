@@ -490,21 +490,6 @@ public class SuperDuperMarketSystem {
         }
     }*/
 
-    public Collection<DiscountInfo> getAllEntitledDiscounts(List<ItemInOrderInfo> wantedItems, boolean isStatic, StoreInfo storeChosen) {
-        List<DiscountInfo> res = new ArrayList<>();
-
-
-        if (isStatic) {
-            Store staticStore = getStoreByID(storeChosen.StoreID);
-            List<ProductInStore> wantedItemsInStore = new ArrayList<>();
-            for (ItemInOrderInfo cur : wantedItems)
-                wantedItemsInStore.add(staticStore.getProductInStoreByID(cur.serialNumber));
-
-
-        }
-
-        return res;
-    }
 
     public void UploadInfoFromXML (String XMLPath) throws  NoValidXMLException {
         SuperDuperMarketDescriptor superDuperMarketDescriptor;
@@ -683,5 +668,39 @@ public class SuperDuperMarketSystem {
 
     }
 
+    public Collection<DiscountInfo> getAllEntitledDiscounts(List<ItemInOrderInfo> wantedItems, boolean isStatic, StoreInfo storeChosen) {
+        List<DiscountInfo> res =null;
 
+
+        if (isStatic) {
+            Store staticStore = getStoreByID(storeChosen.StoreID);
+            List<ProductInStore> wantedItemsInStore = new ArrayList<>();
+            //for (ItemInOrderInfo cur : wantedItems)
+                //wantedItemsInStore.add(staticStore.getProductInStoreByID(cur.serialNumber));
+            res = staticStore.getDiscountsListByItems(wantedItems);
+        }
+        else { //case dynamic
+            res = new ArrayList<>();
+            Set<Store> allStores = new HashSet<>();
+            for (ItemInOrderInfo curItem : wantedItems)
+                allStores.add(getStoreByID(curItem.FromStoreID));
+            for (Store curStore : allStores) {
+                res.addAll(curStore.getDiscountsListFilteredByItems(wantedItems));
+            }
+
+        }
+
+        return res;
+    }
+
+    public Collection<DiscountInfo> getAllEntitledDiscounts(OrderInfo DynamicOrderFromSystem) {
+        return getAllEntitledDiscounts(DynamicOrderFromSystem.ItemsInOrder,false,null);
+    }
+
+
+    public boolean isItemOkToDelete( ItemInStoreInfo itemSelected) {
+        ProductInSystem item = getItemByID(itemSelected.serialNumber);
+        return (item.getNumberOfSellingStores() != 1);
+
+    }
 }

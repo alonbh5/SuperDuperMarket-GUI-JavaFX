@@ -223,4 +223,33 @@ class Store implements HasName, Coordinatable,Serializable {
             throw new InvalidKeyException("Item #"+itemID+" is not in the store #"+this.m_StoreID);
         m_items.get(itemID).setPrice(newPrice);
     }
+
+    public List<DiscountInfo> getDiscountsListByItems(List<ItemInOrderInfo> wantedItemsInStore) {
+        List<DiscountInfo> AllDiscount = getDiscountsList();
+        List<DiscountInfo> res = new ArrayList<>();
+        for (DiscountInfo curDiscount : AllDiscount) {
+            for (ItemInOrderInfo curItem :wantedItemsInStore)
+                if (curDiscount.itemToBuy.ID.equals(curItem.serialNumber))
+                    if (curDiscount.AmountToBuy <= curItem.amountBought) {
+                        curDiscount.setAmountEntitled((int) (curItem.amountBought.doubleValue() / curDiscount.AmountToBuy.doubleValue()));
+                        res.add(curDiscount);
+                    }
+        }
+        return res;
+    }
+
+    public Collection<? extends DiscountInfo> getDiscountsListFilteredByItems(List<ItemInOrderInfo> wantedItems) {
+        List<DiscountInfo> AllDiscount = getDiscountsList();
+        List<DiscountInfo> res = new ArrayList<>();
+        for (DiscountInfo curDiscount : AllDiscount) {
+            for (ItemInOrderInfo curItem : wantedItems)
+                if (curItem.FromStoreID.equals(this.m_StoreID))
+                    if (curDiscount.itemToBuy.ID.equals(curItem.serialNumber))
+                        if (curDiscount.AmountToBuy <= curItem.amountBought) {
+                            curDiscount.setAmountEntitled((int) (curItem.amountBought.doubleValue() / curDiscount.AmountToBuy.doubleValue()));
+                            res.add(curDiscount);
+                        }
+        }
+        return res;
+    }
 }

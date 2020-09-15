@@ -45,7 +45,7 @@ public class ItemInStoreInfo {
     }
 
     public Double getPriceInStore() {
-        return PriceInStore;
+        return Double.parseDouble(String.format("%.2f", PriceInStore));
     }
 
     public Double getSoldCounter() {
