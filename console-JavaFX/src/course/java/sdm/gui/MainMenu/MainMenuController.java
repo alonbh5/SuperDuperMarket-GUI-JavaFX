@@ -24,8 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+
 
 public class MainMenuController {
 
@@ -268,6 +267,7 @@ public class MainMenuController {
         controller.OnCreation(MainSDMSystem.getListOfAllCustomerInSystem(),MainSDMSystem.getListOfAllStoresInSystem(),this);
         MainPane.setCenter(component);
     }
+
 
     @FXML
     void OnStoresAction(ActionEvent event) throws Exception{

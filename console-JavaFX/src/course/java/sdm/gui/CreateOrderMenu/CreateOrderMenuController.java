@@ -2,6 +2,7 @@ package course.java.sdm.gui.CreateOrderMenu;
 
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.gui.InputPane.GetInputPaneController;
 import course.java.sdm.gui.MainMenu.MainMenuController;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -9,10 +10,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +29,8 @@ public class CreateOrderMenuController {
     @FXML    private ComboBox<CustomerInfo> UserCombo;
 
     @FXML    private TitledPane DateAndTypeTIle;
+
+    @FXML    private TitledPane UserTitled;
 
     @FXML    private DatePicker datePicker;
 
@@ -50,6 +58,8 @@ public class CreateOrderMenuController {
 
     @FXML    private Button ContinueButton;
 
+    @FXML    private StackPane MainStackPane;
+
 
 
     private SimpleBooleanProperty isUserSelected;
@@ -63,6 +73,7 @@ public class CreateOrderMenuController {
 
     private MainMenuController MainController;
     private List<ItemInOrderInfo> ItemsByUser;
+
 
     public CreateOrderMenuController () {
         isUserSelected = new SimpleBooleanProperty(false);
@@ -95,6 +106,10 @@ public class CreateOrderMenuController {
 
         ContinueButton.disableProperty().bind(isItemSelected.not());
 
+        UserTitled.disableProperty().bind(isItemSelected);
+        DateAndTypeTIle.disableProperty().bind(isItemSelected);
+        StoreTile.disableProperty().bind(isItemSelected);
+
         ItemIdColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
         ItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
         PayByColumn.setCellValueFactory(new PropertyValueFactory<>("PayBy"));
@@ -113,12 +128,48 @@ public class CreateOrderMenuController {
 
     }
 
-    private void OnUserPickedItem(ItemInStoreInfo rowData) {
-        //Double userAmount = MainController.getUserAmount(rowData);
-        Double userAmount =0.5;
-        ItemsByUser.add(new ItemInOrderInfo(rowData,userAmount));
-        MainController.PrintMassage("Amount for "+rowData.Name + "is " + userAmount);
+    private void OnUserPickedItem(ItemInStoreInfo itemPressed)  {
+
+        boolean isDec = true;
+        if (itemPressed.PayBy.toLowerCase().equals("amount"))
+            isDec=false;
+
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = GetInputPaneController.class.getResource("GetInputPane.fxml");
+        fxmlLoader.setLocation(url);
+        Pane infoComponent = null;
+        try {
+            infoComponent = fxmlLoader.load(url.openStream());
+        } catch (IOException e) {
+        }
+        GetInputPaneController InputController = fxmlLoader.getController();
+        InputController.OnCreation(isDec, () -> OnInputFinished(itemPressed,InputController.getAmount()));
+
+        MainStackPane.getChildren().get(0).setOpacity(0);
+        MainStackPane.getChildren().add(infoComponent);
+
+
+    }
+
+    private void OnInputFinished(ItemInStoreInfo itemPressed,Double userAmount) {
+        boolean isNew = true;
+
+        for (ItemInOrderInfo cur : ItemsByUser) {
+            if (cur.serialNumber.equals(itemPressed.serialNumber)) {
+                cur.addAmount(userAmount);
+                isNew=false;
+                MainController.PrintMassage("Added Amount for "+itemPressed.Name + " new Amount is " + cur.amountBought);
+                break;
+            }
+        }
+        if (isNew) {
+            ItemsByUser.add(new ItemInOrderInfo(itemPressed,userAmount));
+            MainController.PrintMassage("Amount for "+itemPressed.Name + " is " + userAmount);
+        }
         isItemSelected.setValue(true);
+        MainStackPane.getChildren().get(0).setOpacity(1);
+        MainStackPane.getChildren().remove(MainStackPane.getChildren().get(1));
     }
 
     private void exposeAllItems(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1)  {

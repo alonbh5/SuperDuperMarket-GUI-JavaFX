@@ -44,4 +44,8 @@ public class ItemInOrderInfo {
         FromSale=false;
     }
 
+    public void addAmount(double AmountToAdd) {
+        this.amountBought+=AmountToAdd;
+    }
+
 }
