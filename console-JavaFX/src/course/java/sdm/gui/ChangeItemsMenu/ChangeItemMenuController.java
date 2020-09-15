@@ -88,16 +88,22 @@ public class ChangeItemMenuController {
 
         StoreInfo curStore = StoresComboBox.getSelectionModel().getSelectedItem();
 
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ShowItemsInStoreController.class.getResource("ShowItemsInStore.fxml"); //todo make it all in common static..
-        fxmlLoader.setLocation(url);
-        Parent infoComponent = fxmlLoader.load(url.openStream());
-        ShowItemsInStoreController ItemsController = fxmlLoader.getController();
-        ItemsController.setItems(curStore.Items,this);
+        if (!AddRadio.isSelected()) {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            URL url = ShowItemsInStoreController.class.getResource("ShowItemsInStore.fxml");
+            fxmlLoader.setLocation(url);
+            Parent infoComponent = fxmlLoader.load(url.openStream());
+            ShowItemsInStoreController ItemsController = fxmlLoader.getController();
+            ItemsController.setItems(curStore.Items, this);
 
-        MainStackPane.getChildren().add(infoComponent);
-        MainStackPane.getChildren().get(0).setDisable(true);
-        MainController.PrintMassage("Double Click On Item");
+            MainStackPane.getChildren().add(infoComponent);
+            MainStackPane.getChildren().get(0).setDisable(true);
+            MainController.PrintMassage("Double Click On Item");
+        }
+        else {
+
+        }
+
 
 
 
