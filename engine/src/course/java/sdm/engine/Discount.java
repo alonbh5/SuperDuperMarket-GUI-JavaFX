@@ -40,6 +40,7 @@ public class Discount {
         return OffersBasket;
     }
 
+
     boolean isItemYouBuyInDiscount (long itemYouBuyID) {
         return itemYouBuyID == whatYouBuy.getItem().getSerialNumber();
     }

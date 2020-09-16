@@ -16,5 +16,9 @@
 .Massage-Label {-fx-text-fill: Black; -fx-opacity: 1; -fx-background-color: transparent
 }
 
+.Block1 {-fx-background-color: yellow}
+.Block2 {-fx-background-color: #3affff
+}
+
 .Hidden-Label{-fx-opacity: 0;
 }

@@ -171,7 +171,7 @@ class Store implements HasName, Coordinatable,Serializable {
             WhatYouBuy = new OfferItemInfo (Temp.getSerialNumber(),Temp.getName(),
                     Temp.getPayBy().toString(),curDis.getWhatYouBuy().getAmountToBuy(),0.0);
 
-            DiscountInfo newDis = new DiscountInfo (curDis.getDiscountName(),curDis.getDiscountName(),WhatYouBuy
+            DiscountInfo newDis = new DiscountInfo (curDis.getDiscountName(),curDis.getOfferType().toString(),WhatYouBuy
             ,curDis.getWhatYouBuy().getAmountToBuy(),offeredItems);
             res.add(newDis);
         }

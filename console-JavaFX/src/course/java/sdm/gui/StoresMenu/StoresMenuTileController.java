@@ -3,6 +3,7 @@ package course.java.sdm.gui.StoresMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
+import course.java.sdm.gui.StoresMenu.SmallTiles.DiscountFromStoreTileController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
 
@@ -25,32 +27,25 @@ public class StoresMenuTileController {
     @FXML
     private Label NameLabel;
 
-    @FXML
-    private Label LocationLabel;
+    @FXML    private Label LocationLabel;
 
-    @FXML
-    private Label PpkLabel;
+    @FXML    private Label PpkLabel;
 
-    @FXML
-    private Label ShippingProfitLabel;
+    @FXML    private Label ShippingProfitLabel;
 
-    @FXML
-    private AnchorPane DiscountPane;
+    @FXML    private AnchorPane DiscountPane;
 
-    @FXML
-    private AnchorPane ItemsPane;
+    @FXML    private AnchorPane ItemsPane;
 
-    @FXML
-    private AnchorPane OrderPane;
+    @FXML    private AnchorPane OrderPane;
 
-    @FXML
-    private TitledPane ItemTile;
+    @FXML    private TitledPane ItemTile;
 
-    @FXML
-    private TitledPane OrderTile;
+    @FXML    private TitledPane OrderTile;
 
-    @FXML
-    private TitledPane DiscountTile;
+    @FXML    private TitledPane DiscountTile;
+
+    @FXML    private FlowPane DiscountFlowPane;
 
     @FXML
     private void initialize() {
@@ -59,25 +54,47 @@ public class StoresMenuTileController {
         DiscountTile.setExpanded(false);
     }
 
-    public void setValues(String Id, String Name, String Location, String PPK, String ShippingProfit, ScrollPane Discounts, ScrollPane Items, ScrollPane Orders) {
+    public void setValues(String Id, String Name, String Location, String PPK, String ShippingProfit, Collection<DiscountInfo> discounts, ScrollPane Items, ScrollPane Orders) {
         IDLabel.setText(Id);
         NameLabel.setText(Name);
         LocationLabel.setText(Location);
         PpkLabel.setText(PPK);
         ShippingProfitLabel.setText(ShippingProfit);
         ItemsPane.getChildren().add(Items);
-        if (Discounts == null) {
+        if (discounts.isEmpty() || discounts == null) {
             DiscountTile.setText(DiscountTile.getText() + " (Empty)");
             DiscountTile.setCollapsible(false);
         }
         else
-             DiscountPane.getChildren().add(Discounts);
+            setDiscount(discounts);
+
         if (Orders == null) {
             OrderTile.setText(OrderTile.getText() + " (Empty)");
             OrderTile.setCollapsible(false);
         }
         else
             OrderPane.getChildren().add(Orders);
+    }
+
+    private void setDiscount(Collection<DiscountInfo> discounts) {
+        boolean flag = true;
+        for (DiscountInfo cur:discounts) {
+            flag = !flag;
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            URL url = DiscountFromStoreTileController.class.getResource("DiscountFromStoreTile.fxml"); //todo make it all in common static..
+            fxmlLoader.setLocation(url);
+            Parent infoComponent;
+            try {
+                Parent Component = fxmlLoader.load(url.openStream());
+                DiscountFromStoreTileController DiscountController = fxmlLoader.getController();
+                DiscountController.SetValues(cur);
+                DiscountController.changeCssClass(flag);
+                DiscountFlowPane.getChildren().add(Component);
+            } catch (IOException e) {
+                DiscountTile.setText(DiscountTile.getText()+" (Error)");
+            }
+
+        }
     }
 
     public static ScrollPane getItemsPane(StoreInfo store) throws IOException {

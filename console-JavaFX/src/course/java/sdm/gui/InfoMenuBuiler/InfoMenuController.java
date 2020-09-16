@@ -1,5 +1,6 @@
 package course.java.sdm.gui.InfoMenuBuiler;
 
+import course.java.sdm.classesForUI.DiscountInfo;
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
 import course.java.sdm.gui.OrderMenu.OrderItemTileController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
@@ -15,6 +16,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 public class InfoMenuController {
 
@@ -39,7 +42,7 @@ public class InfoMenuController {
 
     }
 
-    public void AddNewStore(String Id, String Name, String Location, String PPK, String ShippingProfit, ScrollPane Discounts, ScrollPane Items, ScrollPane Orders) throws Exception {
+    public void AddNewStore(String Id, String Name, String Location, String PPK, String ShippingProfit, Collection<DiscountInfo> Discounts, ScrollPane Items, ScrollPane Orders) throws Exception {
         URL url = StoresMenuTileController.class.getResource("StoresMenuTile.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(url);

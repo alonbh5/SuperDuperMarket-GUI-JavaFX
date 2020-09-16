@@ -298,15 +298,16 @@ public class MainMenuController {
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();
-        ScrollPane items, discounts, orders;
+        ScrollPane items, orders;
 
         Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
 
         for (StoreInfo cur : stores) {
             items = StoresMenuTileController.getItemsPane(cur);
-            discounts = null; //discounts = StoresMenuTileController.getDiscountPane(cur);
             orders = null; //orders = StoresMenuTileController.getOrdersPane(cur);
-            InfoController.AddNewStore(cur.StoreID.toString(), cur.Name, cur.getPointString(), cur.PPK.toString(), cur.profitFromShipping.toString(), discounts, items, orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
+            InfoController.AddNewStore(cur.StoreID.toString(), cur.Name,
+                    cur.getPointString(), cur.PPK.toString(), cur.profitFromShipping.toString(),
+                    cur.Discount, items, orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
         }
 
         MainPane.setCenter(infoComponent);
