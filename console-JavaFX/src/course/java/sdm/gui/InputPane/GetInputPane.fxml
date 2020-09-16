@@ -12,7 +12,7 @@
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
    </padding>
    <children>
-      <Label layoutX="202.0" layoutY="47.0" prefHeight="17.0" prefWidth="114.0" text="Please Enter Amount" textAlignment="RIGHT" />
+      <Label fx:id="TitleLabel" layoutX="195.0" layoutY="48.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="17.0" prefWidth="231.0" text="Please Enter Amount" textAlignment="CENTER" />
       <Label layoutX="249.0" layoutY="130.0" text=".">
          <font>
             <Font size="96.0" />

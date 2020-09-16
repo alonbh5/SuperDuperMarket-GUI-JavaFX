@@ -652,6 +652,12 @@ public class SuperDuperMarketSystem {
         productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)2),false);
         productInOrder.setAmountBought(25);
         emptyOrder.addProductToOrder(productInOrder);
+        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)5),false);
+        productInOrder.setAmountBought(100);
+        emptyOrder.addProductToOrder(productInOrder);
+        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)3),false);
+        productInOrder.setAmountBought(1);
+        emptyOrder.addProductToOrder(productInOrder);
 
         m_OrderHistory.put(emptyOrder.getOrderSerialNumber(),emptyOrder); //todo dont add it yet...
         updateShippingProfitAfterOrder(emptyOrder); //update shipping profit

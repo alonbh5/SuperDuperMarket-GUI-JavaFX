@@ -25,8 +25,9 @@ public class GetInputPaneController {
     @FXML
     private Button OkButton;
 
-    @FXML
-    private Label ErrorLabel;
+    @FXML    private Label ErrorLabel;
+
+    @FXML    private Label TitleLabel;
 
     private Runnable Onfinish;
 
@@ -71,5 +72,8 @@ public class GetInputPaneController {
 
         return res;
 
+    }
+    public void ChangeTitle (String str) {
+        TitleLabel.setText(str);
     }
 }

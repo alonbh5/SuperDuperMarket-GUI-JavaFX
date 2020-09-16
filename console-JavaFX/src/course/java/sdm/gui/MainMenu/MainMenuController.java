@@ -30,20 +30,33 @@ import java.util.List;
 
 public class MainMenuController {
 
-    @FXML    private BorderPane MainPane;
-    @FXML    private Button XMLButton;
-    @FXML    private Button LoadButton;
-    @FXML    private Button showStoresButton;
-    @FXML    private Button showItemsButton;
-    @FXML    private Button showOrdersButton;
-    @FXML    private Button showCustomersButton;
-    @FXML    private Button NewOrderButton;
-    @FXML    private Button ItemUpdateButton;
-    @FXML    private Button MapButton;
-    @FXML    private Label MassageLabel;
-    @FXML    private ProgressBar ProgressBar;
-    @FXML    private ComboBox<String> SkinComboBox;
-   // @FXML    private Pane CenterPane;
+    @FXML
+    private BorderPane MainPane;
+    @FXML
+    private Button XMLButton;
+    @FXML
+    private Button LoadButton;
+    @FXML
+    private Button showStoresButton;
+    @FXML
+    private Button showItemsButton;
+    @FXML
+    private Button showOrdersButton;
+    @FXML
+    private Button showCustomersButton;
+    @FXML
+    private Button NewOrderButton;
+    @FXML
+    private Button ItemUpdateButton;
+    @FXML
+    private Button MapButton;
+    @FXML
+    private Label MassageLabel;
+    @FXML
+    private ProgressBar ProgressBar;
+    @FXML
+    private ComboBox<String> SkinComboBox;
+    // @FXML    private Pane CenterPane;
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
@@ -55,7 +68,7 @@ public class MainMenuController {
     private SuperDuperMarketSystem MainSDMSystem;
 
 
-    public MainMenuController () {
+    public MainMenuController() {
         selectedFileProperty = new SimpleStringProperty();
         isFileSelected = new SimpleBooleanProperty(false);
         MainSDMSystem = new SuperDuperMarketSystem(this);
@@ -65,7 +78,7 @@ public class MainMenuController {
 
     public OrderInfo getDynamicOrderWithoutDiscounts(List<ItemInOrderInfo> itemsByUser, CustomerInfo selectedUser, Date selectedDate) {
         try {
-            return MainSDMSystem.addDynamicOrderToSystem(itemsByUser,selectedUser,selectedDate);
+            return MainSDMSystem.addDynamicOrderToSystem(itemsByUser, selectedUser, selectedDate);
         } catch (Exception e) {
             PrintMassage("Unknown Error!");
         }
@@ -77,7 +90,7 @@ public class MainMenuController {
         //isFileSelected.addListener((observable, oldValue, newValue) -> MainMenuController::UploadXML);
         LoadButton.disableProperty().bind(isFileSelected.not().or(isLoadedDone));
         bindAllButtonsToXmlLoaded();
-        SkinComboBox.getItems().addAll("Skin 1","Skin 2","Skin 3");
+        SkinComboBox.getItems().addAll("Skin 1", "Skin 2", "Skin 3");
     }
 
     private void bindAllButtonsToXmlLoaded() {
@@ -109,13 +122,12 @@ public class MainMenuController {
         if (MassageLabel.textProperty().isBound()) {
             MassageLabel.textProperty().unbind();
             MassageLabel.setText("Please Load System To Update System");
-        }
-        else
-             MassageLabel.setText("Please Load System");
+        } else
+            MassageLabel.setText("Please Load System");
     }
 
     @FXML
-    private void UploadXMLAction () {
+    private void UploadXMLAction() {
        /* businessLogic.collectMetadata(
                 totalWords::set,
                 totalLines::set,
@@ -146,16 +158,16 @@ public class MainMenuController {
         // task progress bar
         ProgressBar.progressProperty().bind(aTask.progressProperty());
 
-        aTask.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
-            if(newValue != null) {
+        aTask.exceptionProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
                 MassageLabel.getStyleClass().clear();
                 MassageLabel.getStyleClass().add("Error-Label");
                 ProgressBar.progressProperty().unbind();
-           }
+            }
         });
 
-       // aTask.setOnSucceeded(e->isXmlLoaded.set(true));
-        aTask.setOnSucceeded(e->{
+        // aTask.setOnSucceeded(e->isXmlLoaded.set(true));
+        aTask.setOnSucceeded(e -> {
             isXmlLoaded.set(true);
             isLoadedDone.set(true);
             MassageLabel.textProperty().unbind();
@@ -163,7 +175,7 @@ public class MainMenuController {
 
         });
 
-        aTask.setOnFailed(e->{
+        aTask.setOnFailed(e -> {
             isLoadedDone.set(true);
             MassageLabel.textProperty().unbind();
             ProgressBar.progressProperty().unbind();
@@ -174,7 +186,7 @@ public class MainMenuController {
     void OnChangeSkin(ActionEvent event) {
         String selection = SkinComboBox.getValue();
 
-        switch(selection) {
+        switch (selection) {
             case "Skin 1":
                 MainPane.setId("MainMenuPane1");
                 break;
@@ -190,7 +202,7 @@ public class MainMenuController {
 
 
     @FXML
-    void OnCustomersAction(ActionEvent event) throws Exception{
+    void OnCustomersAction(ActionEvent event) throws Exception {
 
         // load header component and controller from fxml
         MassageLabel.setText("Entered Customer View Menu..");
@@ -224,7 +236,7 @@ public class MainMenuController {
 
         Collection<ItemInfo> items = MainSDMSystem.getListOfAllItems();
 
-        ItemsController.setItems (items);
+        ItemsController.setItems(items);
 
         MainPane.setCenter(infoComponent);
 
@@ -235,18 +247,17 @@ public class MainMenuController {
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url;
-        ScrollPane items,stores;
+        ScrollPane items, stores;
         String OrderType = new String();
 
         Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
 
-        if (orders.isEmpty()){
+        if (orders.isEmpty()) {
             url = OrderMenuTileController.class.getResource("EmptyOrdersTile.fxml");
             fxmlLoader.setLocation(url);
             Pane Tile = fxmlLoader.load(url.openStream());
             MainPane.setCenter(Tile);
-        }
-        else {
+        } else {
             url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
             fxmlLoader.setLocation(url);
             ScrollPane infoComponent = fxmlLoader.load(url.openStream());
@@ -257,10 +268,10 @@ public class MainMenuController {
                     OrderType = "Static";
                 else
                     OrderType = "Dynamic";
-                items = OrderMenuTileController.getItemsTile (cur);
-                stores =OrderMenuTileController.getStoresTile (cur);
-                InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(),cur.getDateString(),cur.customer.name,cur.getPointString(),
-                        OrderType,items,stores,cur.m_ShippingPrice.toString(),cur.m_ItemsPrice.toString(),cur.m_TotalPrice.toString());
+                items = OrderMenuTileController.getItemsTile(cur);
+                stores = OrderMenuTileController.getStoresTile(cur);
+                InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(), cur.getDateString(), cur.customer.name, cur.getPointString(),
+                        OrderType, items, stores, cur.m_ShippingPrice.toString(), cur.m_ItemsPrice.toString(), cur.m_TotalPrice.toString());
             }
 
             MainPane.setCenter(infoComponent);
@@ -275,19 +286,19 @@ public class MainMenuController {
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         CreateOrderMenuController controller = fxmlLoader.getController();
-        controller.OnCreation(MainSDMSystem.getListOfAllCustomerInSystem(),MainSDMSystem.getListOfAllStoresInSystem(),this);
+        controller.OnCreation(MainSDMSystem.getListOfAllCustomerInSystem(), MainSDMSystem.getListOfAllStoresInSystem(), this);
         MainPane.setCenter(component);
     }
 
 
     @FXML
-    void OnStoresAction(ActionEvent event) throws Exception{
+    void OnStoresAction(ActionEvent event) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();
-        ScrollPane items,discounts,orders;
+        ScrollPane items, discounts, orders;
 
         Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
 
@@ -295,7 +306,7 @@ public class MainMenuController {
             items = StoresMenuTileController.getItemsPane(cur);
             discounts = null; //discounts = StoresMenuTileController.getDiscountPane(cur);
             orders = null; //orders = StoresMenuTileController.getOrdersPane(cur);
-            InfoController.AddNewStore(cur.StoreID.toString(),cur.Name,cur.getPointString(),cur.PPK.toString(),cur.profitFromShipping.toString(),discounts,items,orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
+            InfoController.AddNewStore(cur.StoreID.toString(), cur.Name, cur.getPointString(), cur.PPK.toString(), cur.profitFromShipping.toString(), discounts, items, orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show
         }
 
         MainPane.setCenter(infoComponent);
@@ -309,7 +320,7 @@ public class MainMenuController {
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         ChangeItemMenuController controller = fxmlLoader.getController();
-        controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(),this);
+        controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(), this);
         MainPane.setCenter(component);
     }
 
@@ -318,11 +329,11 @@ public class MainMenuController {
     }
 
 
-    public Collection<DiscountInfo> getDiscounts(List<ItemInOrderInfo> itemsByUser,boolean isStatic,StoreInfo storeChosen) {
-        return MainSDMSystem.getAllEntitledDiscounts(itemsByUser,isStatic,storeChosen);
+    public Collection<DiscountInfo> getDiscounts(List<ItemInOrderInfo> itemsByUser, boolean isStatic, StoreInfo storeChosen) {
+        return MainSDMSystem.getAllEntitledDiscounts(itemsByUser, isStatic, storeChosen);
     }
 
-    public void RestoreItemChange () {
+    public void RestoreItemChange() {
         try {
             OnItemUpdate(null);
         } catch (Exception e) {
@@ -336,10 +347,25 @@ public class MainMenuController {
 
     public void DeleteItemFromStore(StoreInfo curStore, ItemInStoreInfo itemSelected) {
         try {
-            MainSDMSystem.DeleteItemFromStore(itemSelected.serialNumber,curStore.StoreID);
+            MainSDMSystem.DeleteItemFromStore(itemSelected.serialNumber, curStore.StoreID);
         } catch (Exception e) {
             PrintMassage("Sorry - Unknown Error ");
             RestoreItemChange();
         }
+    }
+
+    public void ChangePrice(ItemInStoreInfo itemSelected, Double amount, StoreInfo curStore) {
+        try {
+            MainSDMSystem.ChangePrice(itemSelected.serialNumber, curStore.StoreID, amount);
+        } catch (Exception e) {
+            PrintMassage("Sorry - Unknown Error ");
+            RestoreItemChange();
+        }
+    }
+
+    public void AddItem(ItemInfo newItem, Double amount, StoreInfo curStore) throws DuplicateItemInStoreException, StoreItemNotInSystemException, NegativePriceException {
+        ItemInStoreInfo newItemToSend = new ItemInStoreInfo (newItem.serialNumber,amount);
+            MainSDMSystem.addItemToStore(curStore.StoreID,newItemToSend);
+
     }
 }
