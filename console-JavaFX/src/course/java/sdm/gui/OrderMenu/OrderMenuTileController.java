@@ -4,11 +4,12 @@ package course.java.sdm.gui.OrderMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.classesForUI.OrderInfo;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -30,9 +31,37 @@ public class OrderMenuTileController {
 
     @FXML    private AnchorPane ItemsPane;
 
+    @FXML    private TableView<ItemInOrderInfo> ItemTable;
+
+    @FXML    private TableView<StoreInOrderInfo> StoreTable;
+
+    @FXML    private TableColumn<ItemInOrderInfo, Long> ItemIdColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, String> ItemNameColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, String> ItemPayByColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, Double> ItemAmountColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, Double> ItemPriceColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, Double> ItemTotalColumn;
+
+    @FXML    private TableColumn<ItemInOrderInfo, String> ItemDisColumn;
+
     @FXML    private TitledPane StoreTile;
 
     @FXML    private AnchorPane StoresPane;
+
+    @FXML    private TableColumn<StoreInOrderInfo, Long> StoreIdColumn;
+
+    @FXML    private TableColumn<StoreInOrderInfo, String> StoreNameColumn;
+
+    @FXML    private TableColumn<StoreInOrderInfo, Integer> PPKColumn;
+
+    @FXML    private TableColumn<StoreInOrderInfo, Double> DistanceColumn;
+
+    @FXML    private TableColumn<StoreInOrderInfo, Double> ShippingColumn;
 
     @FXML    private Label ItemPriceLabel;
 
@@ -46,51 +75,46 @@ public class OrderMenuTileController {
     private void initialize() {
         ItemTile.setExpanded(false);
         StoreTile.setExpanded(false);
+
+        ItemIdColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
+        ItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        ItemPayByColumn.setCellValueFactory(new PropertyValueFactory<>("PayBy"));
+        ItemAmountColumn.setCellValueFactory(new PropertyValueFactory<>("amountBought"));
+        ItemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("PricePerUint"));
+        ItemTotalColumn.setCellValueFactory(new PropertyValueFactory<>("TotalPrice"));
+        ItemDisColumn.setCellValueFactory(new PropertyValueFactory<>("IsDiscount"));
+
+        StoreIdColumn.setCellValueFactory(new PropertyValueFactory<>("StoreId"));
+        StoreNameColumn.setCellValueFactory(new PropertyValueFactory<>("StoreName"));
+        PPKColumn.setCellValueFactory(new PropertyValueFactory<>("PPK"));
+        DistanceColumn.setCellValueFactory(new PropertyValueFactory<>("DistanceFromUser"));
+        ShippingColumn.setCellValueFactory(new PropertyValueFactory<>("ShippingCost"));
+
     }
 
-    public void setValues (String ID, String Date, String UserName, String Location, String OrderType, ScrollPane items,ScrollPane Stores,
-                           String PriceShipping,String PriceItems,String PriceTotal) {
-        OrderIdLabel.setText(ID);
-        DateLabel.setText(Date);
-        UserNameLabel.setText(UserName);
-        LocationLabel.setText(Location);
-        OrderTypeLabel.setText(OrderType);
-        ItemPriceLabel.setText(PriceItems);
-        ShippingPriceLabel.setText(PriceShipping);
-        TotalPriceLabel.setText(PriceTotal);
-        StoresPane.getChildren().add(Stores);
-        ItemsPane.getChildren().add(items);
+    public void setValues (OrderInfo order) {
+        OrderIdLabel.setText(order.m_OrderSerialNumber.toString());
+        DateLabel.setText(order.getDateString());
+        UserNameLabel.setText(order.customer.name + " (#"+order.customer.ID+")");
+        LocationLabel.setText(order.getPointString());
+        if (order.isStatic)
+            OrderTypeLabel.setText("Static");
+        else
+            OrderTypeLabel.setText("Dynamic");
+        ItemPriceLabel.setText(String.format("%.2f", order.m_ItemsPrice));
+        ShippingPriceLabel.setText(String.format("%.2f", order.m_ShippingPrice));
+        TotalPriceLabel.setText(String.format("%.2f", order.m_TotalPrice));
+
+        ObservableList<ItemInOrderInfo> items = FXCollections.observableArrayList();
+        ObservableList<StoreInOrderInfo> stores = FXCollections.observableArrayList();
+        items.addAll(order.ItemsInOrder);
+        stores.addAll(order.Stores);
+        ItemTable.setItems(items);
+        StoreTable.setItems(stores);
     }
 
-    public static ScrollPane getItemsTile(OrderInfo order) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
-        fxmlLoader.setLocation(url);
-        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
 
-        for (ItemInOrderInfo cur : order.ItemsInOrder) {
-            InfoController.AddNewOrderItem(cur.serialNumber.toString(),cur.Name,cur.PayBy.toLowerCase(),cur.PricePerUint.toString(),cur.amountBought.toString(),cur.TotalPrice.toString()
-            ,cur.FromStoreID.toString(),cur.FromSale);
-        }
 
-        return infoComponent;
-    }
 
-    public static ScrollPane getStoresTile(OrderInfo order) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
-        fxmlLoader.setLocation(url);
-        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
-
-        for (StoreInOrderInfo cur : order.Stores) {
-            InfoController.AddNewOrderStore(cur.Store.StoreID.toString(),cur.Store.Name
-                    ,cur.Store.PPK.toString(),cur.Store.getDistanceFromUser(order.customer.Location)
-                    ,cur.Store.getShippingPriceFromUser(order.customer.Location));
-        }
-
-        return infoComponent;
-    }
 
 }

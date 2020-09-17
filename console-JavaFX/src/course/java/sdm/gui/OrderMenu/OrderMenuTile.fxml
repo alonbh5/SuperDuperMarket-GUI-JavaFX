@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -28,12 +30,36 @@
       </HBox>
       <TitledPane fx:id="ItemTile" text="Items">
         <content>
-          <AnchorPane fx:id="ItemsPane" />
+          <AnchorPane fx:id="ItemsPane">
+               <children>
+                  <TableView fx:id="ItemTable" prefHeight="420.0" prefWidth="1180.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="ItemIdColumn" prefWidth="75.0" text="Item ID" />
+                      <TableColumn fx:id="ItemNameColumn" prefWidth="97.0000228881836" text="Item Name" />
+                        <TableColumn fx:id="ItemPayByColumn" prefWidth="109.00006103515625" text="Paying Method" />
+                        <TableColumn fx:id="ItemAmountColumn" minWidth="0.0" prefWidth="83.0" text="Amount" />
+                        <TableColumn fx:id="ItemPriceColumn" prefWidth="109.0" text="Price Per Unit" />
+                        <TableColumn fx:id="ItemTotalColumn" prefWidth="133.00003051757812" text="Total Price" />
+                        <TableColumn fx:id="ItemDisColumn" minWidth="6.0" prefWidth="87.0" text="From" />
+                    </columns>
+                  </TableView>
+               </children></AnchorPane>
         </content>
       </TitledPane>
       <TitledPane fx:id="StoreTile" text="Store(s)">
         <content>
-          <AnchorPane fx:id="StoresPane" />
+          <AnchorPane fx:id="StoresPane">
+               <children>
+                  <TableView fx:id="StoreTable" prefHeight="420.0" prefWidth="1160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="StoreIdColumn" prefWidth="75.0" text="Store ID" />
+                      <TableColumn fx:id="StoreNameColumn" prefWidth="75.0" text="Store Name" />
+                        <TableColumn fx:id="PPKColumn" prefWidth="75.0" text="PPK" />
+                        <TableColumn fx:id="DistanceColumn" prefWidth="97.0" text="Distance " />
+                        <TableColumn fx:id="ShippingColumn" prefWidth="126.0" text="Shipping Price" />
+                    </columns>
+                  </TableView>
+               </children></AnchorPane>
         </content>
       </TitledPane>
       <HBox alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="1162.0" spacing="20.0">

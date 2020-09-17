@@ -48,4 +48,42 @@ public class ItemInOrderInfo {
         this.amountBought+=AmountToAdd;
     }
 
+    public Long getSerialNumber() {
+        return serialNumber;
+    }
+
+    public Boolean getFromSale() {
+        return FromSale;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public String getPayBy() {
+        return PayBy;
+    }
+
+    public Long getFromStoreID() {
+        return FromStoreID;
+    }
+
+    public Double getAmountBought() {
+        return Double.parseDouble(String.format("%.2f", amountBought));
+    }
+
+    public Double getPricePerUint() {
+        return Double.parseDouble(String.format("%.2f", PricePerUint));
+    }
+
+    public Double getTotalPrice() {
+        return Double.parseDouble(String.format("%.2f", TotalPrice));
+    }
+
+    public String getIsDiscount() {
+        if (FromSale)
+            return "Discount";
+        else
+            return "Regular";
+    }
 }

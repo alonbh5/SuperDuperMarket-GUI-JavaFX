@@ -172,6 +172,7 @@ public class MainMenuController {
             isLoadedDone.set(true);
             MassageLabel.textProperty().unbind();
             ProgressBar.progressProperty().unbind();
+            MainPane.setCenter(null);
 
         });
 
@@ -247,8 +248,7 @@ public class MainMenuController {
         // load header component and controller from fxml
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url;
-        ScrollPane items, stores;
-        String OrderType = new String();
+
 
         Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
 
@@ -257,22 +257,16 @@ public class MainMenuController {
             fxmlLoader.setLocation(url);
             Pane Tile = fxmlLoader.load(url.openStream());
             MainPane.setCenter(Tile);
-        } else {
+        }
+        else {
             url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
             fxmlLoader.setLocation(url);
             ScrollPane infoComponent = fxmlLoader.load(url.openStream());
             InfoMenuController InfoController = fxmlLoader.getController();
 
-            for (OrderInfo cur : orders) {
-                if (cur.isStatic)
-                    OrderType = "Static";
-                else
-                    OrderType = "Dynamic";
-                items = OrderMenuTileController.getItemsTile(cur);
-                stores = OrderMenuTileController.getStoresTile(cur);
-                InfoController.AddNewOrder(cur.m_OrderSerialNumber.toString(), cur.getDateString(), cur.customer.name, cur.getPointString(),
-                        OrderType, items, stores, cur.m_ShippingPrice.toString(), cur.m_ItemsPrice.toString(), cur.m_TotalPrice.toString());
-            }
+            for (OrderInfo cur : orders)
+                InfoController.AddNewOrder(cur);
+
 
             MainPane.setCenter(infoComponent);
         }

@@ -14,4 +14,36 @@ public class StoreInOrderInfo {
         PriceOfItems = priceOfItems;
         AmountOfItems = amountOfItemsType;
     }
+
+    public StoreInfo getStore() {
+        return Store;
+    }
+
+    public Double getDistanceFromUser() {
+        return DistanceFromUser;
+    }
+
+    public Double getShippingCost() {
+        return ShippingCost;
+    }
+
+    public Double getPriceOfItems() {
+        return PriceOfItems;
+    }
+
+    public Integer getAmountOfItems() {
+        return AmountOfItems;
+    }
+
+    public Integer getPPK () {
+        return Store.PPK;
+    }
+
+    public String getStoreName() {
+        return Store.Name;
+    }
+
+    public Long getStoreId() {
+        return Store.StoreID;
+    }
 }
