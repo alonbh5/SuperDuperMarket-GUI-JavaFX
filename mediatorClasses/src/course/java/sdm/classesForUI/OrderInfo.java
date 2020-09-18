@@ -44,7 +44,6 @@ public class OrderInfo {
 
     public String getDateString () {
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        df.format(m_Date);
-        return (df.toString());
+        return df.format(m_Date);
     }
 }

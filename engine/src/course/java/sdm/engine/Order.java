@@ -188,4 +188,10 @@ class Order implements Coordinatable, Serializable {
         return res;
 
     }
+
+    public Long getStaticStore() {
+        for (Store onlyStore : m_StoresInOrder) //works only if its static
+            return onlyStore.getStoreID();
+        return null;
+    }
 }

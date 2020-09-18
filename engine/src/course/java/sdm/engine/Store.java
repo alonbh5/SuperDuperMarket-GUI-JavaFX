@@ -11,7 +11,7 @@ import java.util.List;
 class Store implements HasName, Coordinatable,Serializable {
 
     private final Point m_locationCoordinate;
-    private final long m_StoreID;
+    private final Long m_StoreID;
     private double m_profitFromShipping = 0;
     private final Map<Long,ProductInStore> m_items = new HashMap<>();
     private final Map<Long,Order> m_OrderHistory = new HashMap<>();
@@ -172,7 +172,7 @@ class Store implements HasName, Coordinatable,Serializable {
                     Temp.getPayBy().toString(),curDis.getWhatYouBuy().getAmountToBuy(),0.0);
 
             DiscountInfo newDis = new DiscountInfo (curDis.getDiscountName(),curDis.getOfferType().toString(),WhatYouBuy
-            ,curDis.getWhatYouBuy().getAmountToBuy(),offeredItems);
+            ,curDis.getWhatYouBuy().getAmountToBuy(),offeredItems,this.m_StoreID);
             res.add(newDis);
         }
 
@@ -224,32 +224,48 @@ class Store implements HasName, Coordinatable,Serializable {
         m_items.get(itemID).setPrice(newPrice);
     }
 
-    public List<DiscountInfo> getDiscountsListByItems(List<ItemInOrderInfo> wantedItemsInStore) {
+    public List<DiscountInfo> getDiscountsListByItems(Set<ProductInOrder> wantedItemsInStore) {
         List<DiscountInfo> AllDiscount = getDiscountsList();
         List<DiscountInfo> res = new ArrayList<>();
         for (DiscountInfo curDiscount : AllDiscount) {
-            for (ItemInOrderInfo curItem :wantedItemsInStore)
-                if (curDiscount.itemToBuy.ID.equals(curItem.serialNumber))
-                    if (curDiscount.AmountToBuy <= curItem.amountBought) {
-                        curDiscount.setAmountEntitled((int) (curItem.amountBought.doubleValue() / curDiscount.AmountToBuy.doubleValue()));
+            for (ProductInOrder curItem :wantedItemsInStore)
+                if (curDiscount.itemToBuy.ID.equals(curItem.getSerialNumber()))
+                    if (curDiscount.AmountToBuy <= curItem.getAmount()) {
+                        curDiscount.setAmountEntitled((int) (curItem.getAmount() / curDiscount.AmountToBuy));
                         res.add(curDiscount);
                     }
         }
-        return res;
+        return ConnectDiscount(res);
     }
 
-    public Collection<? extends DiscountInfo> getDiscountsListFilteredByItems(List<ItemInOrderInfo> wantedItems) {
+    public Collection<DiscountInfo> getDiscountsListFilteredByItems(Set<ProductInOrder> wantedItems) {
+
         List<DiscountInfo> AllDiscount = getDiscountsList();
         List<DiscountInfo> res = new ArrayList<>();
         for (DiscountInfo curDiscount : AllDiscount) {
-            for (ItemInOrderInfo curItem : wantedItems)
-                if (curItem.FromStoreID.equals(this.m_StoreID))
-                    if (curDiscount.itemToBuy.ID.equals(curItem.serialNumber))
-                        if (curDiscount.AmountToBuy <= curItem.amountBought) {
-                            curDiscount.setAmountEntitled((int) (curItem.amountBought.doubleValue() / curDiscount.AmountToBuy.doubleValue()));
+            for (ProductInOrder curItem : wantedItems)
+                if (curItem.getProductInStore().getStore().m_StoreID.equals(this.m_StoreID))
+                    if (curDiscount.itemToBuy.ID.equals(curItem.getSerialNumber()))
+                        if (curDiscount.AmountToBuy <= curItem.getAmount()) {
+                            curDiscount.setAmountEntitled((int) (curItem.getAmount() / curDiscount.AmountToBuy));
                             res.add(curDiscount);
                         }
         }
-        return res;
+        return ConnectDiscount(res);
+    }
+
+    private List<DiscountInfo> ConnectDiscount(List<DiscountInfo> discounts) {
+        if (discounts.size() > 1) {
+            for (int i = 0; i < discounts.size(); i++) {
+                for (int j=i+1;j<discounts.size();j++) {
+                    if (discounts.get(i).itemToBuy.ID.equals(discounts.get(j).itemToBuy.ID)) {
+                        discounts.get(i).addListener(discounts.get(j));
+                        discounts.get(j).addListener(discounts.get(i));
+                    }
+
+                }
+            }
+        }
+        return discounts;
     }
 }

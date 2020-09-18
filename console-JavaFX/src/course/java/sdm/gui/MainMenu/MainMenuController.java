@@ -78,7 +78,7 @@ public class MainMenuController {
 
     public OrderInfo getDynamicOrderWithoutDiscounts(List<ItemInOrderInfo> itemsByUser, CustomerInfo selectedUser, Date selectedDate) {
         try {
-            return MainSDMSystem.addDynamicOrderToSystem(itemsByUser, selectedUser, selectedDate);
+            return MainSDMSystem.getDynamicOrderInfoBeforeDiscounts(itemsByUser, selectedUser, selectedDate);
         } catch (Exception e) {
             PrintMassage("Unknown Error!");
         }
@@ -192,7 +192,7 @@ public class MainMenuController {
                 MainPane.setId("MainMenuPane1");
                 break;
             case "Skin 2":
-                MainSDMSystem.test();
+                //MainSDMSystem.test();
                 MainPane.setId("MainMenuPane2");
                 break;
             case "Skin 3":
@@ -324,8 +324,14 @@ public class MainMenuController {
     }
 
 
-    public Collection<DiscountInfo> getDiscounts(List<ItemInOrderInfo> itemsByUser, boolean isStatic, StoreInfo storeChosen) {
-        return MainSDMSystem.getAllEntitledDiscounts(itemsByUser, isStatic, storeChosen);
+    public Collection<DiscountInfo> getDiscountsStatic(List<ItemInOrderInfo> itemsByUser, StoreInfo storeChosen,CustomerInfo user,Date dateChosen) throws StoreDoesNotSellItemException, OrderIsNotForThisCustomerException, PointOutOfGridException, CustomerNotInSystemException {
+        return MainSDMSystem.getDiscountsFromStaticOrder(itemsByUser,storeChosen,user,dateChosen);
+    }
+
+    public OrderInfo ApproveStaticOrder(Collection<DiscountInfo> selectedDiscounts) throws OrderIsNotForThisCustomerException {
+
+        MainSDMSystem.ApproveOrder(selectedDiscounts);
+        return MainSDMSystem.getTempOrder();
     }
 
     public void RestoreItemChange() {
@@ -362,5 +368,13 @@ public class MainMenuController {
         ItemInStoreInfo newItemToSend = new ItemInStoreInfo (newItem.serialNumber,amount);
             MainSDMSystem.addItemToStore(curStore.StoreID,newItemToSend);
 
+    }
+
+    public Collection<DiscountInfo> getDiscountsDynamic(List<ItemInOrderInfo> itemsByUser, CustomerInfo selectedUser, Date selectedDate) {
+        return MainSDMSystem.getDiscountsFromDynamicOrder();
+    }
+
+    public void ApproveDynamicOrder(Collection<DiscountInfo> discounts) throws OrderIsNotForThisCustomerException {
+        MainSDMSystem.ApproveOrder(discounts);
     }
 }

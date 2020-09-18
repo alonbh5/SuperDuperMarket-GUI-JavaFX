@@ -29,7 +29,7 @@ public class SuperDuperMarketSystem {
     private Map<Point,Coordinatable> m_SystemGrid = new HashMap<>(); //all the shops
     private Map<Long,Order> m_OrderHistory = new HashMap<>(); //all the shops
     private Map<Long,Store> m_StoresInSystem = new HashMap<>();
-    private Order m_tempDynamicOrder = null;
+    private Order m_tempOrder = null;
     private boolean locked = true;
 
     public SuperDuperMarketSystem(MainMenuController controller) {
@@ -261,8 +261,67 @@ public class SuperDuperMarketSystem {
 
     }
 
-    public OrderInfo addDynamicOrderToSystem (Collection<ItemInOrderInfo> itemsChosen,CustomerInfo curUser, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException, CustomerNotInSystemException {
+    private void addItemToStore (Long StoreID,ProductInStore productToAdd) throws NegativePriceException {
+
+        Store storeToAddTo = m_StoresInSystem.get(StoreID);
+        storeToAddTo.addItemToStore(productToAdd);
+        m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
+    }
+
+
+
+    public Collection<DiscountInfo> getDiscountsFromStaticOrder (Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException, OrderIsNotForThisCustomerException {
+        //create temp static order, return entitled discount..
+
+        if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
+            throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
+        if (itemsChosen.isEmpty())
+            throw (new RuntimeException("Empty List"));
+        if (!isCustomerInSystem(curUser.ID))
+            throw (new CustomerNotInSystemException(curUser.ID));
+
+        Customer curCustomer = m_CustomersInSystem.get(curUser.ID);
+        Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
+        Order newOrder = createEmptyOrder(curCustomer,OrderDate,true);
+
+        for (ItemInOrderInfo curItem : itemsChosen) {
+            if (!curStore.isItemInStore(curItem.serialNumber))
+                throw (new StoreDoesNotSellItemException(curItem.serialNumber));
+            if (curItem.amountBought <= 0)
+                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
+
+            ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
+            ProductInOrder newItem = new ProductInOrder(curProd,false);
+            newItem.setAmountBought(curItem.amountBought);
+            newOrder.addProductToOrder(newItem);
+        }
+
+        m_tempOrder = newOrder;
+
+        return getAllEntitledDiscounts(newOrder);
+    }
+
+
+    private void approveOrder() throws OrderIsNotForThisCustomerException {
+        for (ProductInOrder curItem :m_tempOrder.getBasket())
+            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+
+        m_OrderHistory.put(m_tempOrder.getOrderSerialNumber(),m_tempOrder);
+        updateShippingProfitAfterOrder(m_tempOrder); //update shipping profit
+        updateSoldCounterInStore(m_tempOrder); // updated the counter of item in the store (how many times has been sold)
+        for (Store curStore : m_tempOrder.getStoreSet())
+            curStore.addOrderToStoreHistory(m_tempOrder);
+        m_tempOrder.getCostumer().addOrderToHistory(m_tempOrder);
+
+    }
+
+    public OrderInfo getTempOrder() {
+        return createOrderInfo(m_tempOrder);
+    }
+
+    public OrderInfo getDynamicOrderInfoBeforeDiscounts (Collection<ItemInOrderInfo> itemsChosen,CustomerInfo curUser, Date OrderDate) throws InvalidKeyException, PointOutOfGridException, ItemIsNotSoldAtAllException, CustomerNotInSystemException {
         //NOTE - You need to use approveDynamicOrder to insert to system after
+        //part 1 - Create Temp... (UI want to see stores...)
         if (!isCustomerInSystem(curUser.ID))
             throw (new CustomerNotInSystemException(curUser.ID));
 
@@ -285,52 +344,37 @@ public class SuperDuperMarketSystem {
             newOrder.addProductToOrder(newItem); //added it to order
         }
 
-        m_tempDynamicOrder = newOrder; //todo wait for sale items...
+        m_tempOrder = newOrder; //todo wait for sale items...
         return createOrderInfo(newOrder);
     }
 
-    private void addItemToStore (Long StoreID,ProductInStore productToAdd) throws NegativePriceException {
-
-        Store storeToAddTo = m_StoresInSystem.get(StoreID);
-        storeToAddTo.addItemToStore(productToAdd);
-        m_ItemsInSystem.get(productToAdd.getSerialNumber()).addSellingStore();
+    public Collection<DiscountInfo> getDiscountsFromDynamicOrder () {       //create temp static order, return entitled discount..
+        //part 2 - get discount - UI want to choose
+        if (m_tempOrder.isStatic())
+            return null;
+        return getAllEntitledDiscounts(m_tempOrder);
     }
 
-    public void addStaticOrderToSystem(Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException, OrderIsNotForThisCustomerException {
-        if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
-            throw (new RuntimeException("Store ID #"+storeChosen.StoreID+" is not in System"));
-        if (itemsChosen.isEmpty())
-            throw (new RuntimeException("Empty List"));
-        if (!isCustomerInSystem(curUser.ID))
-            throw (new CustomerNotInSystemException(curUser.ID));
+    public OrderInfo ApproveOrder (Collection<DiscountInfo> DiscountWanted) throws OrderIsNotForThisCustomerException {
 
-        Customer curCustomer = m_CustomersInSystem.get(curUser.ID);
+        for (DiscountInfo curDiscount : DiscountWanted) {
+            ProductInStore curProd;
+            for(int i = 0; i<curDiscount.AmountWanted.getValue();i++) {
+                if (curDiscount.DiscountOperator.toLowerCase().equals("one_of")) {
+                    Store curStore = getStoreByID(curDiscount.StoreID);
+                    curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).ID);
+                    ProductInOrder newItem = new ProductInOrder(curProd,true);
+                    newItem.setAmountBoughtFromSale(
+                            curDiscount.AmountWanted.getValue()*curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).Amount,
+                            curDiscount.AmountWanted.getValue()*curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).PricePerOne);
+                    m_tempOrder.addProductToOrder(newItem);
+                }
+            }
 
-
-        Order newOrder = createEmptyOrder(curCustomer,OrderDate,true);
-        Store curStore = m_StoresInSystem.get(storeChosen.StoreID);
-
-
-        for (ItemInOrderInfo curItem : itemsChosen) {
-            if (!curStore.isItemInStore(curItem.serialNumber))
-                throw (new StoreDoesNotSellItemException(curItem.serialNumber));
-            if (curItem.amountBought <= 0)
-                throw (new RuntimeException("Amount is not Allowed.." + curItem.amountBought));
-
-            ProductInStore curProd = curStore.getProductInStoreByID(curItem.serialNumber);
-            ProductInOrder newItem = new ProductInOrder(curProd,false);
-            newItem.setAmountBought(curItem.amountBought);
-            newOrder.addProductToOrder(newItem);
         }
 
-        for (ProductInOrder curItem :newOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
-
-        m_OrderHistory.put(newOrder.getOrderSerialNumber(),newOrder); //todo dont add it yet...
-        updateShippingProfitAfterOrder(newOrder); //update shipping profit
-        updateSoldCounterInStore(newOrder); // updated the counter of item in the store (how many times has been sold)
-        curStore.addOrderToStoreHistory(newOrder);
-        curCustomer.addOrderToHistory(newOrder);
+        approveOrder();
+        return getTempOrder();
     }
 
     private OrderInfo createOrderInfo(Order CurOrder) {
@@ -349,7 +393,7 @@ public class SuperDuperMarketSystem {
         for (ProductInOrder curProd : Items)
             itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
                     curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
-                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems(),CurOrder.isStatic()));
+                    ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems(),curProd.isFromSale()));
 
         int ppk =0;
         double distance = 0;
@@ -425,16 +469,7 @@ public class SuperDuperMarketSystem {
 
     }
 
-    public void approveDynamicOrder()    {
-        for (ProductInOrder curItem :m_tempDynamicOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
 
-        m_OrderHistory.put(m_tempDynamicOrder.getOrderSerialNumber(),m_tempDynamicOrder);
-        updateShippingProfitAfterOrder(m_tempDynamicOrder); //update shipping profit
-        updateSoldCounterInStore(m_tempDynamicOrder); // updated the counter of item in the store (how many times has been sold)
-        for (Store curStore : m_tempDynamicOrder.getStoreSet())
-            curStore.addOrderToStoreHistory(m_tempDynamicOrder);
-    }
 
     //files
 
@@ -636,7 +671,38 @@ public class SuperDuperMarketSystem {
     }
 
 
-    public void test() {
+
+
+    private Collection<DiscountInfo> getAllEntitledDiscounts(Order order) {
+
+        List<DiscountInfo> res =null;
+
+
+        if (order.isStatic()) {
+            Store staticStore = getStoreByID(order.getStaticStore());
+            List<ProductInStore> wantedItemsInStore = new ArrayList<>();
+            res = staticStore.getDiscountsListByItems(order.getBasket());
+        }
+        else { //case dynamic
+            res = new ArrayList<>();
+            Set<Store> allStores = new HashSet<>();
+            for (ProductInOrder curItem : order.getBasket())
+                allStores.add(curItem.getProductInStore().getStore());
+            for (Store curStore : allStores) {
+                res.addAll(curStore.getDiscountsListFilteredByItems(order.getBasket()));
+            }
+        }
+
+        return res;
+    }
+
+    public boolean isItemOkToDelete( ItemInStoreInfo itemSelected) {
+        ProductInSystem item = getItemByID(itemSelected.serialNumber);
+        return (item.getNumberOfSellingStores() != 1);
+
+    }
+
+   /*public void test() {
         Order emptyOrder = null;
         Date dt = new Date();
 
@@ -672,41 +738,5 @@ public class SuperDuperMarketSystem {
         for (ProductInOrder curItem :emptyOrder.getBasket())
             m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
 
-    }
-
-    public Collection<DiscountInfo> getAllEntitledDiscounts(List<ItemInOrderInfo> wantedItems, boolean isStatic, StoreInfo storeChosen) {
-        List<DiscountInfo> res =null;
-
-
-        if (isStatic) {
-            Store staticStore = getStoreByID(storeChosen.StoreID);
-            List<ProductInStore> wantedItemsInStore = new ArrayList<>();
-            //for (ItemInOrderInfo cur : wantedItems)
-                //wantedItemsInStore.add(staticStore.getProductInStoreByID(cur.serialNumber));
-            res = staticStore.getDiscountsListByItems(wantedItems);
-        }
-        else { //case dynamic
-            res = new ArrayList<>();
-            Set<Store> allStores = new HashSet<>();
-            for (ItemInOrderInfo curItem : wantedItems)
-                allStores.add(getStoreByID(curItem.FromStoreID));
-            for (Store curStore : allStores) {
-                res.addAll(curStore.getDiscountsListFilteredByItems(wantedItems));
-            }
-
-        }
-
-        return res;
-    }
-
-    public Collection<DiscountInfo> getAllEntitledDiscounts(OrderInfo DynamicOrderFromSystem) {
-        return getAllEntitledDiscounts(DynamicOrderFromSystem.ItemsInOrder,false,null);
-    }
-
-
-    public boolean isItemOkToDelete( ItemInStoreInfo itemSelected) {
-        ProductInSystem item = getItemByID(itemSelected.serialNumber);
-        return (item.getNumberOfSellingStores() != 1);
-
-    }
+    }*/
 }

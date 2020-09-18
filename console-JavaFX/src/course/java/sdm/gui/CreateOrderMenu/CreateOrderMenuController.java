@@ -1,7 +1,7 @@
 package course.java.sdm.gui.CreateOrderMenu;
 
 import course.java.sdm.classesForUI.*;
-import course.java.sdm.exceptions.NoValidXMLException;
+import course.java.sdm.exceptions.*;
 import course.java.sdm.gui.InputPane.GetInputPaneController;
 import course.java.sdm.gui.MainMenu.MainMenuController;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -275,12 +275,59 @@ public class CreateOrderMenuController {
 
     private void doDynamicOrder(CustomerInfo selectedUser, Date selectedDate) {
         OrderInfo getOrderSum = MainController.getDynamicOrderWithoutDiscounts(ItemsByUser,selectedUser,selectedDate);
+
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = StoreSumUpController.class.getResource("StoreSumUp.fxml");
+        fxmlLoader.setLocation(url);
+        Parent infoComponent = null;
+        try {
+            infoComponent = fxmlLoader.load(url.openStream());
+        } catch (IOException e) {
+        }
+        StoreSumUpController storeSumUpController = fxmlLoader.getController();
+        storeSumUpController.setValues(getOrderSum,this::showDiscount);
+
+        MainStackPane.getChildren().get(0).setOpacity(0);
+        MainStackPane.getChildren().get(0).setDisable(true);
+        MainStackPane.getChildren().add(infoComponent);
+        MainController.PrintMassage("Click Button To Continue..");
+
         //todo show all store here......
-        Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,false,null);
+        //Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,false,null);
     }
 
     private void doStaticOrder(StoreInfo selectedStore) {
-        Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,true,selectedStore);
+        CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
+        Date SelectedDate = Date.valueOf(datePicker.getValue());
+        Collection<DiscountInfo> discounts;
+
+        try {
+            discounts= MainController.getDiscountsStatic(ItemsByUser,selectedStore,SelectedUser,SelectedDate);
+            //todo work on discount...
+            MainController.ApproveStaticOrder(discounts);
+            MainController.PrintMassage("Static Order Added To System!");
+        } catch (Exception e) {
+            MainController.PrintMassage("Unknown Error");
+        }
+
+    }
+
+    private void showDiscount() {
+        MainStackPane.getChildren().clear();
+        CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
+        Date SelectedDate = Date.valueOf(datePicker.getValue());
+        Collection<DiscountInfo> discounts;
+
+        try {
+            discounts= MainController.getDiscountsDynamic(ItemsByUser,SelectedUser,SelectedDate);
+            //todo work on discount...
+            MainController.ApproveDynamicOrder(discounts);
+            MainController.PrintMassage("Dynamic Order Added To System!");
+        } catch (Exception e) {
+            MainController.PrintMassage("Unknown Error");
+        }
+
     }
 
 

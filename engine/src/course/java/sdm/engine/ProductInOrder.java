@@ -21,6 +21,11 @@ class ProductInOrder implements Serializable {
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
     }
 
+    void setAmountBoughtFromSale(double amountBought,double SalePrice) {
+        this.amountBought = amountBought;
+        this.PriceOfTotalItems = amountBought * SalePrice;
+    }
+
     void addAmountBought(double amountBought) {
         this.amountBought += amountBought;
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();

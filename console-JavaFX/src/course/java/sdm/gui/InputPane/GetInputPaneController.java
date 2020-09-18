@@ -53,7 +53,7 @@ public class GetInputPaneController {
     void OnOk(ActionEvent event) {
         if (TextLeft.getText() != null && TextLeft.getText().matches(regex))
             if (checkRight) {
-                if (TextRight.getText() != null && TextRight.getText().matches(regex))
+                if (TextRight.getText().isEmpty() || TextRight.getText().matches(regex))
                     Onfinish.run();
                 else
                     ErrorLabel.setText("Please Enter Positive Number! (Right Box)");
@@ -68,11 +68,13 @@ public class GetInputPaneController {
 
         Double res = Double.parseDouble(TextLeft.getText());
         if (checkRight)
-            res += Double.parseDouble("0."+TextRight.getText());
+            if (!TextRight.getText().isEmpty())
+                res += Double.parseDouble("0." + TextRight.getText());
 
         return res;
-
     }
+
+
     public void ChangeTitle (String str) {
         TitleLabel.setText(str);
     }

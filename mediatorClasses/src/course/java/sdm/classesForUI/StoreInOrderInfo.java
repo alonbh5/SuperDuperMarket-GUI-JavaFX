@@ -19,16 +19,20 @@ public class StoreInOrderInfo {
         return Store;
     }
 
+    public String getLocation() {
+        return Store.getPointString();
+    }
+
     public Double getDistanceFromUser() {
-        return DistanceFromUser;
+        return Double.parseDouble(String.format("%.2f", DistanceFromUser));
     }
 
     public Double getShippingCost() {
-        return ShippingCost;
+        return Double.parseDouble(String.format("%.2f", ShippingCost));
     }
 
     public Double getPriceOfItems() {
-        return PriceOfItems;
+        return Double.parseDouble(String.format("%.2f", PriceOfItems));
     }
 
     public Integer getAmountOfItems() {
