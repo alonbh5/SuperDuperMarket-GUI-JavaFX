@@ -270,7 +270,7 @@ public class SuperDuperMarketSystem {
 
 
 
-    public Collection<DiscountInfo> getDiscountsFromStaticOrder (Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException, OrderIsNotForThisCustomerException {
+    public List<DiscountInfo> getDiscountsFromStaticOrder (Collection<ItemInOrderInfo> itemsChosen, StoreInfo storeChosen, CustomerInfo curUser, Date OrderDate) throws PointOutOfGridException, StoreDoesNotSellItemException, CustomerNotInSystemException, OrderIsNotForThisCustomerException {
         //create temp static order, return entitled discount..
 
         if (!m_StoresInSystem.containsKey(storeChosen.StoreID))
@@ -357,18 +357,40 @@ public class SuperDuperMarketSystem {
 
     public OrderInfo ApproveOrder (Collection<DiscountInfo> DiscountWanted) throws OrderIsNotForThisCustomerException {
 
+        ProductInOrder newItem;
+        Store curStore;
         for (DiscountInfo curDiscount : DiscountWanted) {
             ProductInStore curProd;
             for(int i = 0; i<curDiscount.AmountWanted.getValue();i++) {
-                if (curDiscount.DiscountOperator.toLowerCase().equals("one_of")) {
-                    Store curStore = getStoreByID(curDiscount.StoreID);
+                curStore = getStoreByID(curDiscount.StoreID);
+                if (curDiscount.DiscountOperator.toUpperCase().equals("ONE_OF")) {
                     curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).ID);
-                    ProductInOrder newItem = new ProductInOrder(curProd,true);
+                    newItem = new ProductInOrder(curProd,true);
                     newItem.setAmountBoughtFromSale(
                             curDiscount.AmountWanted.getValue()*curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).Amount,
-                            curDiscount.AmountWanted.getValue()*curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).PricePerOne);
+                            curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).PricePerOne);
                     m_tempOrder.addProductToOrder(newItem);
                 }
+                else
+                    if (curDiscount.DiscountOperator.toUpperCase().equals("ALL_OR_NOTHING")) { //go over all the thing and add them
+                        for (int j =0; j< curDiscount.OfferedItem.size();j++) {
+                            curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(j).ID);
+                            newItem = new ProductInOrder(curProd, true);
+                            newItem.setAmountBoughtFromSale(
+                                    curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(j).Amount,
+                                    curDiscount.OfferedItem.get(j).PricePerOne);
+                            m_tempOrder.addProductToOrder(newItem);
+                        }
+                    }
+                    else {  //IRRELEVANT
+                        curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(0).ID);
+                        newItem = new ProductInOrder(curProd, true);
+                        newItem.setAmountBoughtFromSale(
+                                curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(0).Amount,
+                                curDiscount.OfferedItem.get(0).PricePerOne);
+                        m_tempOrder.addProductToOrder(newItem);
+                    }
+
             }
 
         }
@@ -673,7 +695,7 @@ public class SuperDuperMarketSystem {
 
 
 
-    private Collection<DiscountInfo> getAllEntitledDiscounts(Order order) {
+    private List<DiscountInfo> getAllEntitledDiscounts(Order order) {
 
         List<DiscountInfo> res =null;
 

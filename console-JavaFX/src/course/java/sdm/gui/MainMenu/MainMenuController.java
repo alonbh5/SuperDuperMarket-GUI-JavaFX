@@ -324,7 +324,7 @@ public class MainMenuController {
     }
 
 
-    public Collection<DiscountInfo> getDiscountsStatic(List<ItemInOrderInfo> itemsByUser, StoreInfo storeChosen,CustomerInfo user,Date dateChosen) throws StoreDoesNotSellItemException, OrderIsNotForThisCustomerException, PointOutOfGridException, CustomerNotInSystemException {
+    public List<DiscountInfo> getDiscountsStatic(List<ItemInOrderInfo> itemsByUser, StoreInfo storeChosen,CustomerInfo user,Date dateChosen) throws StoreDoesNotSellItemException, OrderIsNotForThisCustomerException, PointOutOfGridException, CustomerNotInSystemException {
         return MainSDMSystem.getDiscountsFromStaticOrder(itemsByUser,storeChosen,user,dateChosen);
     }
 

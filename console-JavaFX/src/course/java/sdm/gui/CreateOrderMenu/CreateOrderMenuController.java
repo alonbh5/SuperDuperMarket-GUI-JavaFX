@@ -300,11 +300,13 @@ public class CreateOrderMenuController {
     private void doStaticOrder(StoreInfo selectedStore) {
         CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
         Date SelectedDate = Date.valueOf(datePicker.getValue());
-        Collection<DiscountInfo> discounts;
+        List<DiscountInfo> discounts;
 
         try {
             discounts= MainController.getDiscountsStatic(ItemsByUser,selectedStore,SelectedUser,SelectedDate);
             //todo work on discount...
+            discounts.get(0).addAmountWanted();
+            discounts.get(0).addAmountWanted();
             MainController.ApproveStaticOrder(discounts);
             MainController.PrintMassage("Static Order Added To System!");
         } catch (Exception e) {
