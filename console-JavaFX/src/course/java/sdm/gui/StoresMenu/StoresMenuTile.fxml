@@ -35,14 +35,15 @@
       </TitledPane>
       <TitledPane fx:id="DiscountTile" text="Discounts">
         <content>
-          <AnchorPane fx:id="DiscountPane">
-               <children>
-                  <ScrollPane layoutX="9.600000381469727" layoutY="9.600000381469727">
+            <ScrollPane>
+               <content>
+                  <ScrollPane>
                      <content>
-                        <FlowPane fx:id="DiscountFlowPane" />
+                        <FlowPane fx:id="DiscountFlowPane" orientation="VERTICAL" />
                      </content>
                   </ScrollPane>
-               </children></AnchorPane>
+               </content>
+            </ScrollPane>
         </content>
       </TitledPane>
       <TitledPane fx:id="OrderTile" text="Order History">

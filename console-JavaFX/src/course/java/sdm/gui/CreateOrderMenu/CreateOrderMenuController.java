@@ -2,6 +2,8 @@ package course.java.sdm.gui.CreateOrderMenu;
 
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
+import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
+import course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts.DiscountPickerController;
 import course.java.sdm.gui.InputPane.GetInputPaneController;
 import course.java.sdm.gui.MainMenu.MainMenuController;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -75,6 +77,7 @@ public class CreateOrderMenuController {
 
     private MainMenuController MainController;
     private List<ItemInOrderInfo> ItemsByUser;
+    Collection<DiscountInfo> discounts;
 
 
     public CreateOrderMenuController () {
@@ -276,7 +279,6 @@ public class CreateOrderMenuController {
     private void doDynamicOrder(CustomerInfo selectedUser, Date selectedDate) {
         OrderInfo getOrderSum = MainController.getDynamicOrderWithoutDiscounts(ItemsByUser,selectedUser,selectedDate);
 
-
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = StoreSumUpController.class.getResource("StoreSumUp.fxml");
         fxmlLoader.setLocation(url);
@@ -300,15 +302,13 @@ public class CreateOrderMenuController {
     private void doStaticOrder(StoreInfo selectedStore) {
         CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
         Date SelectedDate = Date.valueOf(datePicker.getValue());
-        List<DiscountInfo> discounts;
 
         try {
             discounts= MainController.getDiscountsStatic(ItemsByUser,selectedStore,SelectedUser,SelectedDate);
-            //todo work on discount...
-            discounts.get(0).addAmountWanted();
-            discounts.get(0).addAmountWanted();
-            MainController.ApproveStaticOrder(discounts);
-            MainController.PrintMassage("Static Order Added To System!");
+            //showDiscount();//todo!@!#!@#
+            //discounts.get(0).addAmountWanted();
+            //discounts.get(0).addAmountWanted();
+
         } catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
         }
@@ -319,14 +319,35 @@ public class CreateOrderMenuController {
         MainStackPane.getChildren().clear();
         CustomerInfo SelectedUser = UserCombo.getSelectionModel().getSelectedItem();
         Date SelectedDate = Date.valueOf(datePicker.getValue());
-        Collection<DiscountInfo> discounts;
+
 
         try {
-            discounts= MainController.getDiscountsDynamic(ItemsByUser,SelectedUser,SelectedDate);
-            //todo work on discount...
-            MainController.ApproveDynamicOrder(discounts);
-            MainController.PrintMassage("Dynamic Order Added To System!");
+            discounts = MainController.getDiscountsDynamic(ItemsByUser, SelectedUser, SelectedDate);
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            URL url = DiscountPickerController.class.getResource("DiscountPicker.fxml"); //todo make it all in common static..
+            fxmlLoader.setLocation(url);
+            Parent component = fxmlLoader.load(url.openStream());
+            DiscountPickerController controller = fxmlLoader.getController();
+            controller.OnCreation(discounts, this::Done);
+            //MainStackPane.getChildren().get(0).setOpacity(0);
+            //MainStackPane.getChildren().get(0).setDisable(true);
+            MainStackPane.getChildren().add(component);
         } catch (Exception e) {
+            MainController.PrintMassage("Unknown Error");
+        }
+
+    }
+
+    private void Done () {
+        try {
+            if (isStaticOrderTypeSelected.getValue()) {
+                MainController.ApproveStaticOrder(discounts);
+                MainController.PrintMassage("Static Order Added To System");
+            } else {
+                MainController.ApproveDynamicOrder(discounts);
+                MainController.PrintMassage("Static Order Added To System");
+            }
+        }catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
         }
 

@@ -58,4 +58,8 @@ public class DiscountInfo {
         if (DiscountOperator.toLowerCase().equals("one_of")) //todo check this
             IndexOfWantedItem = indexOfWantedItem;
     }
+
+    public boolean isIndex() {
+        return DiscountOperator.toLowerCase().equals("one_of");
+    }
 }
