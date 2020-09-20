@@ -8,6 +8,7 @@ import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
+import course.java.sdm.gui.StoresMenu.MapMenu.ShowMapController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
@@ -16,10 +17,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -316,6 +321,22 @@ public class MainMenuController {
         Parent component = fxmlLoader.load(url.openStream());
         ChangeItemMenuController controller = fxmlLoader.getController();
         controller.OnCreation(MainSDMSystem.getListOfAllStoresInSystem(), this);
+        MainPane.setCenter(component);
+    }
+
+
+    @FXML
+    void OnMap(ActionEvent event) throws Exception {
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = ShowMapController.class.getResource("ShowMap.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        Parent component = fxmlLoader.load(url.openStream());
+        ShowMapController controller = fxmlLoader.getController();
+        controller.OnCreation(9,9);
+
+        controller.AddStore(new StoreInfo(new Point(2,1),new Long(2),
+                new Double(2.2),null,null,null,"alonbh5",new Integer(4)));
         MainPane.setCenter(component);
     }
 
