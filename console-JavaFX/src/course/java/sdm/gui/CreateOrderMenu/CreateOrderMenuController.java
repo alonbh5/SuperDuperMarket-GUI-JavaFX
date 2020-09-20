@@ -308,6 +308,7 @@ public class CreateOrderMenuController {
             //showDiscount();//todo!@!#!@#
             //discounts.get(0).addAmountWanted();
             //discounts.get(0).addAmountWanted();
+            showDiscount();
 
         } catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
@@ -322,7 +323,8 @@ public class CreateOrderMenuController {
 
 
         try {
-            discounts = MainController.getDiscountsDynamic(ItemsByUser, SelectedUser, SelectedDate);
+            if (!isStaticOrderTypeSelected.getValue())
+                discounts = MainController.getDiscountsDynamic(ItemsByUser, SelectedUser, SelectedDate);
             FXMLLoader fxmlLoader = new FXMLLoader();
             URL url = DiscountPickerController.class.getResource("DiscountPicker.fxml"); //todo make it all in common static..
             fxmlLoader.setLocation(url);
@@ -345,11 +347,12 @@ public class CreateOrderMenuController {
                 MainController.PrintMassage("Static Order Added To System");
             } else {
                 MainController.ApproveDynamicOrder(discounts);
-                MainController.PrintMassage("Static Order Added To System");
+                MainController.PrintMassage("Dynamic Order Added To System");
             }
         }catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
         }
+        MainController.RestoreNewOrder();
 
     }
 

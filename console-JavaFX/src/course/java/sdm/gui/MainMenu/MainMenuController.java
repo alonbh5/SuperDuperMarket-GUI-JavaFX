@@ -350,7 +350,7 @@ public class MainMenuController {
         try {
             MainSDMSystem.DeleteItemFromStore(itemSelected.serialNumber, curStore.StoreID);
         } catch (Exception e) {
-            PrintMassage("Sorry - Unknown Error ");
+            PrintMassage("Sorry - Unknown Error (DeleteItemFromStore)");
             RestoreItemChange();
         }
     }
@@ -359,7 +359,7 @@ public class MainMenuController {
         try {
             MainSDMSystem.ChangePrice(itemSelected.serialNumber, curStore.StoreID, amount);
         } catch (Exception e) {
-            PrintMassage("Sorry - Unknown Error ");
+            PrintMassage("Sorry - Unknown Error (ChangePrice)");
             RestoreItemChange();
         }
     }
@@ -376,5 +376,13 @@ public class MainMenuController {
 
     public void ApproveDynamicOrder(Collection<DiscountInfo> discounts) throws OrderIsNotForThisCustomerException {
         MainSDMSystem.ApproveOrder(discounts);
+    }
+
+    public void RestoreNewOrder() {
+        try {
+            OnNewOrder(null);
+        } catch (Exception e) {
+            PrintMassage("Sorry - Unknown Error (RestoreNewOrder)");
+        }
     }
 }

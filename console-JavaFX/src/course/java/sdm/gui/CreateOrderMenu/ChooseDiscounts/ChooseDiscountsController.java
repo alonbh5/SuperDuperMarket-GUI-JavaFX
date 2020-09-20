@@ -2,12 +2,14 @@ package course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts;
 
 import course.java.sdm.classesForUI.DiscountInfo;
 import course.java.sdm.classesForUI.OfferItemInfo;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
+import javax.xml.ws.Binding;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,7 @@ public class ChooseDiscountsController {
 
         EntltiledLabel.textProperty().bind(discountTile.AmountEntitled.asString());
         WantedLabel.textProperty().bind(discountTile.AmountWanted.asString());
+        PickButton.disableProperty().bind(Bindings.when(EntltiledLabel.textProperty().isEqualTo("0")).then(true).otherwise(false));
         discount = discountTile;
 
         DiscountLabelName.setText(discountTile.Name + "(" + discountTile.DiscountOperator + ")");
@@ -60,8 +63,6 @@ public class ChooseDiscountsController {
         if (discount.isIndex())
             discount.setIndexOfWantedItem(i);
         discount.addAmountWanted();
-        if (discount.getAmountEntitled() <= 0)
-            PickButton.setDisable(true);
     }
 
     @FXML

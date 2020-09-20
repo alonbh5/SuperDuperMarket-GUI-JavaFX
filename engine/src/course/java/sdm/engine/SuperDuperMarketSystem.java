@@ -360,39 +360,35 @@ public class SuperDuperMarketSystem {
         ProductInOrder newItem;
         Store curStore;
         for (DiscountInfo curDiscount : DiscountWanted) {
-            ProductInStore curProd;
-            for(int i = 0; i<curDiscount.AmountWanted.getValue();i++) {
+            if (curDiscount.AmountWanted.getValue() > 0) {
+                ProductInStore curProd;
                 curStore = getStoreByID(curDiscount.StoreID);
                 if (curDiscount.DiscountOperator.toUpperCase().equals("ONE_OF")) {
-                    curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).ID);
-                    newItem = new ProductInOrder(curProd,true);
-                    newItem.setAmountBoughtFromSale(
-                            curDiscount.AmountWanted.getValue()*curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).Amount,
-                            curDiscount.OfferedItem.get(curDiscount.IndexOfWantedItem).PricePerOne);
-                    m_tempOrder.addProductToOrder(newItem);
-                }
-                else
-                    if (curDiscount.DiscountOperator.toUpperCase().equals("ALL_OR_NOTHING")) { //go over all the thing and add them
-                        for (int j =0; j< curDiscount.OfferedItem.size();j++) {
-                            curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(j).ID);
-                            newItem = new ProductInOrder(curProd, true);
-                            newItem.setAmountBoughtFromSale(
-                                    curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(j).Amount,
-                                    curDiscount.OfferedItem.get(j).PricePerOne);
-                            m_tempOrder.addProductToOrder(newItem);
-                        }
-                    }
-                    else {  //IRRELEVANT
-                        curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(0).ID);
+                    for (int i = 0; i < curDiscount.AmountWanted.getValue(); i++) {
+                        int curIndex = curDiscount.getIndex(i);
+                        curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curIndex).ID);
                         newItem = new ProductInOrder(curProd, true);
-                        newItem.setAmountBoughtFromSale(
-                                curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(0).Amount,
-                                curDiscount.OfferedItem.get(0).PricePerOne);
+                        newItem.setAmountBoughtFromSale(curDiscount.OfferedItem.get(curIndex).Amount, curDiscount.OfferedItem.get(curIndex).PricePerOne);
                         m_tempOrder.addProductToOrder(newItem);
                     }
-
+                } else if (curDiscount.DiscountOperator.toUpperCase().equals("ALL_OR_NOTHING")) { //go over all the thing and add them
+                    for (int j = 0; j < curDiscount.OfferedItem.size(); j++) {
+                        curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(j).ID);
+                        newItem = new ProductInOrder(curProd, true);
+                        newItem.setAmountBoughtFromSale(
+                                curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(j).Amount,
+                                curDiscount.OfferedItem.get(j).PricePerOne);
+                        m_tempOrder.addProductToOrder(newItem);
+                    }
+                } else {  //IRRELEVANT
+                    curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(0).ID);
+                    newItem = new ProductInOrder(curProd, true);
+                    newItem.setAmountBoughtFromSale(
+                            curDiscount.AmountWanted.getValue() * curDiscount.OfferedItem.get(0).Amount,
+                            curDiscount.OfferedItem.get(0).PricePerOne);
+                    m_tempOrder.addProductToOrder(newItem);
+                }
             }
-
         }
 
         approveOrder();

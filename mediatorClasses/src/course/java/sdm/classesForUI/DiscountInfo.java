@@ -3,6 +3,7 @@ package course.java.sdm.classesForUI;
 import course.java.sdm.engine.Discount;
 import javafx.beans.property.SimpleIntegerProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DiscountInfo {
@@ -13,7 +14,9 @@ public class DiscountInfo {
     public final Double AmountToBuy;
     public final Long StoreID;
     public final List<OfferItemInfo> OfferedItem;
-    public Integer IndexOfWantedItem;
+    public final List<Integer> IndexOfWantedItem = new ArrayList<>();
+    private int MaxAmount;
+    private int i = 0;
 
     public SimpleIntegerProperty AmountEntitled = new SimpleIntegerProperty(0);
     public SimpleIntegerProperty AmountWanted = new SimpleIntegerProperty(0);
@@ -30,6 +33,7 @@ public class DiscountInfo {
     public void setAmountEntitled(Integer amountEntitled) //engine do this
     {
         AmountEntitled.setValue(amountEntitled);
+        MaxAmount= amountEntitled;
     }
 
     public Integer getAmountEntitled() {
@@ -37,7 +41,7 @@ public class DiscountInfo {
     }
 
     public void addAmountWanted() { // UI do this
-        if (AmountWanted.getValue()+1 <= AmountEntitled.getValue()) {
+        if (AmountWanted.getValue()+1 <= MaxAmount) {
             AmountWanted.setValue(AmountWanted.getValue()+1);
             AmountEntitled.setValue(AmountEntitled.getValue()-1);
         }
@@ -56,10 +60,14 @@ public class DiscountInfo {
 
     public void setIndexOfWantedItem(Integer indexOfWantedItem) {
         if (DiscountOperator.toLowerCase().equals("one_of")) //todo check this
-            IndexOfWantedItem = indexOfWantedItem;
+            IndexOfWantedItem.add(indexOfWantedItem);
     }
 
     public boolean isIndex() {
         return DiscountOperator.toLowerCase().equals("one_of");
+    }
+
+    public int getIndex(int i) {
+        return IndexOfWantedItem.get(i++);
     }
 }

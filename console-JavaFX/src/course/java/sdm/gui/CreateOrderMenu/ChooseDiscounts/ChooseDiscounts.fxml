@@ -7,46 +7,50 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox alignment="CENTER" spacing="2.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts.ChooseDiscountsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="300.0" prefWidth="252.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts.ChooseDiscountsController">
    <children>
-      <AnchorPane fx:id="MainAnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="236.0" prefWidth="235.0">
+      <VBox alignment="CENTER" spacing="2.0">
          <children>
-            <VBox alignment="CENTER" spacing="5.0">
+            <AnchorPane fx:id="MainAnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="236.0" prefWidth="235.0">
                <children>
-                  <VBox alignment="CENTER">
-                     <children>
-                        <Label text="Discount Name is" />
-                        <Label fx:id="DiscountLabelName" />
-                     </children>
-                  </VBox>
                   <VBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <Label fx:id="BuyLabel" />
-                        <Label fx:id="getLabel" />
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Label text="Discount Name is" />
+                              <Label fx:id="DiscountLabelName" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Label fx:id="BuyLabel" />
+                              <Label fx:id="getLabel" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER" spacing="60.0">
+                           <children>
+                              <Button fx:id="LeftButton" mnemonicParsing="false" onAction="#OnLeft" text="&lt;--" />
+                              <Button fx:id="RightButton" mnemonicParsing="false" onAction="#OnRight" text="--&gt;" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
-                  <HBox alignment="CENTER" spacing="60.0">
-                     <children>
-                        <Button fx:id="LeftButton" mnemonicParsing="false" onAction="#OnLeft" text="&lt;--" />
-                        <Button fx:id="RightButton" mnemonicParsing="false" onAction="#OnRight" text="--&gt;" />
-                     </children>
-                  </HBox>
                </children>
-            </VBox>
+            </AnchorPane>
+            <HBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label text="Amount Entltiled:" />
+                  <Label fx:id="EntltiledLabel" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label text="Amount Wanted:" />
+                  <Label fx:id="WantedLabel" />
+               </children>
+            </HBox>
+            <Button fx:id="PickButton" mnemonicParsing="false" onAction="#OnDiscountPicked" text="Press To Pick" />
          </children>
-      </AnchorPane>
-      <HBox alignment="CENTER" spacing="5.0">
-         <children>
-            <Label text="Amount Entltiled:" />
-            <Label fx:id="EntltiledLabel" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" spacing="5.0">
-         <children>
-            <Label text="Amount Wanted:" />
-            <Label fx:id="WantedLabel" />
-         </children>
-      </HBox>
-      <Button fx:id="PickButton" mnemonicParsing="false" onAction="#OnDiscountPicked" text="Press To Pick" />
+      </VBox>
    </children>
-</VBox>
+</AnchorPane>

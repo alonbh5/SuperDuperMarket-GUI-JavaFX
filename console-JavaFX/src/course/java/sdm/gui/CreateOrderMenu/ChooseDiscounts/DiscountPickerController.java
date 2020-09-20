@@ -1,13 +1,13 @@
 package course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts;
 
 import course.java.sdm.classesForUI.DiscountInfo;
-import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.FlowPane;
+
+import javafx.scene.layout.TilePane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,11 +15,10 @@ import java.util.Collection;
 
 public class DiscountPickerController {
 
-    @FXML
-    private FlowPane MainFlowPane;
 
-    @FXML
-    private Button DoneButton;
+    @FXML    private TilePane MainTilePane;
+
+    @FXML    private Button DoneButton;
 
     private Runnable OnFinish;
 
@@ -31,7 +30,7 @@ public class DiscountPickerController {
             Parent component = fxmlLoader.load(url.openStream());
             ChooseDiscountsController controller = fxmlLoader.getController();
             controller.OnCreation(cur);
-            MainFlowPane.getChildren().add(component);
+            MainTilePane.getChildren().add(component);
 
         }
         OnFinish=onFinish;
