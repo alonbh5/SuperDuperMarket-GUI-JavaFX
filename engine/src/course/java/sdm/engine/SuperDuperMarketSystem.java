@@ -720,6 +720,33 @@ public class SuperDuperMarketSystem {
 
     }
 
+    public int getMaxXPoint() {
+        List<Integer> maxXPoint = new ArrayList<>();
+
+
+        for (Coordinatable cur : m_SystemGrid.values()) {
+            maxXPoint.add(cur.getCoordinate().x);
+        }
+        Integer res= Collections.max(maxXPoint);
+        if (res != null)
+            return res;
+        else return 0;
+    }
+
+    public int getMaxYPoint() {
+        List<Integer> maxYPoint = new ArrayList<>();
+
+
+        for (Coordinatable cur : m_SystemGrid.values()) {
+            maxYPoint.add(cur.getCoordinate().y);
+        }
+        Integer res= Collections.max(maxYPoint);
+        if (res != null)
+            return res;
+        else
+            return 0;
+    }
+
    /*public void test() {
         Order emptyOrder = null;
         Date dt = new Date();

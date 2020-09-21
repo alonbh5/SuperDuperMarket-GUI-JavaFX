@@ -8,7 +8,7 @@ import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.ShowItemsMenu.ShowItemsController;
-import course.java.sdm.gui.StoresMenu.MapMenu.ShowMapController;
+import course.java.sdm.gui.MapMenu.ShowMapController;
 import course.java.sdm.gui.StoresMenu.StoresMenuTileController;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
@@ -24,7 +24,6 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -333,10 +332,19 @@ public class MainMenuController {
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         ShowMapController controller = fxmlLoader.getController();
-        controller.OnCreation(9,9);
+        int maxRows = MainSDMSystem.getMaxYPoint();
+        int maxColumns = MainSDMSystem.getMaxXPoint();
+        controller.OnCreation(maxRows,maxColumns);
 
-        controller.AddStore(new StoreInfo(new Point(2,1),new Long(2),
-                new Double(2.2),null,null,null,"alonbh5",new Integer(4)));
+
+        Collection<CustomerInfo> customer = MainSDMSystem.getListOfAllCustomerInSystem();
+        Collection<StoreInfo> stores = MainSDMSystem.getListOfAllStoresInSystem();
+
+        for (CustomerInfo cur : customer)
+            controller.AddItem(cur);
+        for (StoreInfo cur : stores)
+            controller.AddItem(cur);
+
         MainPane.setCenter(component);
     }
 
