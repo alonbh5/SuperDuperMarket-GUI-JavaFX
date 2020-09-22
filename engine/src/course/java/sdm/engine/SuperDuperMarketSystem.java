@@ -410,7 +410,7 @@ public class SuperDuperMarketSystem {
 
         for (ProductInOrder curProd : Items)
             itemsInOrder.add(new ItemInOrderInfo(curProd.getSerialNumber(),curProd.getProductInStore().getItem().getName(),
-                    curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID()
+                    curProd.getPayBy().toString(),curProd.getProductInStore().getStore().getStoreID(),curProd.getProductInStore().getStore().getName()
                     ,curProd.getAmount(),curProd.getProductInStore().getPricePerUnit(),curProd.getPriceOfTotalItems(),curProd.isFromSale()));
 
         int ppk =0;

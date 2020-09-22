@@ -50,4 +50,5 @@ public class StoreInOrderInfo {
     public Long getStoreId() {
         return Store.StoreID;
     }
+
 }

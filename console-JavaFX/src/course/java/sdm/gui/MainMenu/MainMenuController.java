@@ -346,7 +346,8 @@ public class MainMenuController {
             controller.AddItem(cur);
 
 
-        MainPane.setCenter(new ScrollPane(component));
+       // MainPane.setCenter(new ScrollPane(component));
+        MainPane.setCenter((component));
 
     }
 

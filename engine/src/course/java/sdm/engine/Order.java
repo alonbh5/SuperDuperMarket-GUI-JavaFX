@@ -165,7 +165,7 @@ class Order implements Coordinatable, Serializable {
         for (ProductInOrder cur : m_Basket) {
             if (cur.getProductInStore().getStore().getStoreID() == storeID)
                 res.add(new ItemInOrderInfo(cur.getSerialNumber(),cur.getProductInStore().getItem().getName(),
-                        cur.getPayBy().toString(),cur.getProductInStore().getStore().getStoreID(),
+                        cur.getPayBy().toString(),cur.getProductInStore().getStore().getStoreID(),cur.getProductInStore().getStore().getName(),
                         cur.getAmount(),cur.getProductInStore().getPricePerUnit(),cur.getPriceOfTotalItems(),cur.isFromSale()));
         }
         return res;

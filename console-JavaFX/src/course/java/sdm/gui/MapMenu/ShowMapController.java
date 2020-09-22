@@ -45,7 +45,7 @@ public class ShowMapController {
         }
 
        // MainGrid.setMaxSize(MainGrid.getWidth(),MainGrid.getHeight());
-        MainGrid.setScaleShape(false);
+       // MainGrid.setScaleShape(false);
         TileRow = MainGrid.getHeight() / MaxRows;
         TileCol = MainGrid.getWidth() / MaxColumns ;
 
@@ -60,7 +60,9 @@ public class ShowMapController {
         //newStore.setFitHeight(TileCol);
        // newStore.setFitWidth(TileRow);
 
-        StackPane newPane = new StackPane(newStore);
+        //StackPane newPane = new StackPane(newStore);
+        StackPane newPane = new StackPane();
+        newPane.getStyleClass().add("StoreStack");
 
 
 
@@ -80,7 +82,9 @@ public class ShowMapController {
         //newCustomer.setFitHeight(TileCol);
         //newCustomer.setFitWidth(TileRow);
 
-        StackPane newPane = new StackPane(newCustomer);
+        //StackPane newPane = new StackPane(newCustomer);
+        StackPane newPane = new StackPane();
+        newPane.getStyleClass().add("CustomerStack");
 
         Tooltip storeInfo = new Tooltip(getCustomerTip(customer));
 
@@ -105,7 +109,8 @@ public class ShowMapController {
     }
 
     private void ChangePoint (Point pt) { //todo
-
+         pt.x--;
+         pt.y = MaxRow - pt.y + 1;
 
     }
 

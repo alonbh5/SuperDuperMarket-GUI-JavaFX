@@ -7,11 +7,12 @@ public class ItemInOrderInfo {
     public final String Name;
     public final String PayBy;
     public final Long FromStoreID;
+    public final String FromStoreName;
     public Double amountBought;
     public final Double PricePerUint;
     public final Double TotalPrice;
 
-    public ItemInOrderInfo(long serialNumber, String name, String payBy, long fromStoreID, double amountBought, double PricePerUnit,double totalPrice,Boolean fromSale) {
+    public ItemInOrderInfo(long serialNumber, String name, String payBy, long fromStoreID,String fromStoreName, double amountBought, double PricePerUnit,double totalPrice,Boolean fromSale) {
         this.serialNumber = serialNumber;
         Name = name;
         PayBy = payBy;
@@ -20,17 +21,7 @@ public class ItemInOrderInfo {
         PricePerUint = PricePerUnit;
         this.TotalPrice = totalPrice;
         FromSale = fromSale;
-    }
-
-    public ItemInOrderInfo(long serialNumber, double amountBought) {
-        this.serialNumber = serialNumber;
-        this.amountBought = amountBought;
-        this.PayBy = null;
-        this.Name = null;
-        this.FromStoreID= Long.valueOf(0);
-        this.PricePerUint = 0.0;
-        this.TotalPrice=0.0;
-        FromSale=false;
+        this.FromStoreName = fromStoreName;
     }
 
     public ItemInOrderInfo(ItemInStoreInfo item, Double Amount) {
@@ -39,6 +30,7 @@ public class ItemInOrderInfo {
         this.PayBy = item.PayBy;
         this.Name = item.Name;
         this.FromStoreID= 0L;
+        this.FromStoreName=null;
         this.PricePerUint = item.PriceInStore;
         this.TotalPrice=Amount*PricePerUint;
         FromSale=false;
@@ -85,5 +77,9 @@ public class ItemInOrderInfo {
             return "Discount";
         else
             return "Regular";
+    }
+
+    public String getFromStore() {
+        return FromStoreName + " (#"+FromStoreID.toString()+")";
     }
 }

@@ -40,7 +40,8 @@
                         <TableColumn fx:id="ItemAmountColumn" minWidth="0.0" prefWidth="83.0" text="Amount" />
                         <TableColumn fx:id="ItemPriceColumn" prefWidth="109.0" text="Price Per Unit" />
                         <TableColumn fx:id="ItemTotalColumn" prefWidth="133.00003051757812" text="Total Price" />
-                        <TableColumn fx:id="ItemDisColumn" minWidth="6.0" prefWidth="87.0" text="From" />
+                        <TableColumn fx:id="ItemDisColumn" minWidth="6.0" prefWidth="87.0" text="Type From" />
+                        <TableColumn fx:id="ItemStoreColumn" minWidth="6.0" prefWidth="123.0" text="From Store" />
                     </columns>
                   </TableView>
                </children></AnchorPane>

@@ -49,6 +49,8 @@ public class OrderMenuTileController {
 
     @FXML    private TableColumn<ItemInOrderInfo, String> ItemDisColumn;
 
+    @FXML    private TableColumn<ItemInOrderInfo, String> ItemStoreColumn;
+
     @FXML    private TitledPane StoreTile;
 
     @FXML    private AnchorPane StoresPane;
@@ -83,13 +85,13 @@ public class OrderMenuTileController {
         ItemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("PricePerUint"));
         ItemTotalColumn.setCellValueFactory(new PropertyValueFactory<>("TotalPrice"));
         ItemDisColumn.setCellValueFactory(new PropertyValueFactory<>("IsDiscount"));
+        ItemStoreColumn.setCellValueFactory(new PropertyValueFactory<>("FromStore"));
 
         StoreIdColumn.setCellValueFactory(new PropertyValueFactory<>("StoreId"));
         StoreNameColumn.setCellValueFactory(new PropertyValueFactory<>("StoreName"));
         PPKColumn.setCellValueFactory(new PropertyValueFactory<>("PPK"));
         DistanceColumn.setCellValueFactory(new PropertyValueFactory<>("DistanceFromUser"));
         ShippingColumn.setCellValueFactory(new PropertyValueFactory<>("ShippingCost"));
-
     }
 
     public void setValues (OrderInfo order) {
