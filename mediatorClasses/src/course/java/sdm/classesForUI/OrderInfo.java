@@ -2,6 +2,7 @@ package course.java.sdm.classesForUI;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class OrderInfo {
     public final Long m_OrderSerialNumber;
     public final Date m_Date;
     public final List<StoreInOrderInfo> Stores;
-    public final List<ItemInOrderInfo> ItemsInOrder;
+    public List<ItemInOrderInfo> ItemsInOrder;
     public final CustomerInfo customer;
     public final Double m_TotalPrice;
     public final Double m_ShippingPrice;
@@ -45,5 +46,16 @@ public class OrderInfo {
     public String getDateString () {
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         return df.format(m_Date);
+    }
+
+    public void makeDynamic(StoreInfo store) {
+        List<ItemInOrderInfo> onlyItemsFromStore = new ArrayList<>();
+
+        for (ItemInOrderInfo cur : ItemsInOrder) {
+            if (cur.FromStoreID.equals(store.StoreID)) {
+                onlyItemsFromStore.add(cur);
+            }
+        }
+        ItemsInOrder=onlyItemsFromStore;
     }
 }

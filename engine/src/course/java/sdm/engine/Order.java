@@ -1,5 +1,6 @@
 package course.java.sdm.engine;
 import course.java.sdm.classesForUI.ItemInOrderInfo;
+import course.java.sdm.classesForUI.StoreInOrderInfo;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -193,5 +194,16 @@ class Order implements Coordinatable, Serializable {
         for (Store onlyStore : m_StoresInOrder) //works only if its static
             return onlyStore.getStoreID();
         return null;
+    }
+
+    public List<StoreInOrderInfo> getStoreInfo() {
+        List<StoreInOrderInfo> storesList = new ArrayList<>();
+
+        for (Store curStore : m_StoresInOrder)
+            storesList.add(new StoreInOrderInfo(curStore.getStoreInfo(),
+                    curStore.getCoordinate().distance(this.m_Costumer.getCoordinate()),
+                    SuperDuperMarketSystem.CalculatePPK(curStore,this.m_Costumer.getCoordinate()),getPriceFromStore(curStore),
+                    getAmountOfItemFromStore(curStore)));
+        return storesList;
     }
 }

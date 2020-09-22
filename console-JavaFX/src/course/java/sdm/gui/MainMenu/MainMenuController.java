@@ -302,7 +302,7 @@ public class MainMenuController {
 
         for (StoreInfo cur : stores) {
             items = StoresMenuTileController.getItemsPane(cur);
-            orders = null; //orders = StoresMenuTileController.getOrdersPane(cur);
+            orders = StoresMenuTileController.getOrdersPane(cur); //orders = StoresMenuTileController.getOrdersPane(cur);
             InfoController.AddNewStore(cur.StoreID.toString(), cur.Name,
                     cur.getPointString(), cur.PPK.toString(), cur.profitFromShipping.toString(),
                     cur.Discount, items, orders); //File selectedFile = fileChooser.showOpenDialog(primaryStage); for order, dicounts and items... show

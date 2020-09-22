@@ -138,13 +138,15 @@ class Store implements HasName, Coordinatable,Serializable {
     {
         List<OrderInfo> res = new ArrayList<>();
         List<ItemInOrderInfo> itemsOnlyFromStore;
+        List<StoreInOrderInfo> stores;
         CustomerInfo customer;
 
         for (Order curOrder : m_OrderHistory.values())
         {
+            stores = curOrder.getStoreInfo();
             itemsOnlyFromStore = curOrder.getItemsOnlyFromStore(this.m_StoreID);
             customer =  new CustomerInfo(curOrder.getCostumer().getName(),curOrder.getCostumer().getId(),curOrder.getCostumer().getCoordinate(),curOrder.getCostumer().getAvgPriceOfShipping(),curOrder.getCostumer().getAvgPriceOfOrdersWithoutShipping(),curOrder.getCostumer().getAmountOFOrders());
-            OrderInfo newOrder = new OrderInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),null  //todo this is null no point to show everyone..
+            OrderInfo newOrder = new OrderInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),stores  //todo this is null no point to show everyone..
             ,itemsOnlyFromStore,curOrder.getTotalPrice(),curOrder.getShippingPrice()
                     ,curOrder.getItemsPrice(),curOrder.getAmountOfItems(),customer,curOrder.isStatic());
             res.add(newOrder);
@@ -267,5 +269,13 @@ class Store implements HasName, Coordinatable,Serializable {
             }
         }
         return discounts;
+    }
+
+    public StoreInfo getStoreInfo() {
+        return new StoreInfo(getCoordinate(),
+                getStoreID(),
+                getProfitFromShipping(),
+                null,null,null
+                ,getName(),getPPK());
     }
 }

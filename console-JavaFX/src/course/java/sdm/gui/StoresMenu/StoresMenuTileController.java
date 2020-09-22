@@ -111,24 +111,7 @@ public class StoresMenuTileController {
         return infoComponent;
     }
 
-    public static ScrollPane getDiscountPane(StoreInfo store) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        if (store.Discount.isEmpty()) {
-            return null;
-        }
-
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml");
-        fxmlLoader.setLocation(url);
-        ScrollPane infoComponent = fxmlLoader.load(url.openStream());
-        InfoMenuController InfoController = fxmlLoader.getController();
-
-        for (DiscountInfo cur : store.Discount) {
-        }
-
-        return infoComponent;
-    }
-
-    public static ScrollPane getOrdersPane(StoreInfo store) throws IOException {
+    public static ScrollPane getOrdersPane(StoreInfo store) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         if (store.OrderHistory.isEmpty()) {
             return null;
@@ -140,7 +123,10 @@ public class StoresMenuTileController {
         InfoMenuController InfoController = fxmlLoader.getController();
 
         for (OrderInfo cur : store.OrderHistory) {
-
+            //if(!cur.isStatic) {
+             //   cur.makeDynamic(store);
+           // }
+            InfoController.AddNewOrder(cur);
         }
         return infoComponent;
     }
