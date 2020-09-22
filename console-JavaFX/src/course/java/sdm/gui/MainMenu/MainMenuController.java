@@ -345,7 +345,9 @@ public class MainMenuController {
         for (StoreInfo cur : stores)
             controller.AddItem(cur);
 
-        MainPane.setCenter(component);
+
+        MainPane.setCenter(new ScrollPane(component));
+
     }
 
     public Collection<ItemInfo> getAllItems() throws NoValidXMLException {

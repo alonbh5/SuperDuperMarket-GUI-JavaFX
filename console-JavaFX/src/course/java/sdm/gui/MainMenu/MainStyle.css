@@ -22,3 +22,10 @@
 
 .Hidden-Label{-fx-opacity: 0;
 }
+
+.store {-fx-background-color: yellow}
+.customer{-fx-background-color: #1d15ff
+}
+
+.tooltip{-fx-font-size: 20}
+

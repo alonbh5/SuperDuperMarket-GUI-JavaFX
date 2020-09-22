@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.awt.*;
 
@@ -22,8 +23,9 @@ public class ShowMapController {
 
     public void OnCreation (int MaxRows, int MaxColumns) {
         // x = columns | | | |
-        MaxCol = MaxColumns;
-        MaxRow = MaxRows;
+        MaxCol = MaxColumns; //x
+        MaxRow = MaxRows; //y
+
         MaxRows++;
         MaxColumns++;
         MainGrid.getColumnConstraints().clear();
@@ -44,51 +46,72 @@ public class ShowMapController {
 
        // MainGrid.setMaxSize(MainGrid.getWidth(),MainGrid.getHeight());
         MainGrid.setScaleShape(false);
-        TileRow = MainGrid.getHeight() / MaxRows /2;
-        TileCol = MainGrid.getHeight() / MaxCol /2;
+        TileRow = MainGrid.getHeight() / MaxRows;
+        TileCol = MainGrid.getWidth() / MaxColumns ;
+
     }
 
     public void AddItem (StoreInfo store) {
-        Point Location = store.locationCoordinate;
+        Point Location = new Point(store.locationCoordinate);
         ChangePoint(Location);
-        ImageView newStore =  new ImageView("https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/32x32/store.png");
+        ImageView newStore =  new ImageView("https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png");
 
         //newStore.setPreserveRatio(true);
-        newStore.setFitHeight(TileCol);
-        newStore.setFitWidth(TileRow);
+        //newStore.setFitHeight(TileCol);
+       // newStore.setFitWidth(TileRow);
+
+        StackPane newPane = new StackPane(newStore);
+
 
 
         Tooltip StoreInfo = new Tooltip(getStoreTip(store));
-        Tooltip.install(newStore,StoreInfo);
-        MainGrid.add(newStore,Location.x,Location.y);
+        //Tooltip.install(newStore,StoreInfo);
+        //MainGrid.add(newStore,Location.x,Location.y);
+        Tooltip.install(newPane,StoreInfo);
+        MainGrid.add(newPane,Location.x,Location.y);
     }
 
     public void AddItem (CustomerInfo customer) {
-        Point Location = customer.Location;
+        Point Location = new Point(customer.Location);
         ChangePoint(Location);
-        ImageView newStore =  new ImageView("https://icon-icons.com/icons2/11/PNG/32/person_user_customer_man_male_man_boy_people_1687.png");
+        ImageView newCustomer =  new ImageView("https://icon-icons.com/icons2/11/PNG/32/person_user_customer_man_male_man_boy_people_1687.png");
 
-        //newStore.setPreserveRatio(true);
-        newStore.setFitHeight(TileCol);
-        newStore.setFitWidth(TileRow);
+        //newCustomer.setPreserveRatio(true);
+        //newCustomer.setFitHeight(TileCol);
+        //newCustomer.setFitWidth(TileRow);
 
+        StackPane newPane = new StackPane(newCustomer);
 
+        Tooltip storeInfo = new Tooltip(getCustomerTip(customer));
 
-        Tooltip StoreInfo = new Tooltip(getCustomerTip(customer));
-        Tooltip.install(newStore,StoreInfo);
-        MainGrid.add(newStore,Location.x,Location.y);
-
+        //Tooltip.install(newStore,StoreInfo);
+        //MainGrid.add(newStore,Location.x,Location.y);
+        Tooltip.install(newPane,storeInfo);
+        MainGrid.add(newPane,Location.x,Location.y);
     }
 
     private String getCustomerTip(CustomerInfo customer) {
-        return customer.name;
+        return String.format("Location %s\n" +
+                        "customer #%d - '%s'\n" +
+                        "He Order %d times."
+                ,customer.getLocationString(),customer.ID,customer.name,customer.AmountOfOrders);
     }
 
     private String getStoreTip(StoreInfo store) {
-        return store.Name;
+        return String.format("Location %s\n" +
+                "Store #%d - '%s'\n" +
+                "PPK is %d and Number of Orders is %d."
+                ,store.getPointString(),store.StoreID,store.Name,store.PPK,store.OrderHistory.size());
     }
 
-    private void ChangePoint (Point pt) {
+    private void ChangePoint (Point pt) { //todo
+
+
     }
 
+    /*if (pt.x == 1 && pt.y == 1)
+        {
+            pt.x=0;
+            pt.y=35;
+        }*/
 }

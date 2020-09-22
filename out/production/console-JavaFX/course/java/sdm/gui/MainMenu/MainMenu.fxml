@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane id="MainMenuPane1" fx:id="MainPane" stylesheets="@MainStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.MainMenu.MainMenuController">
+<BorderPane id="MainMenuPane1" fx:id="MainPane" maxHeight="1080.0" maxWidth="1920.0" stylesheets="@MainStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.MainMenu.MainMenuController">
    <top>
       <GridPane alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="79.0" prefWidth="1164.0" BorderPane.alignment="CENTER">
         <columnConstraints>
