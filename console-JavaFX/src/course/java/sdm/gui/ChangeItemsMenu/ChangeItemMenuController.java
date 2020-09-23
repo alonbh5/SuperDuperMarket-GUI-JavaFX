@@ -19,6 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -106,8 +108,16 @@ public class ChangeItemMenuController {
             ShowItemsInStoreController ItemsController = fxmlLoader.getController();
             ItemsController.setItems(curStore.Items, this);
 
+
+            /*AnchorPane.setLeftAnchor(infoComponent,0.0);
+            AnchorPane.setBottomAnchor(infoComponent,0.0);
+            AnchorPane.setRightAnchor(infoComponent,0.0);
+            AnchorPane.setTopAnchor(infoComponent,0.0);
+            AnchorPane x = new AnchorPane(infoComponent);*/
+
             MainStackPane.getChildren().add(infoComponent);
             MainStackPane.getChildren().get(0).setDisable(true);
+            MainStackPane.getChildren().get(0).setOpacity(0);
             MainController.PrintMassage("Double Click On Item");
         }
         else {
@@ -126,6 +136,7 @@ public class ChangeItemMenuController {
 
             MainStackPane.getChildren().add(infoComponent);
             MainStackPane.getChildren().get(0).setDisable(true);
+            MainStackPane.getChildren().get(0).setOpacity(0);
             MainController.PrintMassage("Double Click On Item");
         }
 
@@ -144,8 +155,9 @@ public class ChangeItemMenuController {
             else if (!MainController.isItemOkToDelete(itemSelected))
                 MainController.PrintMassage("Sorry - This is the Only Store that Sell it..");
             else {
+                String discountInfo = MainController.WillDiscountBeDelete(curStore, itemSelected);
                 MainController.DeleteItemFromStore(curStore, itemSelected);
-                MainController.PrintMassage(itemSelected.Name + " Was Deleted From Store " + curStore.Name);
+                MainController.PrintMassage(itemSelected.Name + " Was Deleted From Store " + curStore.Name + discountInfo);
             }
             MainController.RestoreItemChange();
         }

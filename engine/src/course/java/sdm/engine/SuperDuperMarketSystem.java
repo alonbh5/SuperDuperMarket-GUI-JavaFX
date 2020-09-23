@@ -750,6 +750,12 @@ public class SuperDuperMarketSystem {
             return 0;
     }
 
+    public int WillDiscountBeDelete(Long itemID, Long storeID) {
+        Store storeByID = getStoreByID(storeID);
+
+        return storeByID.howManyDiscount(itemID);
+    }
+
    /*public void test() {
         Order emptyOrder = null;
         Date dt = new Date();

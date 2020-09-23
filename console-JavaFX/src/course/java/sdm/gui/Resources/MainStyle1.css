@@ -9,6 +9,10 @@
 }
 
 
+.BackgroundTrans{-fx-background-color: inherit;
+}
+
+
 
 
 .MenuButtons {-fx-background-color:
@@ -41,7 +45,7 @@
 .label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
     -fx-font-family: "Blackoak Std";
 }
 

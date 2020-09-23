@@ -271,11 +271,24 @@ class Store implements HasName, Coordinatable,Serializable {
         return discounts;
     }
 
-    public StoreInfo getStoreInfo() {
+     StoreInfo getStoreInfo() {
         return new StoreInfo(getCoordinate(),
                 getStoreID(),
                 getProfitFromShipping(),
                 null,null,null
                 ,getName(),getPPK());
+    }
+
+    int howManyDiscount(Long itemID) {
+        int counter = 0;
+        if (!m_items.containsKey(itemID))
+            return counter;
+
+
+
+        for (Discount cur : m_Discounts)
+            if (cur.isItemYouBuyInDiscount(itemID))
+                counter++;
+        return counter;
     }
 }

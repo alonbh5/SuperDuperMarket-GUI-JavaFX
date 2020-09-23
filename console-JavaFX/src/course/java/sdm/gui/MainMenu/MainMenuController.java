@@ -374,6 +374,15 @@ public class MainMenuController {
         return MainSDMSystem.isItemOkToDelete(itemSelected);
     }
 
+    public String WillDiscountBeDelete(StoreInfo curStore, ItemInStoreInfo itemSelected) {
+        int x = MainSDMSystem.WillDiscountBeDelete(itemSelected.serialNumber, curStore.StoreID);
+
+        if (x==0)
+            return " (No Discount Were Deleted)";
+        else
+            return " ("+x+" Discounts Were Deleted)";
+    }
+
     public void DeleteItemFromStore(StoreInfo curStore, ItemInStoreInfo itemSelected) {
         try {
             MainSDMSystem.DeleteItemFromStore(itemSelected.serialNumber, curStore.StoreID);
@@ -425,4 +434,6 @@ public class MainMenuController {
     public DoubleProperty getMassageLocationY() {
         return MassageLabel.layoutYProperty();
     }
+
+
 }
