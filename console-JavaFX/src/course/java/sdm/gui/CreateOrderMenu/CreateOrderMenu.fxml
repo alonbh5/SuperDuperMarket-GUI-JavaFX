@@ -12,95 +12,99 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<StackPane fx:id="MainStackPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController">
-   <children>
-      <VBox alignment="CENTER">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController">
+   <center>
+      <StackPane fx:id="MainStackPane">
          <children>
-            <TitledPane fx:id="UserTitled" animated="false" prefHeight="78.0" prefWidth="1196.0" text="User">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <Label text="Please Choose User:" />
-                              <ComboBox fx:id="UserCombo" onAction="#OnUserSelected" prefHeight="25.0" prefWidth="367.0" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-            <TitledPane fx:id="DateAndTypeTIle" animated="false" prefHeight="87.0" prefWidth="875.0" text="Date &amp; Order Type">
-              <content>
-                <AnchorPane>
-                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <Label text="Please Choose User:" />
-                              <DatePicker fx:id="datePicker" onAction="#OnDateSelected" />
-                              <Separator orientation="VERTICAL" prefHeight="200.0" />
-                              <RadioButton fx:id="StaticRadio" mnemonicParsing="false" onAction="#OnStaticRadio" text="Static Order">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="OrderType" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="DynamicRadio" mnemonicParsing="false" onAction="#OnDynamicRadio" text="Dynamic Order" toggleGroup="$OrderType" />
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-            <TitledPane fx:id="StoreTile" animated="false" text="Store">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="106.0" prefWidth="1058.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" minHeight="0.0" minWidth="0.0" prefHeight="60.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                           <children>
-                              <Label text="Please Choose Store" />
-                              <ComboBox fx:id="StoresCombo" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="370.0" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-            <TitledPane fx:id="ItemTile" prefHeight="388.0" prefWidth="1061.0" text="Items">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="ItemTable" layoutX="-1.0" prefHeight="362.0" prefWidth="1194.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columns>
-                            <TableColumn fx:id="ItemIdColumn" editable="false" prefWidth="75.0" text="Item ID" />
-                            <TableColumn fx:id="ItemNameColumn" editable="false" prefWidth="75.0" text="Item Name" />
-                              <TableColumn fx:id="PayByColumn" editable="false" prefWidth="115.0" text="Paying Method" />
-                              <TableColumn fx:id="PricePerUnitColumn" editable="false" prefWidth="103.0" text="Price Per Unit" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-            <HBox alignment="CENTER">
+            <VBox alignment="CENTER">
                <children>
-                  <Button fx:id="ContinueButton" disable="true" mnemonicParsing="false" onAction="#OnContinue" prefHeight="25.0" prefWidth="102.0" text="Continue" />
+                  <TitledPane fx:id="UserTitled" animated="false" prefHeight="78.0" prefWidth="1196.0" text="User">
+                    <content>
+                      <AnchorPane>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label text="Please Choose User:" />
+                                    <ComboBox fx:id="UserCombo" onAction="#OnUserSelected" prefHeight="25.0" prefWidth="367.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <TitledPane fx:id="DateAndTypeTIle" animated="false" prefHeight="87.0" prefWidth="875.0" text="Date &amp; Order Type">
+                    <content>
+                      <AnchorPane>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label text="Please Choose User:" />
+                                    <DatePicker fx:id="datePicker" onAction="#OnDateSelected" />
+                                    <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                    <RadioButton fx:id="StaticRadio" mnemonicParsing="false" onAction="#OnStaticRadio" text="Static Order">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="OrderType" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="DynamicRadio" mnemonicParsing="false" onAction="#OnDynamicRadio" text="Dynamic Order" toggleGroup="$OrderType" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <TitledPane fx:id="StoreTile" animated="false" text="Store">
+                    <content>
+                      <AnchorPane>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                                 <children>
+                                    <Label text="Please Choose Store" />
+                                    <ComboBox fx:id="StoresCombo" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="370.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <TitledPane fx:id="ItemTile" prefHeight="388.0" prefWidth="1061.0" text="Items">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TableView fx:id="ItemTable" layoutX="-1.0" prefHeight="362.0" prefWidth="1194.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                  <TableColumn fx:id="ItemIdColumn" editable="false" prefWidth="75.0" text="Item ID" />
+                                  <TableColumn fx:id="ItemNameColumn" editable="false" prefWidth="75.0" text="Item Name" />
+                                    <TableColumn fx:id="PayByColumn" editable="false" prefWidth="115.0" text="Paying Method" />
+                                    <TableColumn fx:id="PricePerUnitColumn" editable="false" prefWidth="103.0" text="Price Per Unit" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Button fx:id="ContinueButton" disable="true" mnemonicParsing="false" onAction="#OnContinue" prefHeight="25.0" prefWidth="102.0" text="Continue" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
-   </children>
-</StackPane>
+      </StackPane>
+   </center>
+</BorderPane>

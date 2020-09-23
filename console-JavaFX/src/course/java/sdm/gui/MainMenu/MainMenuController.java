@@ -328,7 +328,7 @@ public class MainMenuController {
     void OnMap(ActionEvent event) throws Exception {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ShowMapController.class.getResource("ShowMap.fxml"); //todo make it all in common static..
+        URL url = ShowMapController.class.getResource("ShowMap.fxml");
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         ShowMapController controller = fxmlLoader.getController();
@@ -345,8 +345,6 @@ public class MainMenuController {
         for (StoreInfo cur : stores)
             controller.AddItem(cur);
 
-
-       // MainPane.setCenter(new ScrollPane(component));
         MainPane.setCenter((component));
 
     }

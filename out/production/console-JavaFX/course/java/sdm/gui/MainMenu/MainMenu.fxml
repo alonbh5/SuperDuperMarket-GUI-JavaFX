@@ -15,9 +15,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane id="MainMenuPane1" fx:id="MainPane" maxHeight="1080.0" maxWidth="1920.0" stylesheets="@MainStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.MainMenu.MainMenuController">
+<BorderPane id="MainMenuPane1" fx:id="MainPane" maxHeight="1080.0" maxWidth="1920.0" stylesheets="@../Resources/MainStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.MainMenu.MainMenuController">
    <top>
-      <GridPane alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="79.0" prefWidth="1164.0" BorderPane.alignment="CENTER">
+      <GridPane id="TopMainPane" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="79.0" prefWidth="1164.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -32,11 +32,11 @@
          <children>
             <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" GridPane.rowIndex="1">
                <children>
-                  <Button id="XMLButton" fx:id="XMLButton" mnemonicParsing="false" onAction="#openFileButtonAction" prefHeight="39.0" prefWidth="127.0" text="Choose XML" />
-                  <Button fx:id="LoadButton" disable="true" mnemonicParsing="false" onAction="#UploadXMLAction" prefHeight="39.0" prefWidth="129.0" text="Load System" />
+                  <Button id="XMLButton" fx:id="XMLButton" mnemonicParsing="false" onAction="#openFileButtonAction" prefHeight="39.0" prefWidth="127.0" styleClass="MenuButtons" text="Choose XML" />
+                  <Button fx:id="LoadButton" disable="true" mnemonicParsing="false" onAction="#UploadXMLAction" prefHeight="39.0" prefWidth="129.0" styleClass="MenuButtons" text="Load System" />
                </children>
             </HBox>
-            <Label text="Super Duper Market" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label id="TitleLabel" text="Super Duper Market" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
                   <CheckBox mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Animation" textAlignment="CENTER" />
@@ -53,9 +53,9 @@
       </GridPane>
    </top>
    <right>
-      <VBox alignment="TOP_RIGHT" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="142.0" spacing="30.0">
+      <VBox alignment="TOP_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="30.0">
          <children>
-            <Button fx:id="showStoresButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnStoresAction" text="Show All Stores">
+            <Button fx:id="showStoresButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnStoresAction" prefHeight="35.0" prefWidth="166.0" styleClass="MenuButtons" text="Show All Stores">
                <padding>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </padding>
@@ -63,26 +63,26 @@
                   <Insets />
                </VBox.margin>
             </Button>
-            <Button fx:id="showItemsButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemsAction" text="Show All Items" />
-            <Button fx:id="showOrdersButton" disable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#OnOrderHistoryAction" text="Show Order History" />
-            <Button fx:id="showCustomersButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnCustomersAction" text="Show All Customers" />
-            <Button fx:id="NewOrderButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#OnNewOrder" text="New Order" />
-            <Button fx:id="ItemUpdateButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemUpdate" text="Item Update" />
-            <Button fx:id="MapButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnMap" text="System Map" />
+            <Button fx:id="showItemsButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemsAction" prefHeight="35.0" styleClass="MenuButtons" text="Show All Items" />
+            <Button fx:id="showOrdersButton" disable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#OnOrderHistoryAction" prefHeight="35.0" styleClass="MenuButtons" text="Show Order History" />
+            <Button fx:id="showCustomersButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnCustomersAction" prefHeight="35.0" styleClass="MenuButtons" text="Show All Customers" />
+            <Button fx:id="NewOrderButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#OnNewOrder" prefHeight="35.0" styleClass="MenuButtons" text="New Order" />
+            <Button fx:id="ItemUpdateButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemUpdate" prefHeight="35.0" styleClass="MenuButtons" text="Item Update" />
+            <Button fx:id="MapButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnMap" prefHeight="35.0" styleClass="MenuButtons" text="System Map" />
             <Button disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" />
          </children>
          <BorderPane.margin>
             <Insets left="10.0" top="10.0" />
          </BorderPane.margin>
          <padding>
-            <Insets left="10.0" right="10.0" top="70.0" />
+            <Insets bottom="20.0" left="10.0" right="10.0" top="70.0" />
          </padding>
       </VBox>
    </right>
    <bottom>
       <VBox alignment="CENTER" prefHeight="55.0" prefWidth="1164.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="100.0" prefWidth="1164.0" spacing="20.0">
+            <HBox id="BottonMenuPane" prefHeight="100.0" prefWidth="1164.0" spacing="20.0">
                <children>
                   <Label text="State: ">
                      <font>

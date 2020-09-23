@@ -3,17 +3,13 @@ package course.java.sdm.gui.OrderMenu;
 
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.classesForUI.OrderInfo;
-import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
-import java.io.IOException;
-import java.net.URL;
 
 public class OrderMenuTileController {
 

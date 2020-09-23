@@ -54,7 +54,7 @@ public class ShowMapController {
     public void AddItem (StoreInfo store) {
         Point Location = new Point(store.locationCoordinate);
         ChangePoint(Location);
-        ImageView newStore =  new ImageView("https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png");
+        //ImageView newStore =  new ImageView("https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png");
 
         //newStore.setPreserveRatio(true);
         //newStore.setFitHeight(TileCol);
@@ -76,7 +76,7 @@ public class ShowMapController {
     public void AddItem (CustomerInfo customer) {
         Point Location = new Point(customer.Location);
         ChangePoint(Location);
-        ImageView newCustomer =  new ImageView("https://icon-icons.com/icons2/11/PNG/32/person_user_customer_man_male_man_boy_people_1687.png");
+        //ImageView newCustomer =  new ImageView("https://icon-icons.com/icons2/11/PNG/32/person_user_customer_man_male_man_boy_people_1687.png");
 
         //newCustomer.setPreserveRatio(true);
         //newCustomer.setFitHeight(TileCol);

@@ -2,7 +2,6 @@ package course.java.sdm.gui.StoresMenu;
 
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.gui.InfoMenuBuiler.InfoMenuController;
-import course.java.sdm.gui.OrderMenu.OrderMenuTileController;
 import course.java.sdm.gui.StoresMenu.SmallTiles.DiscountFromStoreTileController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

@@ -1,0 +1,77 @@
+
+
+#MainMenuPane1 {-fx-background-image: url("Imgs/blueBackground.jpg");
+-fx-background-size: cover; -fx-background-repeat: no-repeat;
+}
+.InfoScroll{-fx-background-image: url("Imgs/blueBackground.jpg");
+    -fx-background-size: cover; -fx-background-repeat: no-repeat;
+}
+.InfoVbox{-fx-background-color: transparent;
+}
+
+
+#MainMenuPane2 {-fx-background-image: url("Imgs/background1.png");
+}
+
+#MainMenuPane3 {-fx-background-image: url("Imgs/background2.jpg");
+}
+
+.MenuButtons {-fx-background-color:
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 3 30 3 30;
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+}
+
+/*#FullScreenPane1 {-fx-background-color: Gray}*/
+
+#TopMainPane {-fx-background-image: url("Imgs/background2.jpg");}
+
+#BottonMenuPane {-fx-background-image: url("Imgs/bottonBackground.jpg");}
+
+#pointLabel {-fx-font-size: 96px}
+
+#TitleLabel {-fx-text-fill: white; -fx-opacity: 1; -fx-font-size: 30; /*-fx-background-color: white*/
+ -fx-font-family: "Arial Black";  /*Lucida Console;!*Courier New!; -*/
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-font-family: "Blackoak Std";
+}
+
+.Error-Label{-fx-text-fill: red; -fx-opacity: 1;-fx-background-color: transparent
+}
+.Massage-Label {-fx-text-fill: black; -fx-opacity: 1; -fx-font-size: 18; /*-fx-background-color: white*/
+}
+
+.Hidden-Label{-fx-opacity: 0;
+}
+
+
+.Block1 {-fx-background-color: yellow}
+.Block2 {-fx-background-color: #3affff
+}
+
+
+
+#GridMap {-fx-background-image: url("Imgs/bricks.jpg");-fx-opacity: 0.85}
+
+.StoreStack {/*-fx-background-color: #fff98f;*/
+    /*https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png*/
+    -fx-background-image: url("Imgs/StoreIcon.png");
+    -fx-background-repeat: no-repeat ; -fx-background-size: auto  ; -fx-background-position: center;}
+.CustomerStack{/*-fx-background-color: #ff8be1;*/
+    /*https://icon-icons.com/icons2/11/PNG/32/person_user_customer_man_male_man_boy_people_1687.png*/
+    -fx-background-image: url("Imgs/CustomerIcon.png");
+    -fx-background-repeat: no-repeat ; -fx-background-size: auto; -fx-background-position: center;
+}
+
+.tooltip{-fx-font-size: 20}
+
