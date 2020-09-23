@@ -28,8 +28,8 @@
                         </VBox>
                         <HBox alignment="CENTER" spacing="60.0">
                            <children>
-                              <Button fx:id="LeftButton" mnemonicParsing="false" onAction="#OnLeft" text="&lt;--" />
-                              <Button fx:id="RightButton" mnemonicParsing="false" onAction="#OnRight" text="--&gt;" />
+                              <Button fx:id="LeftButton" mnemonicParsing="false" onAction="#OnLeft" styleClass="MenuButtons" text="&lt;--" />
+                              <Button fx:id="RightButton" mnemonicParsing="false" onAction="#OnRight" styleClass="MenuButtons" text="--&gt;" />
                            </children>
                         </HBox>
                      </children>
@@ -48,7 +48,7 @@
                   <Label fx:id="WantedLabel" />
                </children>
             </HBox>
-            <Button fx:id="PickButton" mnemonicParsing="false" onAction="#OnDiscountPicked" text="Press To Pick" />
+            <Button fx:id="PickButton" mnemonicParsing="false" onAction="#OnDiscountPicked" styleClass="MenuButtons" text="Press To Pick" />
          </children>
       </VBox>
    </children>

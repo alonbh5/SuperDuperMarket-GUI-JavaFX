@@ -355,7 +355,7 @@ public class SuperDuperMarketSystem {
         return getAllEntitledDiscounts(m_tempOrder);
     }
 
-    public OrderInfo ApproveOrder (Collection<DiscountInfo> DiscountWanted) throws OrderIsNotForThisCustomerException {
+    public OrderInfo addDiscounts (Collection<DiscountInfo> DiscountWanted) throws OrderIsNotForThisCustomerException {
 
         ProductInOrder newItem;
         Store curStore;
@@ -391,8 +391,11 @@ public class SuperDuperMarketSystem {
             }
         }
 
-        approveOrder();
         return getTempOrder();
+    }
+
+    public void ApproveOrder() throws OrderIsNotForThisCustomerException {
+        approveOrder();
     }
 
     private OrderInfo createOrderInfo(Order CurOrder) {

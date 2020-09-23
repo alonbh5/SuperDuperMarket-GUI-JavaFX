@@ -27,7 +27,7 @@
                   </TableView>
                </children>
             </AnchorPane>
-            <Button fx:id="DiscountsButton" mnemonicParsing="false" onAction="#onDiscountAction" text="Show Discounts" />
+            <Button fx:id="DiscountsButton" mnemonicParsing="false" onAction="#onDiscountAction" styleClass="MenuButtons" text="Show Discounts" />
          </children>
       </VBox>
   </content>

@@ -76,7 +76,14 @@ public class ChooseDiscountsController {
     void OnRight(ActionEvent event) {
         i = Math.abs((i + 1) % msgArray.size());
         getLabel.setText(msgArray.get(i));
+    }
 
+    void changeCssClass(boolean flag) {
+        MainAnchorPane.getStyleClass().clear();
+        if (flag)
+            MainAnchorPane.getStyleClass().add("Block1");
+        else
+            MainAnchorPane.getStyleClass().add("Block2");
     }
 
 }

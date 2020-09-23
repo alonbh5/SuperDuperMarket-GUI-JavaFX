@@ -23,13 +23,17 @@ public class DiscountPickerController {
     private Runnable OnFinish;
 
     public void OnCreation (Collection<DiscountInfo> discounts, Runnable onFinish) throws IOException {
+        boolean color = true;
+
         for (DiscountInfo cur :discounts) {
+            color=!color;
             FXMLLoader fxmlLoader = new FXMLLoader();
             URL url = ChooseDiscountsController.class.getResource("ChooseDiscounts.fxml");
             fxmlLoader.setLocation(url);
             Parent component = fxmlLoader.load(url.openStream());
             ChooseDiscountsController controller = fxmlLoader.getController();
             controller.OnCreation(cur);
+            controller.changeCssClass(color);
             MainTilePane.getChildren().add(component);
 
         }
@@ -40,5 +44,7 @@ public class DiscountPickerController {
     void OnDoneAction(ActionEvent event) {
         OnFinish.run();
     }
+
+
 
 }

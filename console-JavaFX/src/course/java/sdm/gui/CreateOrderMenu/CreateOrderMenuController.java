@@ -2,7 +2,6 @@ package course.java.sdm.gui.CreateOrderMenu;
 
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.exceptions.*;
-import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.CreateOrderMenu.ChooseDiscounts.DiscountPickerController;
 import course.java.sdm.gui.InputPane.GetInputPaneController;
 import course.java.sdm.gui.MainMenu.MainMenuController;
@@ -150,6 +149,7 @@ public class CreateOrderMenuController {
         }
         GetInputPaneController InputController = fxmlLoader.getController();
         InputController.OnCreation(isDec, () -> OnInputFinished(itemPressed,InputController.getAmount()));
+        InputController.initAnimation(MainController.getAnimation(),MainController.getMassageLocationX(),MainController.getMassageLocationY());
 
         MainStackPane.getChildren().get(0).setOpacity(0);
         MainStackPane.getChildren().get(0).setDisable(true);
@@ -325,35 +325,67 @@ public class CreateOrderMenuController {
         try {
             if (!isStaticOrderTypeSelected.getValue())
                 discounts = MainController.getDiscountsDynamic(ItemsByUser, SelectedUser, SelectedDate);
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            URL url = DiscountPickerController.class.getResource("DiscountPicker.fxml"); //todo make it all in common static..
-            fxmlLoader.setLocation(url);
-            Parent component = fxmlLoader.load(url.openStream());
-            DiscountPickerController controller = fxmlLoader.getController();
-            controller.OnCreation(discounts, this::Done);
-            //MainStackPane.getChildren().get(0).setOpacity(0);
-            //MainStackPane.getChildren().get(0).setDisable(true);
-            MainStackPane.getChildren().add(component);
+            if (discounts.isEmpty())
+                ShowSumUp();
+            else {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                URL url = DiscountPickerController.class.getResource("DiscountPicker.fxml");
+                fxmlLoader.setLocation(url);
+                Parent component = fxmlLoader.load(url.openStream());
+                DiscountPickerController controller = fxmlLoader.getController();
+                controller.OnCreation(discounts, this::ShowSumUp);
+                MainStackPane.getChildren().add(component);
+            }
         } catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
         }
 
     }
 
-    private void Done () {
+    private void ShowSumUp () {
+        OrderInfo order=null;
         try {
             if (isStaticOrderTypeSelected.getValue()) {
-                MainController.ApproveStaticOrder(discounts);
-                MainController.PrintMassage("Static Order Added To System");
+                order=MainController.AddDiscountsToStaticOrder(discounts);
             } else {
-                MainController.ApproveDynamicOrder(discounts);
-                MainController.PrintMassage("Dynamic Order Added To System");
+                order=MainController.AddDiscountsToDynamicOrder(discounts);
             }
         }catch (Exception e) {
             MainController.PrintMassage("Unknown Error");
         }
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = OrderSumUoController.class.getResource("OrderSumUo.fxml");
+        fxmlLoader.setLocation(url);
+        try {
+            Parent component = fxmlLoader.load(url.openStream());
+            OrderSumUoController controller = fxmlLoader.getController();
+            controller.setOrder(order, this::Done,this::Cancel);
+            MainStackPane.getChildren().clear();
+            MainStackPane.getChildren().add(component);
+
+        } catch (Exception e) {
+            MainController.PrintMassage("Error");
+        }
+
+    }
+
+    private void Done () {
+
+        MainController.ApproveOrder();
+
+        if (isStaticOrderTypeSelected.getValue()) {
+            MainController.PrintMassage("Static Order Added To System");
+        } else {
+            MainController.PrintMassage("Dynamic Order Added To System");
+        }
         MainController.RestoreNewOrder();
 
+    }
+
+    private void Cancel() {
+        MainController.PrintMassage("Order Was Canceled");
+        MainController.RestoreNewOrder();
     }
 
 

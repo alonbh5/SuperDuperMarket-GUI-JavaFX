@@ -34,33 +34,20 @@ import java.util.List;
 
 public class MainMenuController {
 
-    @FXML
-    private BorderPane MainPane;
-    @FXML
-    private Button XMLButton;
-    @FXML
-    private Button LoadButton;
-    @FXML
-    private Button showStoresButton;
-    @FXML
-    private Button showItemsButton;
-    @FXML
-    private Button showOrdersButton;
-    @FXML
-    private Button showCustomersButton;
-    @FXML
-    private Button NewOrderButton;
-    @FXML
-    private Button ItemUpdateButton;
-    @FXML
-    private Button MapButton;
-    @FXML
-    private Label MassageLabel;
-    @FXML
-    private ProgressBar ProgressBar;
-    @FXML
-    private ComboBox<String> SkinComboBox;
-    // @FXML    private Pane CenterPane;
+    @FXML    private BorderPane MainPane;
+    @FXML    private Button XMLButton;
+    @FXML    private Button LoadButton;
+    @FXML    private Button showStoresButton;
+    @FXML    private Button showItemsButton;
+    @FXML    private Button showOrdersButton;
+    @FXML    private Button showCustomersButton;
+    @FXML    private Button NewOrderButton;
+    @FXML    private Button ItemUpdateButton;
+    @FXML    private Button MapButton;
+    @FXML    private Label MassageLabel;
+    @FXML    private ProgressBar ProgressBar;
+    @FXML    private ComboBox<String> SkinComboBox;
+    @FXML    private CheckBox AnimationCheckBox;
 
     private SimpleStringProperty selectedFileProperty;
     private SimpleBooleanProperty isFileSelected;
@@ -190,17 +177,20 @@ public class MainMenuController {
     @FXML
     void OnChangeSkin(ActionEvent event) {
         String selection = SkinComboBox.getValue();
+        String theme1Url = getClass().getResource("../Resources/MainStyle1.css").toExternalForm();
+        String theme2Url = getClass().getResource("../Resources/MainStyle2.css").toExternalForm();
+        String theme3Url = getClass().getResource("../Resources/MainStyle3.css").toExternalForm();
+        MainPane.getStylesheets().clear();
 
         switch (selection) {
             case "Skin 1":
-                MainPane.setId("MainMenuPane1");
+                MainPane.getStylesheets().add(theme1Url);
                 break;
             case "Skin 2":
-                //MainSDMSystem.test();
-                MainPane.setId("MainMenuPane2");
+                MainPane.getStylesheets().add(theme2Url);
                 break;
             case "Skin 3":
-                MainPane.setId("MainMenuPane3");
+                MainPane.getStylesheets().add(theme3Url);
                 break;
         }
     }
@@ -358,10 +348,18 @@ public class MainMenuController {
         return MainSDMSystem.getDiscountsFromStaticOrder(itemsByUser,storeChosen,user,dateChosen);
     }
 
-    public OrderInfo ApproveStaticOrder(Collection<DiscountInfo> selectedDiscounts) throws OrderIsNotForThisCustomerException {
+    public OrderInfo AddDiscountsToStaticOrder(Collection<DiscountInfo> selectedDiscounts) throws OrderIsNotForThisCustomerException {
 
-        MainSDMSystem.ApproveOrder(selectedDiscounts);
+        MainSDMSystem.addDiscounts(selectedDiscounts);
         return MainSDMSystem.getTempOrder();
+    }
+
+    public void ApproveOrder() {
+        try {
+            MainSDMSystem.ApproveOrder();
+        } catch (OrderIsNotForThisCustomerException e) {
+            PrintMassage("Error In Approving Order");
+        }
     }
 
     public void RestoreItemChange() {
@@ -404,8 +402,8 @@ public class MainMenuController {
         return MainSDMSystem.getDiscountsFromDynamicOrder();
     }
 
-    public void ApproveDynamicOrder(Collection<DiscountInfo> discounts) throws OrderIsNotForThisCustomerException {
-        MainSDMSystem.ApproveOrder(discounts);
+    public OrderInfo AddDiscountsToDynamicOrder (Collection<DiscountInfo> discounts) throws OrderIsNotForThisCustomerException {
+        return MainSDMSystem.addDiscounts(discounts);
     }
 
     public void RestoreNewOrder() {
@@ -414,5 +412,17 @@ public class MainMenuController {
         } catch (Exception e) {
             PrintMassage("Sorry - Unknown Error (RestoreNewOrder)");
         }
+    }
+
+    public BooleanProperty getAnimation  () {
+        return AnimationCheckBox.selectedProperty();
+    }
+
+    public DoubleProperty getMassageLocationX() {
+        return MassageLabel.layoutXProperty();
+    }
+
+    public DoubleProperty getMassageLocationY() {
+        return MassageLabel.layoutYProperty();
     }
 }

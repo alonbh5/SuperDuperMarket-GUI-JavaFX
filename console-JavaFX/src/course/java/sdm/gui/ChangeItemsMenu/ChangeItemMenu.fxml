@@ -13,7 +13,7 @@
       <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="773.0">
          <children>
             <Label layoutX="136.0" layoutY="85.0" text="Choose Store" />
-            <Button fx:id="OkButton" disable="true" layoutX="325.0" layoutY="431.0" mnemonicParsing="false" onAction="#OnContinueButton" prefHeight="25.0" prefWidth="124.0" text="Continue" />
+            <Button fx:id="OkButton" disable="true" layoutX="325.0" layoutY="431.0" mnemonicParsing="false" onAction="#OnContinueButton" prefHeight="30.0" styleClass="MenuButtons" text="Continue" />
             <RadioButton fx:id="ChangeRadio" disable="true" layoutX="136.0" layoutY="244.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#OnChangeRadio" text="Change Price">
                <toggleGroup>
                   <ToggleGroup fx:id="OptionItems" />
