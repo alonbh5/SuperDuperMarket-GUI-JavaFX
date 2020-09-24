@@ -81,7 +81,7 @@
    <bottom>
       <VBox alignment="CENTER" prefHeight="55.0" prefWidth="1164.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox id="BottonMenuPane" prefHeight="100.0" prefWidth="1164.0" spacing="20.0">
+            <HBox id="BottonMenuPane" alignment="CENTER" prefHeight="100.0" prefWidth="1164.0" spacing="20.0">
                <children>
                   <Label text="State: ">
                      <font>

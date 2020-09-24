@@ -364,7 +364,7 @@ public class SuperDuperMarketSystem {
                 ProductInStore curProd;
                 curStore = getStoreByID(curDiscount.StoreID);
                 if (curDiscount.DiscountOperator.toUpperCase().equals("ONE_OF")) {
-                    for (int i = 0; i < curDiscount.AmountWanted.getValue(); i++) {
+                    for (int i = 0; i < curDiscount.AmountWanted.getValue(); i++) { //todo this is not working..
                         int curIndex = curDiscount.getIndex(i);
                         curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curIndex).ID);
                         newItem = new ProductInOrder(curProd, true);

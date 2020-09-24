@@ -21,6 +21,12 @@ class ProductInOrder implements Serializable {
         this.PriceOfTotalItems = amountBought * productInStore.getPricePerUnit();
     }
 
+    void addAmountWithSamePriceAsNow (double amountBought) {
+        double SalePrice = PriceOfTotalItems/this.amountBought  ;
+        this.amountBought = this.amountBought+amountBought;
+        this.PriceOfTotalItems = this.amountBought * SalePrice;
+    }
+
     void setAmountBoughtFromSale(double amountBought,double SalePrice) {
         this.amountBought = amountBought;
         this.PriceOfTotalItems = amountBought * SalePrice;
@@ -67,9 +73,19 @@ class ProductInOrder implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductInOrder that = (ProductInOrder) o;
-        return Double.compare(that.amountBought, amountBought) == 0 &&
-                Double.compare(that.PriceOfTotalItems, PriceOfTotalItems) == 0 &&
-                productInStore.equals(that.productInStore);
+
+        boolean sameSale;
+        try { //todo check this - what if not from same sale ...
+            if (isFromSale == that.isFromSale)
+                sameSale =  (PriceOfTotalItems / amountBought) == (that.getPriceOfTotalItems() /that.getAmount());
+            else
+                sameSale=true;
+        }catch (Exception e) {
+            sameSale = false;
+        }
+
+
+        return productInStore.equals(that.productInStore) && sameSale;
     }
 
     @Override

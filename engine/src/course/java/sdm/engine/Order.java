@@ -77,7 +77,13 @@ class Order implements Coordinatable, Serializable {
     {
         if (!isStoreInOrder(productToAdd.getProductInStore().getStore()))
             m_ShippingPrice += SuperDuperMarketSystem.CalculatePPK(productToAdd.getProductInStore().getStore(),this.getCoordinate());
-        m_Basket.add(productToAdd); //add order
+        if (m_Basket.contains(productToAdd))
+            for (ProductInOrder curProd : m_Basket) {
+                if (curProd.equals(productToAdd))
+                    curProd.addAmountWithSamePriceAsNow(productToAdd.getAmount());
+            }
+        else
+            m_Basket.add(productToAdd); //add new product
         m_StoresInOrder.add(productToAdd.getProductInStore().getStore()); //add store to order stores list
         m_ItemsPrice += productToAdd.getPriceOfTotalItems();
         m_TotalPrice = m_ItemsPrice + m_ShippingPrice;

@@ -188,9 +188,7 @@ public class MainMenuController {
                 MainPane.getStylesheets().add(theme1Url);
                 break;
             case "Skin 2":
-                System.out.println("hay");
                 MainPane.getStylesheets().add(theme2Url);
-                System.out.println("bye");
                 break;
             case "Skin 3":
                 MainPane.getStylesheets().add(theme3Url);
@@ -205,7 +203,7 @@ public class MainMenuController {
         // load header component and controller from fxml
         MassageLabel.setText("Entered Customer View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = CustomersMenuTileController.class.getResource("CustomerMenuTile.fxml"); //todo make it all in common static..
+        URL url = CustomersMenuTileController.class.getResource("CustomerMenuTile.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         CustomersMenuTileController CustomerController = fxmlLoader.getController();
@@ -227,7 +225,7 @@ public class MainMenuController {
         // load header component and controller from fxml
         MassageLabel.setText("Entered Items View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ShowItemsController.class.getResource("ShowItemsMenu.fxml"); //todo make it all in common static..
+        URL url = ShowItemsController.class.getResource("ShowItemsMenu.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         ShowItemsController ItemsController = fxmlLoader.getController();
@@ -246,7 +244,7 @@ public class MainMenuController {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url;
 
-
+        MassageLabel.setText("Entered Order History Menu..");
         Collection<OrderInfo> orders = MainSDMSystem.getListOfAllOrderInSystem();
 
         if (orders.isEmpty()) {
@@ -256,7 +254,7 @@ public class MainMenuController {
             MainPane.setCenter(Tile);
         }
         else {
-            url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+            url = InfoMenuController.class.getResource("InfoMenu.fxml");
             fxmlLoader.setLocation(url);
             ScrollPane infoComponent = fxmlLoader.load(url.openStream());
             InfoMenuController InfoController = fxmlLoader.getController();
@@ -273,7 +271,7 @@ public class MainMenuController {
     @FXML
     void OnNewOrder(ActionEvent event) throws IOException, NoValidXMLException {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = CreateOrderMenuController.class.getResource("CreateOrderMenu.fxml"); //todo make it all in common static..
+        URL url = CreateOrderMenuController.class.getResource("CreateOrderMenu.fxml");
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         CreateOrderMenuController controller = fxmlLoader.getController();
@@ -284,8 +282,9 @@ public class MainMenuController {
 
     @FXML
     void OnStoresAction(ActionEvent event) throws Exception {
+        PrintMassage("Entered Stores View Menu..");
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();

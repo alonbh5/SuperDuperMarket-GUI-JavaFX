@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RunGuiMenu:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RunGuiMenu_jar</output-path>
+    <root id="archive" name="RunJavaFX.jar">
+      <element id="module-output" name="console-JavaFX" />
+      <element id="module-output" name="mediatorClasses" />
+    </root>
+  </artifact>
+</component>

@@ -53,7 +53,7 @@ class ProductInStore implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductInStore that = (ProductInStore) o;
-        return that.getItem().getSerialNumber() == this.item.getSerialNumber();
+        return that.getItem().getSerialNumber() == this.item.getSerialNumber() && that.getStore().equals(this.store);
     }
 
     @Override
