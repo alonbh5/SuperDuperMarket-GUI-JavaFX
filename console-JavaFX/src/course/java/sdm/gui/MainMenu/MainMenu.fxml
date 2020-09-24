@@ -39,8 +39,8 @@
             <Label id="TitleLabel" text="Super Duper Market" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <CheckBox fx:id="AnimationCheckBox" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Animation" textAlignment="CENTER" />
-                  <ComboBox fx:id="SkinComboBox" onAction="#OnChangeSkin" prefWidth="150.0" promptText="Skin" />
+                  <CheckBox fx:id="AnimationCheckBox" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" styleClass="RadioLabels" text="Animation" textAlignment="CENTER" />
+                  <ComboBox fx:id="SkinComboBox" onAction="#OnChangeSkin" prefWidth="150.0" promptText="Skin" styleClass="RadioLabels" />
                </children>
                <GridPane.margin>
                   <Insets />
@@ -69,7 +69,6 @@
             <Button fx:id="NewOrderButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#OnNewOrder" prefHeight="35.0" styleClass="MenuButtons" text="New Order" />
             <Button fx:id="ItemUpdateButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemUpdate" prefHeight="35.0" styleClass="MenuButtons" text="Item Update" />
             <Button fx:id="MapButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnMap" prefHeight="35.0" styleClass="MenuButtons" text="System Map" />
-            <Button disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" />
          </children>
          <BorderPane.margin>
             <Insets left="10.0" top="10.0" />

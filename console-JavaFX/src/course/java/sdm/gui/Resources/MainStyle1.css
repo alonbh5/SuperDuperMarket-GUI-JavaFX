@@ -9,7 +9,7 @@
 }
 
 
-.BackgroundTrans{-fx-background-color: inherit;
+.BackgroundTrans{-fx-background-color: transparent;
 }
 
 
@@ -34,6 +34,24 @@
 
 /*#TopMainPane {-fx-background-image: url("Imgs/background2.jpg");}*/
 
+.ComboBoxGroup {
+    -fx-background: white;
+}
+
+.combo-box-popup .list-view
+{
+    -fx-background-color: white, white;
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}
+
+.RadioLabels {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Blackoak Std";
+}
+
 #BottonMenuPane {-fx-background-image: url("Imgs/bottonBackground.jpg");}
 
 #pointLabel {-fx-font-size: 96px}
@@ -43,10 +61,7 @@
 }
 
 .label {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: black;
-    -fx-font-family: "Blackoak Std";
+
 }
 
 .Error-Label{-fx-text-fill: red; -fx-opacity: 1;-fx-background-color: transparent
@@ -62,7 +77,9 @@
 .Block2 {-fx-background-color: #3affff
 }
 
-
+.TiltedGroup{
+    -fx-background-color: transparent,transparent,transparent;
+}
 
 #GridMap {-fx-background-image: url("Imgs/bricks.jpg");-fx-opacity: 0.85}
 
