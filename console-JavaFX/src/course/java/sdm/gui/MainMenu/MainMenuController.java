@@ -177,9 +177,10 @@ public class MainMenuController {
     @FXML
     void OnChangeSkin(ActionEvent event) {
         String selection = SkinComboBox.getValue();
-        String theme1Url = getClass().getResource("../Resources/MainStyle1.css").toExternalForm();
-        String theme2Url = getClass().getResource("../Resources/MainStyle2.css").toExternalForm();
-        String theme3Url = getClass().getResource("../Resources/MainStyle3.css").toExternalForm();
+
+        String theme1Url = getClass().getResource("/course/java/sdm/gui/Resources/MainStyle1.css").toExternalForm();
+        String theme2Url = getClass().getResource("/course/java/sdm/gui/Resources/MainStyle2.css").toExternalForm();
+        String theme3Url = getClass().getResource("/course/java/sdm/gui/Resources/MainStyle3.css").toExternalForm();
         MainPane.getStylesheets().clear();
 
         switch (selection) {
@@ -187,7 +188,9 @@ public class MainMenuController {
                 MainPane.getStylesheets().add(theme1Url);
                 break;
             case "Skin 2":
+                System.out.println("hay");
                 MainPane.getStylesheets().add(theme2Url);
+                System.out.println("bye");
                 break;
             case "Skin 3":
                 MainPane.getStylesheets().add(theme3Url);

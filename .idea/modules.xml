@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/engine/console-JAVAFX.iml" filepath="$PROJECT_DIR$/engine/console-JAVAFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/console-JavaFX/console-JavaFX.iml" filepath="$PROJECT_DIR$/console-JavaFX/console-JavaFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/console-ui/console-ui.iml" filepath="$PROJECT_DIR$/console-ui/console-ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/engine/engine.iml" filepath="$PROJECT_DIR$/engine/engine.iml" />
