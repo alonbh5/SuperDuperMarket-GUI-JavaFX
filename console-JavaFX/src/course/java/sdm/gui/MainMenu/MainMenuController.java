@@ -94,6 +94,7 @@ public class MainMenuController {
         NewOrderButton.disableProperty().bind(isXmlLoaded.not());
         ItemUpdateButton.disableProperty().bind(isXmlLoaded.not());
         MapButton.disableProperty().bind(isXmlLoaded.not());
+        AddDiscountButton.disableProperty().bind(isXmlLoaded.not());
     }
 
 
@@ -452,4 +453,21 @@ public class MainMenuController {
         MainPane.setCenter(component);
     }
 
+    public void CreateDiscount(DiscountInfo newDiscount) {
+        try {
+            MainSDMSystem.addDiscountToStore(newDiscount.StoreID,newDiscount);
+            PrintMassage("Discount Was Added!");
+            MainPane.setCenter(null);
+        } catch (StoreDoesNotSellItemException e) {
+            PrintMassage("Error - Item Does Not Sold In Store");
+        } catch (NegativeQuantityException e) {
+            PrintMassage("Error - Negative Amount Received: "+e.Quantity);
+        } catch (NoOffersInDiscountException e) {
+            PrintMassage("Error - No Offers In Discount Received");
+        } catch (IllegalOfferException e) {
+            PrintMassage("Error - Illegal Offer Received");
+        } catch (NegativePriceException e) {
+            PrintMassage("Error - Negative Price Received: "+e.PriceReceived);
+        }
+    }
 }

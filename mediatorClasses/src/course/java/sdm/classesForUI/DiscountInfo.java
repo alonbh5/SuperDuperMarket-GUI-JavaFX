@@ -26,7 +26,10 @@ public class DiscountInfo {
         DiscountOperator = discountOperator;
         this.itemToBuy = itemToBuy;
         AmountToBuy = amountToBuy;
-        OfferedItem = offeredItem;
+        if (offeredItem == null)
+            OfferedItem = new ArrayList<>();
+        else
+            OfferedItem = offeredItem;
         this.StoreID = StoreID;
     }
 
@@ -80,10 +83,11 @@ public class DiscountInfo {
                         flag = false;
                         break; //todo check that works
                     }
+        }
 
          if (flag)
              OfferedItem.add(newItem);
-
-        }
     }
+
+
 }

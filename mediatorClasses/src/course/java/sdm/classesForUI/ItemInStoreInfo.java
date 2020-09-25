@@ -52,7 +52,8 @@ public class ItemInStoreInfo {
         return SoldCounter;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "Item #"+serialNumber+" "+Name + " Cost: "+ getPriceInStore().toString();
+    }
 }

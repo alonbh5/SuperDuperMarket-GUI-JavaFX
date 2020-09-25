@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -30,6 +31,8 @@
                                  <children>
                                     <Label text="Please Choose Store:" />
                                     <ComboBox fx:id="StoreCombo" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="367.0" />
+                                    <Label text="Discount Name:" />
+                                    <TextField fx:id="NameTextField" onKeyTyped="#OnTextPress" prefHeight="25.0" prefWidth="272.0" />
                                  </children>
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
