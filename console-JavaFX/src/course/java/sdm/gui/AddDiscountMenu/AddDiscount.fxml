@@ -46,24 +46,36 @@
                     <content>
                       <AnchorPane>
                            <children>
-                              <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <VBox layoutX="9.600000381469727" layoutY="9.600000381469727" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Label text="Please Choose Item To Buy" />
-                                    <Separator orientation="VERTICAL" prefHeight="200.0" />
-                                    <ComboBox fx:id="ItemToBuyCombo" onAction="#OnItemToBuyAction" prefWidth="150.0" />
-                                    <Button fx:id="AmountButton" disable="true" mnemonicParsing="false" onAction="#OnAmountAction" text="Add Amount" />
-                                    <RadioButton fx:id="AllRadio" mnemonicParsing="false" text="&quot;All Or Nothing&quot;">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="RadioTypeGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="OneRadio" mnemonicParsing="false" text="&quot;One Of&quot;" toggleGroup="$RadioTypeGroup" />
-                                    <Label text="(NOTE If Only One Item Picked - Discount WIll Be &quot;Irrelevant&quot;)" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                       <children>
+                                          <RadioButton fx:id="AllRadio" mnemonicParsing="false" text="&quot;All Or Nothing&quot;">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="RadioTypeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="OneRadio" mnemonicParsing="false" text="&quot;One Of&quot;">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="RadioTypeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <Label text="(NOTE If Only One Item Picked - Discount WIll Be &quot;Irrelevant&quot;)" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0">
+                                       <children>
+                                          <Label text="Please Choose Item To Buy" />
+                                          <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                          <ComboBox fx:id="ItemToBuyCombo" onAction="#OnItemToBuyAction" prefWidth="150.0" />
+                                          <Button fx:id="AmountButton" disable="true" mnemonicParsing="false" onAction="#OnAmountAction" text="Add Amount" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
                                  </children>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </HBox>
+                              </VBox>
                            </children>
                         </AnchorPane>
                     </content>
