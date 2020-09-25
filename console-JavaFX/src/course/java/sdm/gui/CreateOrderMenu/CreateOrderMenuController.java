@@ -132,6 +132,16 @@ public class CreateOrderMenuController {
 
     }
 
+    public void OnCreation (Collection<CustomerInfo> customer, Collection<StoreInfo> stores, MainMenuController mainController ) {
+        MainController = mainController;
+
+        for (CustomerInfo cur : customer)
+            UserCombo.getItems().add(cur);
+
+        for (StoreInfo cur : stores)
+            StoresCombo.getItems().add(cur);
+    }
+
     private void OnUserPickedItem(ItemInStoreInfo itemPressed)  {
 
         boolean isDec = true;
@@ -205,15 +215,7 @@ public class CreateOrderMenuController {
             StoresCombo.setDisable(!observableValue.getValue()); //todo stores not Closing...
     }
 
-    public void OnCreation (Collection<CustomerInfo> customer, Collection<StoreInfo> stores, MainMenuController mainController ) {
-        MainController = mainController;
 
-        for (CustomerInfo cur : customer)
-            UserCombo.getItems().add(cur);
-
-        for (StoreInfo cur : stores)
-            StoresCombo.getItems().add(cur);
-    }
 
 
     @FXML

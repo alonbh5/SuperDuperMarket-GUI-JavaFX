@@ -756,41 +756,49 @@ public class SuperDuperMarketSystem {
         return storeByID.howManyDiscount(itemID);
     }
 
-   /*public void test() {
-        Order emptyOrder = null;
-        Date dt = new Date();
+   public void addDiscountToStore (Long StoreId, DiscountInfo discountInfo) throws StoreDoesNotSellItemException, NegativeQuantityException, NoOffersInDiscountException, IllegalOfferException, NegativePriceException {
+       Store store = getStoreByID(StoreId);
 
-        try {
-            emptyOrder = createEmptyOrder(m_CustomersInSystem.get((long)1), dt, true);
-        } catch (PointOutOfGridException e) {
-            e.printStackTrace();
-        }
 
-        ProductInOrder productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)1),false);
-        productInOrder.setAmountBought(5);
-        emptyOrder.addProductToOrder(productInOrder);
-        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)2),false);
-        productInOrder.setAmountBought(25);
-        emptyOrder.addProductToOrder(productInOrder);
-        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)5),false);
-        productInOrder.setAmountBought(100);
-        emptyOrder.addProductToOrder(productInOrder);
-        productInOrder = new ProductInOrder(m_StoresInSystem.get((long)1).getProductInStoreByID((long)3),false);
-        productInOrder.setAmountBought(1);
-        emptyOrder.addProductToOrder(productInOrder);
+       if (!store.isItemInStore(discountInfo.itemToBuy.ID))
+           throw new StoreDoesNotSellItemException("Item of Discount is not sold at store", discountInfo.itemToBuy.ID);
 
-        m_OrderHistory.put(emptyOrder.getOrderSerialNumber(),emptyOrder); //todo dont add it yet...
-        updateShippingProfitAfterOrder(emptyOrder); //update shipping profit
-        updateSoldCounterInStore(emptyOrder); // updated the counter of item in the store (how many times has been sold)
-        m_StoresInSystem.get((long)1).addOrderToStoreHistory(emptyOrder);
-        try {
-            m_CustomersInSystem.get((long)1).addOrderToHistory(emptyOrder);
-        } catch (OrderIsNotForThisCustomerException e) {
-            e.printStackTrace();
-        }
+       if (discountInfo.itemToBuy.Amount < 0)
+           throw new NegativeQuantityException((int)discountInfo.itemToBuy.Amount.doubleValue());
 
-        for (ProductInOrder curItem :emptyOrder.getBasket())
-            m_ItemsInSystem.get(curItem.getSerialNumber()).addTimesSold(curItem.getAmountByPayingMethod());
+       if (discountInfo.OfferedItem.isEmpty()) {
+           throw new NoOffersInDiscountException(discountInfo.Name);
+       }
 
-    }*/
+       Discount.OfferType newOp = Discount.OfferType.IRRELEVANT;
+       if (discountInfo.DiscountOperator.toUpperCase().equals("ONE OF"))
+           newOp = Discount.OfferType.ONE_OF;
+       if (discountInfo.DiscountOperator.toUpperCase().equals("ALL OR NOTHING"))
+           newOp = Discount.OfferType.ALL_OR_NOTHING;
+       if (discountInfo.OfferedItem.size() == 1)
+           newOp = Discount.OfferType.IRRELEVANT;
+
+
+       Item curItem = m_ItemsInSystem.get(discountInfo.itemToBuy.ID).getItem();
+       ProductYouBuy whatYouBuy = new ProductYouBuy(curItem, discountInfo.itemToBuy.Amount);
+       Discount newDis = new Discount(newOp,discountInfo.Name, whatYouBuy);
+
+       for (OfferItemInfo curOffer : discountInfo.OfferedItem) {
+           if (curOffer.PricePerOne < 0)
+               throw new NegativePriceException(curOffer.PricePerOne);
+
+           if (!store.isItemInStore(curOffer.ID))
+               throw new StoreDoesNotSellItemException("Item of Discount is not sold at store", curOffer.ID);
+
+           if (curOffer.Amount < 0)
+               throw new NegativeQuantityException((int)curOffer.Amount.doubleValue());
+
+           Item itemForCtor = m_ItemsInSystem.get(curOffer.ID).getItem();
+
+           newDis.AddProductYouGet(new ProductYouGet(itemForCtor, curOffer.Amount, curOffer.PricePerOne));
+       }
+       store.addDiscount(newDis);
+   }
+
+
 }

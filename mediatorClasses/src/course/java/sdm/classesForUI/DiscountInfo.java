@@ -70,4 +70,20 @@ public class DiscountInfo {
     public int getIndex(int i) {
         return IndexOfWantedItem.get(i++);
     }
+
+    public void addItemYouGet (OfferItemInfo newItem) {
+        boolean flag =true;
+        for (OfferItemInfo cur : OfferedItem) {
+            if (cur.ID.equals(newItem.ID))
+                if (cur.Amount.equals(newItem.Amount))
+                    if (cur.PricePerOne.equals(newItem.PricePerOne)) {
+                        flag = false;
+                        break; //todo check that works
+                    }
+
+         if (flag)
+             OfferedItem.add(newItem);
+
+        }
+    }
 }

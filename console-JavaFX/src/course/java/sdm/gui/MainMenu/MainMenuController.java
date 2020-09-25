@@ -2,6 +2,7 @@ package course.java.sdm.gui.MainMenu;
 import course.java.sdm.classesForUI.*;
 import course.java.sdm.engine.SuperDuperMarketSystem;
 import course.java.sdm.exceptions.*;
+import course.java.sdm.gui.AddDiscountMenu.AddDiscountController;
 import course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController;
 import course.java.sdm.gui.CreateOrderMenu.CreateOrderMenuController;
 import course.java.sdm.gui.CustomersMenu.CustomersMenuTileController;
@@ -44,6 +45,7 @@ public class MainMenuController {
     @FXML    private Button NewOrderButton;
     @FXML    private Button ItemUpdateButton;
     @FXML    private Button MapButton;
+    @FXML    private Button AddDiscountButton;
     @FXML    private Label MassageLabel;
     @FXML    private ProgressBar ProgressBar;
     @FXML    private ComboBox<String> SkinComboBox;
@@ -437,5 +439,17 @@ public class MainMenuController {
         return MassageLabel.layoutYProperty();
     }
 
+
+    @FXML
+    void OnAddDiscount(ActionEvent event) throws Exception {
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        URL url = AddDiscountController.class.getResource("AddDiscount.fxml"); //todo make it all in common static..
+        fxmlLoader.setLocation(url);
+        Parent component = fxmlLoader.load(url.openStream());
+        AddDiscountController controller = fxmlLoader.getController();
+        controller.onCreation(MainSDMSystem.getListOfAllStoresInSystem(), this);
+        MainPane.setCenter(component);
+    }
 
 }

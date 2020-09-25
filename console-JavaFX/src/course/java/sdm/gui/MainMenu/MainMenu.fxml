@@ -69,6 +69,7 @@
             <Button fx:id="NewOrderButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#OnNewOrder" prefHeight="35.0" styleClass="MenuButtons" text="New Order" />
             <Button fx:id="ItemUpdateButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnItemUpdate" prefHeight="35.0" styleClass="MenuButtons" text="Item Update" />
             <Button fx:id="MapButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnMap" prefHeight="35.0" styleClass="MenuButtons" text="System Map" />
+            <Button fx:id="AddDiscountButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#OnAddDiscount" prefHeight="35.0" styleClass="MenuButtons" text="Add Discount" />
          </children>
          <BorderPane.margin>
             <Insets left="10.0" top="10.0" />
