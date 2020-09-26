@@ -7,20 +7,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="MainAnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="228.0" prefWidth="231.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.StoresMenu.SmallTiles.DiscountFromStoreTileController">
+<AnchorPane fx:id="MainAnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="228.0" prefWidth="231.0" styleClass="DiscountPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.StoresMenu.SmallTiles.DiscountFromStoreTileController">
    <children>
       <VBox alignment="CENTER" spacing="10.0">
          <children>
             <VBox alignment="CENTER">
                <children>
-                  <Label text="Discount Name is" />
-                  <Label fx:id="DiscountLabelName" />
+                  <Label styleClass="DiscountLabel" text="Discount Name is" />
+                  <Label fx:id="DiscountLabelName" styleClass="DiscountLabel" />
                </children>
             </VBox>
             <VBox alignment="CENTER" spacing="5.0">
                <children>
-                  <Label fx:id="BuyLabel" />
-                  <Label fx:id="getLabel" />
+                  <Label fx:id="BuyLabel" styleClass="DiscountLabel" />
+                  <Label fx:id="getLabel" styleClass="DiscountLabel" />
                </children>
             </VBox>
             <HBox alignment="CENTER" spacing="60.0">

@@ -90,4 +90,13 @@ public class DiscountInfo {
     }
 
 
+    public String getDiscountOp() {
+        if (DiscountOperator.toUpperCase().equals("ONE_OF"))
+            return "One Of";
+        else
+            if (DiscountOperator.toUpperCase().equals("ALL_OR_NOTHING"))
+                return "All Or Nothing";
+            else
+                return "Irrelevant";
+    }
 }

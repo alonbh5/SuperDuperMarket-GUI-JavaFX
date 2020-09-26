@@ -18,10 +18,6 @@ public class RunGUi extends Application {
 
         FXMLLoader loader = new FXMLLoader();
 
-        // load main fxml
-        //System.out.println(MainMenuController.class);
-        //System.out.println(getClass());
-
         URL mainFXML = MainMenuController.class.getResource("MainMenu.fxml");
         loader.setLocation(mainFXML);
         Parent root = loader.load();

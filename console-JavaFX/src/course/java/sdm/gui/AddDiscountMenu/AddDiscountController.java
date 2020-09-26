@@ -94,8 +94,8 @@ public class AddDiscountController {
 
         OpenDisInfo.bind(isStoreSelected.and(isNameTyped));
 
-        DiscountInfoTile.collapsibleProperty().bind(OpenDisInfo);
-        DiscountInfoTile.expandedProperty().bind(OpenDisInfo);
+        DiscountInfoTile.disableProperty().bind(OpenDisInfo.not());
+
 
         OpenAllItems.bind(isItemToBuySelected.and(isAmountSelected).and(isTypeSelected));
 
@@ -213,6 +213,7 @@ public class AddDiscountController {
                     amountForItem, itemInStore.PriceInStore);
 
             newDiscount = new DiscountInfo(NameTextField.getText(), DisType, itemYouBuy, amountForItem, null, StoreCombo.getValue().StoreID);
+            DiscountInfoTile.disableProperty().unbind();
             DiscountInfoTile.setDisable(true);
             StoreTitled.setDisable(true);
             ItemTile.setExpanded(true);

@@ -2,11 +2,15 @@
 #MainMenuPane1 {-fx-background-image: url("Imgs/background1.jpg");
     -fx-background-size: cover; -fx-background-repeat: no-repeat;
 }
-.InfoScroll{-fx-background-image: url("Imgs/blueBackground.jpg");
-    -fx-background-size: cover; -fx-background-repeat: no-repeat;
-}
-.InfoVbox{-fx-background-color: transparent;
-}
+.InfoScroll{-fx-background-color: transparent;}
+
+
+.InfoVbox{-fx-background-color: transparent;}
+
+.scroll-pane{-fx-background-color: transparent;}
+
+.DiscountPane{-fx-background-image: url("Imgs/discountBackground.jpg");
+     -fx-background-size: cover; -fx-background-repeat: no-repeat;}
 
 
 .BackgroundTrans{-fx-background-color: transparent;
@@ -48,21 +52,29 @@
 .RadioLabels {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
     -fx-font-family: "Blackoak Std";
 }
+
+#NoOrderLabel {-fx-text-fill: white;}
 
 #BottonMenuPane {-fx-background-image: url("Imgs/bottonBackground.jpg");}
 
 #pointLabel {-fx-font-size: 96px}
 
-#TitleLabel {-fx-text-fill: white; -fx-opacity: 1; -fx-font-size: 30; /*-fx-background-color: white*/
-    -fx-font-family: "Arial Black";  /*Lucida Console;!*Courier New!; -*/
+#TitleLabel {-fx-text-fill: #d6ffee; -fx-opacity: 1; -fx-font-size: 32; /*-fx-background-color: white*/
+
+    -fx-font-family: "Courier New!";-fx-font-weight: bold;  /*Lucida Console;!*Courier New!; -*/
 }
 
 .label {
-
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-font-family: "Arial Black";
 }
+
+.DiscountLabel {-fx-font-size: 14px;-fx-font-weight: bold}
 
 .Error-Label{-fx-text-fill: red; -fx-opacity: 1;-fx-background-color: transparent
 }
@@ -73,9 +85,9 @@
 }
 
 
-.Block1 {-fx-background-color: yellow}
+/*.Block1 {-fx-background-color: yellow}
 .Block2 {-fx-background-color: #3affff
-}
+}*/
 
 .TiltedGroup{
     -fx-background-color: transparent,transparent,transparent;

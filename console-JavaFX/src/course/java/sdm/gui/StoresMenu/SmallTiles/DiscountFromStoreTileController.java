@@ -39,13 +39,13 @@ public class DiscountFromStoreTileController {
     public void SetValues(DiscountInfo discountTile) {
         discount = discountTile;
 
-        DiscountLabelName.setText(discountTile.Name + "(" + discountTile.DiscountOperator + ")");
+        DiscountLabelName.setText(discountTile.Name + " (" + discountTile.getDiscountOp() + ")");
         BuyLabel.setText("If You Buy " + discountTile.AmountToBuy.toString() + "\n" +
                 discountTile.itemToBuy.Name + "'s (Item #" + discountTile.itemToBuy.ID + ")\nYou Can Get:");
 
         for (OfferItemInfo curGet : discountTile.OfferedItem) {
             i++;
-            msgArray.add(new String(i + ". " + curGet.Amount + " " + curGet.Name + "'s (#" + curGet.ID + ")\n" +
+            msgArray.add(new String(i + ") " + curGet.Amount + " " + curGet.Name + "'s (#" + curGet.ID + ")\n" +
                     "in the Price of " + curGet.PricePerOne + " for one"));
         }
         i = 0;
@@ -69,11 +69,11 @@ public class DiscountFromStoreTileController {
     }
 
     public void changeCssClass(boolean flag) {
-        MainAnchorPane.getStyleClass().clear();
+        /*MainAnchorPane.getStyleClass().clear();
         if (flag)
             MainAnchorPane.getStyleClass().add("Block1");
         else
-            MainAnchorPane.getStyleClass().add("Block2");
+            MainAnchorPane.getStyleClass().add("Block2");*/
     }
 
 

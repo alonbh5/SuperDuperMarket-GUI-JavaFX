@@ -35,13 +35,9 @@
       </TitledPane>
       <TitledPane fx:id="DiscountTile" text="Discounts">
         <content>
-            <ScrollPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true">
                <content>
-                  <ScrollPane>
-                     <content>
-                        <FlowPane fx:id="DiscountFlowPane" orientation="VERTICAL" />
-                     </content>
-                  </ScrollPane>
+                  <FlowPane fx:id="DiscountFlowPane" hgap="5.0" orientation="VERTICAL" vgap="5.0" />
                </content>
             </ScrollPane>
         </content>
