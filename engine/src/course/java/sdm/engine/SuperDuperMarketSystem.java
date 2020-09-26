@@ -561,14 +561,6 @@ public class SuperDuperMarketSystem {
     }
 
 
-
-
-
-
-
-
-
-
     private void updateShippingProfitAfterOrder(Order newOrder) {
         Set<Store> AllStoresFromOrder = newOrder.getStoreSet();
         Store storeInSysAndNotInFile;
