@@ -7,13 +7,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-
 <Pane fx:id="MainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="339.0" prefWidth="519.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.InputPane.GetInputPaneController">
    <padding>
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
    </padding>
    <children>
-      <Label fx:id="TitleLabel" layoutX="68.0" layoutY="53.0" text="Please Enter Amount" />
+      <Label id="InputLabel" fx:id="TitleLabel" layoutX="68.0" layoutY="53.0" text="Please Enter Amount" />
       <Label id="pointLabel" layoutX="249.0" layoutY="130.0" text=".">
          <font>
             <Font size="96.0" />

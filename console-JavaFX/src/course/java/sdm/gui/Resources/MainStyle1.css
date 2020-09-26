@@ -67,6 +67,8 @@
     -fx-font-family: "Courier New!";-fx-font-weight: bold;  /*Lucida Console;!*Courier New!; -*/
 }
 
+#InputLabel { -fx-text-fill: black;}
+
 .label {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -93,7 +95,8 @@
     -fx-background-color: transparent,transparent,transparent;
 }
 
-#GridMap {-fx-background-image: url("Imgs/bricks.jpg");-fx-opacity: 0.85}
+
+#GridMap {-fx-background-image: url("Imgs/map3.jpg");-fx-opacity: 0.85;-fx-background-size: cover; -fx-background-repeat: no-repeat;}
 
 .StoreStack {/*-fx-background-color: #fff98f;*/
     /*https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png*/

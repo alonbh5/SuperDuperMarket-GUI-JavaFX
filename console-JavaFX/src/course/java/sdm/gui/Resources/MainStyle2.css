@@ -2,10 +2,18 @@
 #MainMenuPane1 {-fx-background-image: url("Imgs/background2.jpg");
     -fx-background-size: cover; -fx-background-repeat: no-repeat;
 }
-.InfoScroll{-fx-background-image: url("Imgs/blueBackground.jpg");
-    -fx-background-size: cover; -fx-background-repeat: no-repeat;
-}
-.InfoVbox{-fx-background-color: transparent;
+.InfoScroll{-fx-background-color: transparent;}
+
+
+.InfoVbox{-fx-background-color: transparent;}
+
+.scroll-pane{-fx-background-color: transparent;}
+
+.DiscountPane{-fx-background-image: url("Imgs/discountBackground2.jpg");
+    -fx-background-size: cover; -fx-background-repeat: no-repeat;}
+
+
+.BackgroundTrans{-fx-background-color: transparent;
 }
 
 
@@ -56,7 +64,7 @@
 
 
 
-#GridMap {-fx-background-image: url("Imgs/bricks.jpg");-fx-opacity: 0.85}
+#GridMap {-fx-background-image: url("Imgs/BFjwi.png");-fx-opacity: 0.85;-fx-background-size: cover; -fx-background-repeat: no-repeat;}
 
 .StoreStack {/*-fx-background-color: #fff98f;*/
     /*https://icon-icons.com/icons2/2063/PNG/32/store_shop_building_ecommerce_icon_124608.png*/

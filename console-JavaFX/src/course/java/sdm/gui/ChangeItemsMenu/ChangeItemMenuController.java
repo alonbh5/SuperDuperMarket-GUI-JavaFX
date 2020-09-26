@@ -109,12 +109,6 @@ public class ChangeItemMenuController {
             ItemsController.setItems(curStore.Items, this);
 
 
-            /*AnchorPane.setLeftAnchor(infoComponent,0.0);
-            AnchorPane.setBottomAnchor(infoComponent,0.0);
-            AnchorPane.setRightAnchor(infoComponent,0.0);
-            AnchorPane.setTopAnchor(infoComponent,0.0);
-            AnchorPane x = new AnchorPane(infoComponent);*/
-
             MainStackPane.getChildren().add(infoComponent);
             MainStackPane.getChildren().get(0).setDisable(true);
             MainStackPane.getChildren().get(0).setOpacity(0);
@@ -149,6 +143,10 @@ public class ChangeItemMenuController {
 
         StoreInfo curStore = StoresComboBox.getSelectionModel().getSelectedItem();
 
+        boolean isDec = true;
+        if (itemSelected.PayBy.toUpperCase().equals("AMOUNT"))
+            isDec = false;
+
         if (DeleteRadio.isSelected()) {
             if (curStore.Items.size() == 1)
                 MainController.PrintMassage("Sorry - There is Only One Item In Store");
@@ -171,7 +169,7 @@ public class ChangeItemMenuController {
             } catch (IOException e) {
             }
             GetInputPaneController InputController = fxmlLoader.getController();
-            InputController.OnCreation(true, () -> OnChangeFinished(itemSelected,InputController.getAmount(),curStore));
+            InputController.OnCreation(isDec, () -> OnChangeFinished(itemSelected,InputController.getAmount(),curStore));
             InputController.ChangeTitle("Please Enter New Price");
 
             MainStackPane.getChildren().get(0).setOpacity(0);
@@ -201,6 +199,10 @@ public class ChangeItemMenuController {
     }
 
     public void onAddItemItem(ItemInfo newItem) {
+        boolean isDec = true;
+        if (newItem.PayBy.toUpperCase().equals("AMOUNT"))
+            isDec = false;
+
         StoreInfo curStore = StoresComboBox.getSelectionModel().getSelectedItem();
 
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -212,7 +214,7 @@ public class ChangeItemMenuController {
         } catch (IOException e) {
         }
         GetInputPaneController InputController = fxmlLoader.getController();
-        InputController.OnCreation(true, () -> OnAddFinished(newItem,InputController.getAmount(),curStore));
+        InputController.OnCreation(isDec, () -> OnAddFinished(newItem,InputController.getAmount(),curStore));
         InputController.ChangeTitle("Please Enter New Price");
 
         MainStackPane.getChildren().get(0).setOpacity(0);

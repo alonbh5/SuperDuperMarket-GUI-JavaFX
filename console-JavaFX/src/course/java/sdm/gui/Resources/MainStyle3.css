@@ -2,11 +2,20 @@
 #MainMenuPane1 {-fx-background-image: url("Imgs/blueBackground.jpg");
 -fx-background-size: cover; -fx-background-repeat: no-repeat;
 }
-.InfoScroll{-fx-background-image: url("Imgs/blueBackground.jpg");
-    -fx-background-size: cover; -fx-background-repeat: no-repeat;
+.InfoScroll{-fx-background-color: transparent;}
+
+
+.InfoVbox{-fx-background-color: transparent;}
+
+.scroll-pane{-fx-background-color: transparent;}
+
+.DiscountPane{-fx-background-image: url("Imgs/discountBackground3.jpg");
+    -fx-background-size: cover; -fx-background-repeat: no-repeat;}
+
+
+.BackgroundTrans{-fx-background-color: transparent;
 }
-.InfoVbox{-fx-background-color: transparent;
-}
+
 
 
 /*.MenuButtons {-fx-background-color:

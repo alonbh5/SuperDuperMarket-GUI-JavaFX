@@ -83,8 +83,8 @@ public class GetInputPaneController {
     private void MakeAnimation () {
 
             Path path = new Path();
-            path.getElements().add(new MoveTo(locationX.getValue(), locationY.getValue()));
-            path.getElements().add(new LineTo(TextLeft.getLayoutX()-80, TextLeft.getLayoutY()+300));
+            path.getElements().add(new MoveTo(locationX.getValue()-100, locationY.getValue()));
+            path.getElements().add(new LineTo(TextLeft.getLayoutX(), TextLeft.getLayoutY()+200));
 
             OkButton.setDisable(true);
             TextLeft.setDisable(true);

@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-
 <ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="course.java.sdm.gui.ChangeItemsMenu.ChangeItemMenuController">
    <content>
       <StackPane fx:id="MainStackPane">
@@ -25,7 +24,7 @@
                   </RadioButton>
                   <RadioButton fx:id="DeleteRadio" disable="true" layoutX="329.0" layoutY="244.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#OnDeleteStoreRadio" prefHeight="17.0" prefWidth="116.0" styleClass="RadioLabels" text="Delete Item" toggleGroup="$OptionItems" />
                   <RadioButton fx:id="AddRadio" disable="true" layoutX="512.0" layoutY="244.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#OnAddRadio" styleClass="RadioLabels" text="Add Item" toggleGroup="$OptionItems" />
-                  <ComboBox fx:id="StoresComboBox" layoutX="237.0" layoutY="81.0" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="386.0" />
+                  <ComboBox fx:id="StoresComboBox" layoutX="249.0" layoutY="81.0" onAction="#OnStoreSelected" prefHeight="25.0" prefWidth="374.0" />
                   <Label fx:id="MassageLabel" layoutX="349.0" layoutY="345.0" />
                </children>
             </Pane>
