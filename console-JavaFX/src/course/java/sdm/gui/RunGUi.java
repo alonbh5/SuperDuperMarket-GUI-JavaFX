@@ -34,7 +34,7 @@ public class RunGUi extends Application {
 
         // set stage
         primaryStage.setTitle("Super Duper Market by Alon Ben Harosh");
-        Scene scene = new Scene(root, 1200, 730);
+        Scene scene = new Scene(root, 1178, 744);
         primaryStage.setScene(scene);
         primaryStage.show();
 
