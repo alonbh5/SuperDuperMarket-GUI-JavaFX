@@ -135,7 +135,7 @@ public class MainMenuController {
             MainSDMSystem.UploadInfoFromXML(selectedFileProperty.getValueSafe());
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Massage-Label");
-        } catch (Exception e) { //todo this is not working..
+        } catch (Exception e) {
             MassageLabel.getStyleClass().clear();
             MassageLabel.getStyleClass().add("Error-Label");
         }
@@ -145,7 +145,7 @@ public class MainMenuController {
         this.primaryStage = primaryStage;
     }
 
-    public void bindTaskToUIComponents(Task<Boolean> aTask) { //todo this on finsih
+    public void bindTaskToUIComponents(Task<Boolean> aTask) {
         // task message
         MassageLabel.textProperty().bind(aTask.messageProperty());
 
@@ -310,7 +310,7 @@ public class MainMenuController {
     void OnItemUpdate(ActionEvent event) throws Exception {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = ChangeItemMenuController.class.getResource("ChangeItemMenu.fxml"); //todo make it all in common static..
+        URL url = ChangeItemMenuController.class.getResource("ChangeItemMenu.fxml");
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         ChangeItemMenuController controller = fxmlLoader.getController();
@@ -445,7 +445,7 @@ public class MainMenuController {
     void OnAddDiscount(ActionEvent event) throws Exception {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = AddDiscountController.class.getResource("AddDiscount.fxml"); //todo make it all in common static..
+        URL url = AddDiscountController.class.getResource("AddDiscount.fxml");
         fxmlLoader.setLocation(url);
         Parent component = fxmlLoader.load(url.openStream());
         AddDiscountController controller = fxmlLoader.getController();

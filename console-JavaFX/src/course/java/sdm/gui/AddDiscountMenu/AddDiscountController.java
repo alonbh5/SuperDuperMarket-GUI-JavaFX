@@ -200,7 +200,7 @@ public class AddDiscountController {
     }
 
     private void CreateBasicDiscount (Double amountForItem) {
-        //todo create here when all is the properties say true - > add listener
+
         if (amountForItem <= 0)
             MainController.PrintMassage("Amount Should Be Positive!");
         else {
@@ -212,7 +212,10 @@ public class AddDiscountController {
             OfferItemInfo itemYouBuy = new OfferItemInfo(itemInStore.serialNumber, itemInStore.Name, itemInStore.PayBy,
                     amountForItem, itemInStore.PriceInStore);
 
-            newDiscount = new DiscountInfo(NameTextField.getText(), DisType, itemYouBuy, amountForItem, null, StoreCombo.getValue().StoreID);
+            String name = NameTextField.getText();
+            name = name.trim();
+
+            newDiscount = new DiscountInfo(name, DisType, itemYouBuy, amountForItem, null, StoreCombo.getValue().StoreID);
             DiscountInfoTile.disableProperty().unbind();
             DiscountInfoTile.setDisable(true);
             StoreTitled.setDisable(true);
@@ -258,10 +261,6 @@ public class AddDiscountController {
 
     private void OnPriceSet(Double amount, ItemInStoreInfo itemPressed, Double pricePerUnit) {
         isOfferSelected.setValue(true);
-
-
-        //todo create discount before and just add it with "addItemYouGet"
-        //create when all is done
         newDiscount.addItemYouGet(new OfferItemInfo(itemPressed.serialNumber,itemPressed.Name,itemPressed.PayBy,
                 amount,pricePerUnit));
 
@@ -275,7 +274,10 @@ public class AddDiscountController {
         if (NameTextField.getText().isEmpty())
             isNameTyped.setValue(false);
         else
-            isNameTyped.setValue(true);
+            if (NameTextField.getText().trim().isEmpty())
+                isNameTyped.setValue(false);
+            else
+                isNameTyped.setValue(true);
     }
 
 }

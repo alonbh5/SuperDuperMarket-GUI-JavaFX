@@ -18,7 +18,7 @@ public class LoadXmlTask extends Task<Boolean> {
     Map<Long,Order> OrderHistory = new HashMap<>();
     Map<Long,Customer> CustomersInSystem = new HashMap<>();
 
-    private final int SLEEP_TIME = 1; //todo change this before submit
+    private final int SLEEP_TIME = 900;
 
      LoadXmlTask(SuperDuperMarketDescriptor superDuperMarketDescriptor, SuperDuperMarketSystem mainSys) {
         this.superDuperMarketDescriptor = superDuperMarketDescriptor;
@@ -36,7 +36,7 @@ public class LoadXmlTask extends Task<Boolean> {
         return copyInfoFromXMLClasses(superDuperMarketDescriptor);
     }
 
-    private boolean copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws Exception { //todo what if there is no customers or somthing
+    private boolean copyInfoFromXMLClasses(SuperDuperMarketDescriptor superDuperMarketDescriptor) throws Exception {
 
             Thread.sleep(SLEEP_TIME);
             updateMessage("Getting Items...");
@@ -100,7 +100,7 @@ public class LoadXmlTask extends Task<Boolean> {
                 throw new WrongPayingMethodException(item.getPurchaseCategory());
             }
 
-            Item newBaseItem = new Item ((long)item.getId(),item.getName(),ePayBy);
+            Item newBaseItem = new Item ((long)item.getId(),item.getName().trim(),ePayBy);
             ProductInSystem newItem = new ProductInSystem(newBaseItem);
             ItemsInSystem.put(newItem.getSerialNumber(),newItem);
         }
@@ -115,7 +115,7 @@ public class LoadXmlTask extends Task<Boolean> {
             updateMessage("Error! - XML contains 2 points at the same location " + StoreLocation.getX() + ","+ StoreLocation.getY()+" !");
             throw new DuplicatePointOnGridException(StoreLocation);}
 
-        Store newStore = new Store((long) store.getId(), StoreLocation, store.getName(), store.getDeliveryPpk());
+        Store newStore = new Store((long) store.getId(), StoreLocation, store.getName().trim(), store.getDeliveryPpk());
         ProductInSystem sysItem;
 
         for (SDMSell curItem : store.getSDMPrices().getSDMSell()) {
@@ -144,7 +144,7 @@ public class LoadXmlTask extends Task<Boolean> {
                 sysItem.setMinSellingStore(newStore);
 
         }
-//todo check spaces and case sensetuve  "    sdas "  = "sdas"
+
         if (newStore.getItemList().isEmpty()) {
             updateMessage("Error! - Store #"+store.getId() + "Does not Sell any item!");
             throw new StoreDoesNotSellItemException(newStore.getStoreID());
@@ -165,10 +165,19 @@ public class LoadXmlTask extends Task<Boolean> {
                     throw new NoOffersInDiscountException(curDis.getName());
                 }
 
+                String DisOp = curDis.getThenYouGet().getOperator().trim().toUpperCase();
+
+                if (!DisOp.equals("ONE-OF") && !DisOp.equals("ALL-OR-NOTHING") && !DisOp.equals("IRRELEVANT")){
+                    updateMessage("Error! -Discount "+curDis.getName()+" Has an Illegal Operator Name - " +DisOp);
+                    throw new IllegalOfferException(curDis.getName());
+                }
+
+
+
                 Discount.OfferType newOp = Discount.OfferType.IRRELEVANT;
-                if (curDis.getThenYouGet().getOperator().equals("ONE-OF"))
+                if (curDis.getThenYouGet().getOperator().trim().toUpperCase().equals("ONE-OF"))
                     newOp = Discount.OfferType.ONE_OF;
-                if (curDis.getThenYouGet().getOperator().equals("ALL-OR-NOTHING"))
+                if (curDis.getThenYouGet().getOperator().trim().toUpperCase().equals("ALL-OR-NOTHING"))
                     newOp = Discount.OfferType.ALL_OR_NOTHING;
                 if (newOp.equals(Discount.OfferType.IRRELEVANT) && curDis.getThenYouGet().getSDMOffer().size() != 1) {
                     updateMessage("Error! -Discount "+curDis.getName()+" Say it IRRELEVANT what you choose but offer more then one product!");
@@ -176,7 +185,7 @@ public class LoadXmlTask extends Task<Boolean> {
 
                 Item curItem = ItemsInSystem.get((long) curDis.getIfYouBuy().getItemId()).getItem();
                 ProductYouBuy whatYouBuy = new ProductYouBuy(curItem, curDis.getIfYouBuy().getQuantity());
-                Discount newDis = new Discount(newOp, curDis.getName(), whatYouBuy);
+                Discount newDis = new Discount(newOp, curDis.getName().trim(), whatYouBuy);
 
                 for (SDMOffer offer : curDis.getThenYouGet().getSDMOffer()) {
                     if (offer.getForAdditional() < 0) {
@@ -211,7 +220,7 @@ public class LoadXmlTask extends Task<Boolean> {
         if (SystemGrid.containsKey(location)) {
             updateMessage("Error! - XML contains 2 points at the same location " + location.getX() + ","+ location.getY()+" !");
             throw new DuplicatePointOnGridException(location);}
-        Customer newUser = new Customer(customer.getId(),customer.getName(),location);
+        Customer newUser = new Customer(customer.getId(),customer.getName().trim(),location);
         CustomersInSystem.put(newUser.getIdNumber(),newUser);
         SystemGrid.put(newUser.getCoordinate(),newUser);
     }

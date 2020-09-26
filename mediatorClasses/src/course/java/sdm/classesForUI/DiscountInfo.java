@@ -62,7 +62,7 @@ public class DiscountInfo {
     }
 
     public void setIndexOfWantedItem(Integer indexOfWantedItem) {
-        if (DiscountOperator.toLowerCase().equals("one_of")) //todo check this
+        if (DiscountOperator.toLowerCase().equals("one_of"))
             IndexOfWantedItem.add(indexOfWantedItem);
     }
 
@@ -81,7 +81,7 @@ public class DiscountInfo {
                 if (cur.Amount.equals(newItem.Amount))
                     if (cur.PricePerOne.equals(newItem.PricePerOne)) {
                         flag = false;
-                        break; //todo check that works
+                        break;
                     }
         }
 

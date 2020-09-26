@@ -108,15 +108,10 @@ public class ShowMapController {
                 ,store.getPointString(),store.StoreID,store.Name,store.PPK,store.OrderHistory.size());
     }
 
-    private void ChangePoint (Point pt) { //todo
+    private void ChangePoint (Point pt) {
          pt.x--;
          pt.y = MaxRow - pt.y + 1;
 
     }
 
-    /*if (pt.x == 1 && pt.y == 1)
-        {
-            pt.x=0;
-            pt.y=35;
-        }*/
 }

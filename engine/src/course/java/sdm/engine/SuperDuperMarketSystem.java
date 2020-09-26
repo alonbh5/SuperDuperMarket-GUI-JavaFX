@@ -106,17 +106,17 @@ public class SuperDuperMarketSystem {
     public int getAmountOfItemsInSystem ()
     {
         return m_ItemsInSystem.size();
-    } //todo propties?
+    }
 
     public int getAmountOfOrdersInSystem ()
     {
         return m_OrderHistory.size();
-    } //todo propties?
+    }
 
     public int getAmountOfStoresInSystem ()
     {
         return m_SystemGrid.size();
-    } //todo propties?
+    }
 
     private double getAvgPriceForItem (Long ItemID)   {
         return Arrays.stream(m_StoresInSystem.values().stream()
@@ -201,7 +201,7 @@ public class SuperDuperMarketSystem {
             {
                 Store curStore = m_StoresInSystem.get(storeID);
                 List<ItemInStoreInfo> items = curStore.getItemList();
-                List<OrderInfo> orders = curStore.getOrderHistoryList(); //todo this need to return new info
+                List<OrderInfo> orders = curStore.getOrderHistoryList();
                 List<DiscountInfo> discounts = curStore.getDiscountsList();
 
                 return new StoreInfo(curStore.getCoordinate(),
@@ -344,7 +344,7 @@ public class SuperDuperMarketSystem {
             newOrder.addProductToOrder(newItem); //added it to order
         }
 
-        m_tempOrder = newOrder; //todo wait for sale items...
+        m_tempOrder = newOrder;
         return createOrderInfo(newOrder);
     }
 
@@ -364,7 +364,7 @@ public class SuperDuperMarketSystem {
                 ProductInStore curProd;
                 curStore = getStoreByID(curDiscount.StoreID);
                 if (curDiscount.DiscountOperator.toUpperCase().equals("ONE_OF")) {
-                    for (int i = 0; i < curDiscount.AmountWanted.getValue(); i++) { //todo this is not working..
+                    for (int i = 0; i < curDiscount.AmountWanted.getValue(); i++) {
                         int curIndex = curDiscount.getIndex(i);
                         curProd = curStore.getProductInStoreByID(curDiscount.OfferedItem.get(curIndex).ID);
                         newItem = new ProductInOrder(curProd, true);
@@ -438,8 +438,6 @@ public class SuperDuperMarketSystem {
     private Order createEmptyOrder (Customer customer, Date OrderDate,boolean isStatic) throws PointOutOfGridException {
         if (!isCoordinateInRange(customer.getCoordinate()))
             throw (new PointOutOfGridException(customer.getCoordinate()));
-       // if (m_SystemGrid.containsKey(customer.getCoordinate())) //todo there is now need to check  - xml checkes...
-            //throw (new KeyAlreadyExistsException("There is a store at "+ customer.getCoordinate().toString()));
 
         while (m_OrderHistory.containsKey(OrdersSerialGenerator))
             OrdersSerialGenerator++;
@@ -557,7 +555,7 @@ public class SuperDuperMarketSystem {
             throw new NoValidXMLException();
         }
         currentRunningTask = new LoadXmlTask(superDuperMarketDescriptor,this);
-        //controller.bindTaskToUIComponents(currentRunningTask,onFinish); todo this onFinsih
+        //controller.bindTaskToUIComponents(currentRunningTask,onFinish);
         controller.bindTaskToUIComponents(currentRunningTask);
         new Thread(currentRunningTask).start();
     }

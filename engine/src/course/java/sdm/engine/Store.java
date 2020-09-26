@@ -146,7 +146,7 @@ class Store implements HasName, Coordinatable,Serializable {
             stores = curOrder.getStoreInfo();
             itemsOnlyFromStore = curOrder.getItemsOnlyFromStore(this.m_StoreID);
             customer =  new CustomerInfo(curOrder.getCostumer().getName(),curOrder.getCostumer().getId(),curOrder.getCostumer().getCoordinate(),curOrder.getCostumer().getAvgPriceOfShipping(),curOrder.getCostumer().getAvgPriceOfOrdersWithoutShipping(),curOrder.getCostumer().getAmountOFOrders());
-            OrderInfo newOrder = new OrderInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),stores  //todo this is null no point to show everyone..
+            OrderInfo newOrder = new OrderInfo(curOrder.getOrderSerialNumber(),curOrder.getDate(),stores
             ,itemsOnlyFromStore,curOrder.getTotalPrice(),curOrder.getShippingPrice()
                     ,curOrder.getItemsPrice(),curOrder.getAmountOfItems(),customer,curOrder.isStatic());
             res.add(newOrder);
@@ -209,7 +209,7 @@ class Store implements HasName, Coordinatable,Serializable {
         m_items.remove(itemID);
     }
 
-    void DeleteDiscount (String DiscountName) { //todo chack that thats what aviad wanted..
+    void DeleteDiscount (String DiscountName) {
         Discount disToDel = null;
 
         for (Discount cur : m_Discounts)

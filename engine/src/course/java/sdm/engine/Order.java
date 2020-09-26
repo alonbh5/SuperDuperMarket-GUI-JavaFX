@@ -12,7 +12,7 @@ class Order implements Coordinatable, Serializable {
 
     private final long m_OrderSerialNumber;
     private Date m_Date;
-    private final Customer m_Costumer; //todo change it to customer
+    private final Customer m_Costumer;
     private double m_TotalPrice=0;
     private double m_ShippingPrice=0;
     private double m_ItemsPrice=0;

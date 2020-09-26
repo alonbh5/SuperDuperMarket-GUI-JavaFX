@@ -39,7 +39,7 @@ public class DiscountFromStoreTileController {
     public void SetValues(DiscountInfo discountTile) {
         discount = discountTile;
 
-        DiscountLabelName.setText(discountTile.Name + " (" + discountTile.getDiscountOp() + ")");
+        DiscountLabelName.setText(discountTile.Name + "\n(" + discountTile.getDiscountOp() + ")");
         BuyLabel.setText("If You Buy " + discountTile.AmountToBuy.toString() + "\n" +
                 discountTile.itemToBuy.Name + "'s (Item #" + discountTile.itemToBuy.ID + ")\nYou Can Get:");
 

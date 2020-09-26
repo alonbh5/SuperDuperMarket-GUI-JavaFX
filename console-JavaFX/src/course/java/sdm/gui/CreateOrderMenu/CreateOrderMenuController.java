@@ -212,7 +212,7 @@ public class CreateOrderMenuController {
 
     private void exposeStore(ObservableValue<? extends Boolean> observableValue, Boolean object, Boolean object1) {
             StoreTile.setExpanded(observableValue.getValue());
-            StoresCombo.setDisable(!observableValue.getValue()); //todo stores not Closing...
+            StoresCombo.setDisable(!observableValue.getValue());
     }
 
 
@@ -250,7 +250,7 @@ public class CreateOrderMenuController {
         StoresCombo.setValue(null); //reset the store comboBox..
         StoresCombo.getSelectionModel().clearSelection();
 
-        StoreTile.setExpanded(false); //todo this not works..
+        StoreTile.setExpanded(false);
 
         MainController.PrintMassage("Dynamic Order - Please Choose From All Items (Double Click)...");
     }
@@ -297,8 +297,6 @@ public class CreateOrderMenuController {
         MainStackPane.getChildren().add(infoComponent);
         MainController.PrintMassage("Click Button To Continue..");
 
-        //todo show all store here......
-        //Collection<DiscountInfo> discounts = MainController.getDiscounts(ItemsByUser,false,null);
     }
 
     private void doStaticOrder(StoreInfo selectedStore) {
@@ -307,9 +305,6 @@ public class CreateOrderMenuController {
 
         try {
             discounts= MainController.getDiscountsStatic(ItemsByUser,selectedStore,SelectedUser,SelectedDate);
-            //showDiscount();//todo!@!#!@#
-            //discounts.get(0).addAmountWanted();
-            //discounts.get(0).addAmountWanted();
             showDiscount();
 
         } catch (Exception e) {

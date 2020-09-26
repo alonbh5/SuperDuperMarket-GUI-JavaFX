@@ -80,7 +80,7 @@ public class StoresMenuTileController {
         for (DiscountInfo cur:discounts) {
             flag = !flag;
             FXMLLoader fxmlLoader = new FXMLLoader();
-            URL url = DiscountFromStoreTileController.class.getResource("DiscountFromStoreTile.fxml"); //todo make it all in common static..
+            URL url = DiscountFromStoreTileController.class.getResource("DiscountFromStoreTile.fxml");
             fxmlLoader.setLocation(url);
             Parent infoComponent;
             try {
@@ -98,7 +98,7 @@ public class StoresMenuTileController {
 
     public static ScrollPane getItemsPane(StoreInfo store) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        URL url = InfoMenuController.class.getResource("InfoMenu.fxml"); //todo make it all in common static..
+        URL url = InfoMenuController.class.getResource("InfoMenu.fxml");
         fxmlLoader.setLocation(url);
         ScrollPane infoComponent = fxmlLoader.load(url.openStream());
         InfoMenuController InfoController = fxmlLoader.getController();

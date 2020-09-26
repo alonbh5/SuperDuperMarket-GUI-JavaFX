@@ -76,7 +76,7 @@ public class ChangeItemMenuController {
 
     @FXML
     void OnStoreSelected(ActionEvent event) {
-        isStoreSelected.setValue(true); //todo check store.....
+        isStoreSelected.setValue(true);
     }
 
     @FXML

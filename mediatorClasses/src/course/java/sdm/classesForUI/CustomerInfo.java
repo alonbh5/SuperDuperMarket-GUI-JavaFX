@@ -8,7 +8,7 @@ public class CustomerInfo {
     public final Point Location;
     public final Double AvgPriceForShipping;
     public final Double AvgPriceForOrderWithoutShipping;
-    public final Integer AmountOfOrders; //todo list of orderinfo?
+    public final Integer AmountOfOrders;
 
     public CustomerInfo(String name, long ID, Point location, double avgPriceForShipping, double avgPriceForOrderWithoutShipping, int amountOfOrders) {
         this.name = name;

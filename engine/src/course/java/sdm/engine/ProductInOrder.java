@@ -75,7 +75,7 @@ class ProductInOrder implements Serializable {
         ProductInOrder that = (ProductInOrder) o;
 
         boolean sameSale;
-        try { //todo check this - what if not from same sale ...
+        try {
             if (isFromSale == that.isFromSale)
                 sameSale =  (PriceOfTotalItems / amountBought) == (that.getPriceOfTotalItems() /that.getAmount());
             else
