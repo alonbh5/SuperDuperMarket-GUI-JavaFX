@@ -50,7 +50,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" prefHeight="61.0" prefWidth="1059.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <Label text="Please Choose User:" />
+                                          <Label text="Please Choose Date:" />
                                           <DatePicker fx:id="datePicker" onAction="#OnDateSelected" />
                                           <Separator orientation="VERTICAL" prefHeight="200.0" />
                                           <RadioButton fx:id="StaticRadio" mnemonicParsing="false" onAction="#OnStaticRadio" text="Static Order">
